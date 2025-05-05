@@ -1,0 +1,14 @@
+{
+  "name": "scan2win",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd frontend && pnpm dev",
+    "start:backend": "cd backend && npm run start:dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,20 @@
+{
+  "extends": ["react-app", "plugin:import/errors", "plugin:import/warnings"],
+  "plugins": ["import"],
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".jsx", ".json"]
+      }
+    }
+  },
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "react-hooks/exhaustive-deps": "off",
+    "import/no-unresolved": "error"
+  }
+}

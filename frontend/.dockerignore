@@ -1,0 +1,57 @@
+# Dependencies
+
+node_modules
+.pnpm-store
+.npm
+
+# Build directories
+
+dist
+build
+coverage
+
+# Development files
+
+.git
+.github
+.gitignore
+.vscode
+.idea
+\*.log
+
+# Environment files
+
+.env
+.env.\*
+!.env.example
+
+# Testing
+
+**tests**
+test
+tests
+_.test.js
+_.spec.js
+
+# Documentation
+
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+docs
+
+# Configuration files that aren't needed in the container
+
+\*.config.js
+!vite.config.js
+!postcss.config.js
+!tailwind.config.js
+tsconfig.json
+jsconfig.json
+
+# Misc
+
+.DS_Store
+Thumbs.db
+_.swp
+_.swo
