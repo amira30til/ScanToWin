@@ -45,8 +45,8 @@ export class Admin {
   @Column({ nullable: true })
   tel: number;
   @ApiProperty()
-  @Column({ nullable: true })
-  refreshToken: string;
+  @Column({ nullable: true, type: 'text' })
+  refreshToken: string | null;
   @ApiProperty()
   @Column({ nullable: true })
   resetToken: string;
@@ -77,10 +77,10 @@ export class Admin {
   @ApiProperty()
   @Column({ nullable: true })
   isGuaranteedWin: boolean;
-
+  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
-
+  @ApiProperty()
   @UpdateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

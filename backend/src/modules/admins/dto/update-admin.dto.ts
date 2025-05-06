@@ -1,5 +1,4 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PartialType } from '@nestjs/mapped-types';
 import { CreateAdminDto } from './create-admin.dto';
 import {
   IsBoolean,
@@ -42,7 +41,8 @@ export class UpdateAdminDto implements Partial<CreateAdminDto> {
   email?: string;
 
   @ApiPropertyOptional({
-    description: 'Admin password (min 8 chars with at least 1 letter and 1 number)',
+    description:
+      'Admin password (min 8 chars with at least 1 letter and 1 number)',
     example: 'NewPassword123',
   })
   @IsString()

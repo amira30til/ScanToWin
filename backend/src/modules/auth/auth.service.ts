@@ -6,7 +6,7 @@ import {
 import { LoginDto } from './dto/login.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from '../admins/entities/admin.entity';
-import { Auth, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   AuthMessages,
   UserMessages,
@@ -22,6 +22,7 @@ import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,7 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
   /*------------------------------ SIMPLE LOGIN ------------------------------*/
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto, res: Response) {
     try {
       const { email, password } = dto;
       const user = await this.adminsRepository
@@ -63,9 +64,17 @@ export class AuthService {
         secret: `${process.env.REFRESH_JWT_SECRET}`,
         expiresIn: `${process.env.REFRESH_JWT_EXPIRED}`,
       });
-      // TODO: why did you comment this out?
-      // delete user.password;
-      return { accessToken, refreshToken, user };
+
+      // Set refresh token in HTTP-only cookie
+      this.setRefreshTokenCookie(res, refreshToken);
+
+      // Store hashed refresh token in the database (optional but recommended for security)
+      const salt = await bcrypt.genSalt();
+      const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+      user.refreshToken = hashedRefreshToken;
+      await this.adminsRepository.save(user);
+
+      return { accessToken, user };
     } catch (e) {
       return handleServiceError(e);
     }
@@ -73,7 +82,74 @@ export class AuthService {
   /*------------------------------ REFRESH TOKEN ------------------------------*/
   async refreshToken(
     userId: number,
-  ): Promise<ApiResponseInterface<Auth> | ErrorResponseInterface> {
+    refreshToken: string,
+    res: Response,
+  ): Promise<ApiResponseInterface<any> | ErrorResponseInterface> {
+    try {
+      const user = await this.adminsRepository.findOne({
+        where: { id: userId },
+        select: ['id', 'email', 'role', 'refreshToken'],
+      });
+
+      if (!user) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(userId));
+      }
+
+      // Verify that the stored refresh token matches the one in the cookie
+      if (!user.refreshToken) {
+        throw new UnauthorizedException(
+          'Invalid refresh token: User has no stored refresh token',
+        );
+      }
+
+      const isRefreshTokenValid = await bcrypt.compare(
+        refreshToken,
+        user.refreshToken,
+      );
+      if (!isRefreshTokenValid) {
+        throw new UnauthorizedException(
+          'Invalid refresh token: Token does not match stored token',
+        );
+      }
+
+      const newPayload = {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      };
+
+      const newAccessToken = await this.jwtService.signAsync(newPayload, {
+        secret: `${process.env.JWT_SECRET}`,
+        expiresIn: `${process.env.JWT_EXPIRED}`,
+      });
+
+      const newRefreshToken = await this.jwtService.signAsync(newPayload, {
+        secret: `${process.env.REFRESH_JWT_SECRET}`,
+        expiresIn: `${process.env.REFRESH_JWT_EXPIRED}`,
+      });
+
+      // Update refresh token in the database
+      const salt = await bcrypt.genSalt();
+      const hashedRefreshToken = await bcrypt.hash(newRefreshToken, salt);
+      user.refreshToken = hashedRefreshToken;
+      await this.adminsRepository.save(user);
+
+      // Set the new refresh token in a cookie
+      this.setRefreshTokenCookie(res, newRefreshToken);
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        accessToken: newAccessToken,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  /*---------------------------- LOGOUT ----------------------------*/
+  async logout(
+    userId: number,
+    res: Response,
+  ): Promise<ApiResponseInterface<any> | ErrorResponseInterface> {
     try {
       const user = await this.adminsRepository.findOne({
         where: { id: userId },
@@ -83,34 +159,45 @@ export class AuthService {
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(userId));
       }
 
-      const newPayload = {
-        sub: user.id,
-        email: user.email,
-        role: user.role,
-      };
+      // Clear refresh token in database
+      user.refreshToken = null;
+      await this.adminsRepository.save(user);
 
-      const newToken = await this.jwtService.signAsync(newPayload, {
-        secret: `${process.env.JWT_SECRET}`,
-        expiresIn: `${process.env.JWT_EXPIRED}`,
-      });
+      // Clear refresh token cookie
+      this.clearRefreshTokenCookie(res);
 
-      // Optional chaining ensures no error if password is undefined
-      if (user.password !== undefined) {
-        //delete user.password;
-      }
-
-      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        accessToken: newToken,
-      });
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, 'Logout successful');
     } catch (error) {
       return handleServiceError(error);
     }
   }
 
+  /*---------------------------- COOKIE HELPERS ----------------------------*/
+  private setRefreshTokenCookie(res: Response, token: string) {
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict' as const,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days (should match the JWT expiry)
+      path: '/',
+    };
+
+    res.cookie('refresh_token', token, cookieOptions);
+  }
+
+  private clearRefreshTokenCookie(res: Response) {
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict' as const,
+      path: '/',
+    });
+  }
+
   /*---------------------------- FORGOT PASSWORD ----------------------------*/
   async forgotPasswordWithEmail(
     email: string,
-  ): Promise<ApiResponseInterface<Auth> | ErrorResponseInterface> {
+  ): Promise<ApiResponseInterface<any> | ErrorResponseInterface> {
     try {
       const user = await this.adminsRepository.findOne({ where: { email } });
       if (!user) {

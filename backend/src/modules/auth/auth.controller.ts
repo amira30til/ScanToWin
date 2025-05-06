@@ -1,34 +1,63 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import {
   ApiOperation,
-  ApiResponse,
+  ApiResponse as SwaggerResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { RefreshAuthGuard } from './guards/refresh-token.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Response } from 'express';
+import { JwtAuthGuard } from './guards/jwt-auth.guards';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
   /*------------------------------- SIMPLE LOGIN ---------------------------------*/
   @Post()
   @ApiOperation({ summary: 'Login user' })
-  @ApiResponse({ status: 200, description: 'Login successful' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  @SwaggerResponse({ status: 200, description: 'Login successful' })
+  @SwaggerResponse({ status: 401, description: 'Unauthorized' })
+  login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    return this.authService.login(dto, res);
   }
 
   /*------------------------------- REFRESH TOKEN ---------------------------------*/
+  @ApiOperation({
+    summary: 'Refresh token using cookie',
+    description:
+      'This endpoint requires a refresh token passed in the cookies to generate a new access token. The token should be set as `refresh_token`.',
+  })
   @Post('refresh-token')
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(RefreshAuthGuard)
-  @ApiOperation({ summary: 'Refresh token' })
-  refreshToken(@Request() req: any) {
-    return this.authService.refreshToken(+req.user.userId);
+  @ApiOperation({ summary: 'Refresh token using cookie' })
+  refreshToken(@Request() req: any, @Res({ passthrough: true }) res: Response) {
+    return this.authService.refreshToken(
+      +req.user.userId,
+      req.cookies.refresh_token,
+      res,
+    );
+  }
+
+  /*------------------------------- LOGOUT ---------------------------------*/
+  @Post('logout')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Logout user' })
+  async logout(@Request() req: any, @Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(+req.user.userId, res);
   }
 
   /*------------------------------ FORGOT PASSWORD --------------------------------*/
@@ -48,8 +77,8 @@ export class AuthController {
   forgotPassword(@Body('email') email: string) {
     return this.authService.forgotPasswordWithEmail(email);
   }
-  /*----------------------------  RESET Password ----------------------------*/
 
+  /*---------------------------- RESET Password ----------------------------*/
   @Post('reset-password')
   @ApiBody({
     description:
