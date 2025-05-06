@@ -138,6 +138,7 @@ export class AuthService {
       this.setRefreshTokenCookie(res, newRefreshToken);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        role: user.role,
         accessToken: newAccessToken,
       });
     } catch (error) {
@@ -156,6 +157,7 @@ export class AuthService {
       });
 
       if (!user) {
+        this.clearRefreshTokenCookie(res);
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(userId));
       }
 

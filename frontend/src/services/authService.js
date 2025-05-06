@@ -1,8 +1,8 @@
 import axios from "@/api/axios";
 
-const LOGIN_URL = "/auth/login";
+const LOGIN_URL = "/auth";
 const REGISTER_URL = "/auth/register";
-const REFRESH_URL = "/auth/refresh";
+const REFRESH_URL = "/auth/refresh-token";
 const LOGOUT_URL = "/auth/logout";
 
 export const registerUser = async ({ email, password }) => {
@@ -20,7 +20,7 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const refreshToken = async () => {
-  return await axios.get(REFRESH_URL, {
+  return await axios.post(REFRESH_URL, {
     withCredentials: true,
   });
 };

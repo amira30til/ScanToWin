@@ -7,7 +7,7 @@ const useRefreshToken = () => {
   const refresh = async () => {
     const response = await refreshToken();
     setAuth({
-      roles: response.data.roles,
+      role: response.data.role,
       accessToken: response.data.accessToken,
     });
     return response.data.accessToken;

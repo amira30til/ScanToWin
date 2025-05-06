@@ -9,7 +9,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import SuperAdminHome from "@/pages/super-admin/SuperAdminHome";
 import PersistLogin from "@/pages/auth/PersistLogin";
 import LayoutAdmin from "@/components/LayoutAdmin";
-import AdminCampaign from "./pages/admin/AdminCampaign";
+import AdminCampaign from "@/pages/admin/AdminCampaign";
 import AdminSMS from "./pages/admin/AdminSMS";
 import AdminReview from "./pages/admin/AdminReview";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -20,10 +20,8 @@ import AdminTiktok from "./pages/admin/AdminTiktok";
 import AdminUsersData from "./pages/admin/AdminUsersData";
 import AdminFacebook from "./pages/admin/AdminFacebook";
 
-const ROLES = {
-  SuperAdmin: 5150,
-  Admin: 2001,
-};
+const Admin = "ADMIN";
+const SuperAdmin = "SUPER_ADMIN";
 
 const App = () => {
   return (
@@ -34,11 +32,11 @@ const App = () => {
 
       <Route element={<PersistLogin />}>
         <Route path="login" element={<Login />} />
-        <Route element={<RequireAuth allowedRoles={[ROLES.SuperAdmin]} />}>
+        <Route element={<RequireAuth allowedRole={SuperAdmin} />}>
           <Route path="super-admin" element={<SuperAdminHome />} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+        <Route element={<RequireAuth allowedRole={Admin} />}>
           <Route path="/admin/*" element={<LayoutAdmin />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="campaign" element={<AdminCampaign />} />

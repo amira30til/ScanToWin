@@ -4,7 +4,7 @@
   "settings": {
     "import/resolver": {
       "alias": {
-        "map": [["@", "./src"]],
+        "map": [["@", "./frontend/src"]],
         "extensions": [".js", ".jsx", ".json"]
       }
     }

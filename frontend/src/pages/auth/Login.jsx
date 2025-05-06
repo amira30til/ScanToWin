@@ -40,11 +40,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const roleBasedRedirect = (roles) => {
+  const roleBasedRedirect = (role) => {
     let userRole = "";
-    if (roles.includes(2001)) {
+    if (role === "ADMIN") {
       userRole = "admin";
-    } else if (roles.includes(5150)) {
+    } else if (role === "SUPER_ADMIN") {
       userRole = "super-admin";
     }
     navigate(`/${userRole}`, { replace: true });
@@ -61,9 +61,9 @@ const Login = () => {
       });
 
       const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ email, password, roles, accessToken });
-      roleBasedRedirect(roles);
+      const role = response?.data?.user?.role;
+      setAuth({ email, password, role, accessToken });
+      roleBasedRedirect(role);
     } catch (error) {
       if (!error?.response) {
         toast("No Server Response", "error");
@@ -81,8 +81,7 @@ const Login = () => {
 
   useEffect(() => {
     if (auth?.accessToken) {
-      const roles = auth?.roles;
-      roleBasedRedirect(roles);
+      roleBasedRedirect(auth?.role);
     }
   }, [auth, navigate]);
 
