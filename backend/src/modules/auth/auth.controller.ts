@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-  Res,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import {
@@ -17,8 +10,8 @@ import {
 } from '@nestjs/swagger';
 import { RefreshAuthGuard } from './guards/refresh-token.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { Response } from 'express';
-import { JwtAuthGuard } from './guards/jwt-auth.guards';
+import { Response, Request } from 'express';
+// import { JwtAuthGuard } from './guards/jwt-auth.guards';
 
 @Controller('auth')
 export class AuthController {
@@ -43,21 +36,24 @@ export class AuthController {
   @ApiCookieAuth()
   @UseGuards(RefreshAuthGuard)
   @ApiOperation({ summary: 'Refresh token using cookie' })
-  refreshToken(@Request() req: any, @Res({ passthrough: true }) res: Response) {
-    return this.authService.refreshToken(
-      +req.user.userId,
-      req.cookies.refresh_token,
-      res,
-    );
+  refreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = request.cookies.refresh_token as string;
+    return this.authService.refreshToken(refreshToken, res);
   }
 
   /*------------------------------- LOGOUT ---------------------------------*/
   @Post('logout')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Logout user' })
-  async logout(@Request() req: any, @Res({ passthrough: true }) res: Response) {
-    return this.authService.logout(+req.user.userId, res);
+  async logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = request.cookies.refresh_token as string;
+    return this.authService.logout(refreshToken, res);
   }
 
   /*------------------------------ FORGOT PASSWORD --------------------------------*/

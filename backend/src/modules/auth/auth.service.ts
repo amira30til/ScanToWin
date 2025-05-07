@@ -68,10 +68,7 @@ export class AuthService {
       // Set refresh token in HTTP-only cookie
       this.setRefreshTokenCookie(res, refreshToken);
 
-      // Store hashed refresh token in the database (optional but recommended for security)
-      const salt = await bcrypt.genSalt();
-      const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
-      user.refreshToken = hashedRefreshToken;
+      user.refreshToken = refreshToken;
       await this.adminsRepository.save(user);
 
       return { accessToken, user };
@@ -81,34 +78,26 @@ export class AuthService {
   }
   /*------------------------------ REFRESH TOKEN ------------------------------*/
   async refreshToken(
-    userId: number,
     refreshToken: string,
     res: Response,
   ): Promise<ApiResponseInterface<any> | ErrorResponseInterface> {
     try {
+      if (!refreshToken) {
+        throw new NotFoundException(UserMessages.USER_REFRESH_TOKEN_NOT_FOUND);
+      }
+
       const user = await this.adminsRepository.findOne({
-        where: { id: userId },
+        where: { refreshToken },
         select: ['id', 'email', 'role', 'refreshToken'],
       });
 
       if (!user) {
-        throw new NotFoundException(UserMessages.USER_NOT_FOUND(userId));
+        throw new NotFoundException(UserMessages.USER_REFRESH_TOKEN_NOT_FOUND);
       }
 
-      // Verify that the stored refresh token matches the one in the cookie
       if (!user.refreshToken) {
         throw new UnauthorizedException(
           'Invalid refresh token: User has no stored refresh token',
-        );
-      }
-
-      const isRefreshTokenValid = await bcrypt.compare(
-        refreshToken,
-        user.refreshToken,
-      );
-      if (!isRefreshTokenValid) {
-        throw new UnauthorizedException(
-          'Invalid refresh token: Token does not match stored token',
         );
       }
 
@@ -128,10 +117,7 @@ export class AuthService {
         expiresIn: `${process.env.REFRESH_JWT_EXPIRED}`,
       });
 
-      // Update refresh token in the database
-      const salt = await bcrypt.genSalt();
-      const hashedRefreshToken = await bcrypt.hash(newRefreshToken, salt);
-      user.refreshToken = hashedRefreshToken;
+      user.refreshToken = newRefreshToken;
       await this.adminsRepository.save(user);
 
       // Set the new refresh token in a cookie
@@ -148,24 +134,26 @@ export class AuthService {
 
   /*---------------------------- LOGOUT ----------------------------*/
   async logout(
-    userId: number,
+    refreshToken: string,
     res: Response,
   ): Promise<ApiResponseInterface<any> | ErrorResponseInterface> {
     try {
+      if (!refreshToken) {
+        throw new NotFoundException(UserMessages.USER_REFRESH_TOKEN_NOT_FOUND);
+      }
+
       const user = await this.adminsRepository.findOne({
-        where: { id: userId },
+        where: { refreshToken },
       });
 
       if (!user) {
         this.clearRefreshTokenCookie(res);
-        throw new NotFoundException(UserMessages.USER_NOT_FOUND(userId));
+        throw new NotFoundException(UserMessages.USER_REFRESH_TOKEN_NOT_FOUND);
       }
 
-      // Clear refresh token in database
       user.refreshToken = null;
       await this.adminsRepository.save(user);
 
-      // Clear refresh token cookie
       this.clearRefreshTokenCookie(res);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, 'Logout successful');

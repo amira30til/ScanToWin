@@ -20,13 +20,21 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const refreshToken = async () => {
-  return await axios.post(REFRESH_URL, {
-    withCredentials: true,
-  });
+  return await axios.post(
+    REFRESH_URL,
+    {},
+    {
+      withCredentials: true,
+    },
+  );
 };
 
 export const logoutUser = async () => {
-  return await axios(LOGOUT_URL, {
-    withCredentials: true,
-  });
+  return await axios.post(
+    LOGOUT_URL,
+    {},
+    {
+      withCredentials: true,
+    },
+  );
 };

@@ -3,6 +3,7 @@ export const UserMessages = {
   USER_ALREADY_EXISTS: (field: string) =>
     `User with this ${field} already exists`,
   USER_NOT_FOUND: (id: number) => `User with ID ${id} not found`,
+  USER_REFRESH_TOKEN_NOT_FOUND: 'User with this refresh token not found',
   EMAIL_USER_NOT_FOUND: (email: string) => `User with Email ${email} not found`,
   PHONE_USER_NOT_FOUND: (tel: number) => `User with tel ${tel} not found`,
   CANNOT_REPORT_ADMIN: 'Forbidden: cannot report admin',
