@@ -1,67 +1,185 @@
+// HOOKS
+import { useAxiosPrivate, useLogout, useToast } from "@/hooks";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useAxiosPrivate, useLogout } from "@/hooks";
-import { Button } from "@chakra-ui/react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+// FUNCTIONS
+import { getAdmins, deleteAdmin } from "@/services/superAdminService";
+import { DateTime } from "luxon";
+
+// COMPONENTS
+import CreateAdminModal from "@/components/modals/CreateAdminModal";
+import DataTable from "@/components/DataTable";
+import Logo from "@/components/Logo";
+
+// STYLES
+import {
+  Flex,
+  Box,
+  Button,
+  Spinner,
+  Heading,
+  Td,
+  useDisclosure,
+} from "@chakra-ui/react";
+import IconButton from "@/components/common/IconButton";
+
+// ASSETS
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const SuperAdminHome = () => {
   const navigate = useNavigate();
-  const goBack = () => navigate(-1);
-  const [users, setUsers] = useState();
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
   const logout = useLogout();
+  const queryClient = useQueryClient();
+  const toast = useToast();
+
+  const { data: admins, isLoading } = useQuery({
+    queryKey: ["admins"],
+    queryFn: async () => {
+      const response = await getAdmins(axiosPrivate);
+      return response.data.data.admins;
+    },
+    onError: (err) => {
+      console.log("Failed to fetch admins:", err);
+      navigate("/login", { state: { from: location }, replace: true });
+    },
+  });
+
+  const createAdminMutation = useMutation({
+    mutationFn: async (data) => await deleteAdmin(axiosPrivate, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries("admins");
+      toast("Admin deleted successfully", "success");
+    },
+    onError: () => toast("Failed to delete admin", "error"),
+  });
+
+  const deleteAdminHandler = (id) => {
+    createAdminMutation.mutate(id);
+  };
 
   const signOut = async () => {
     await logout();
     navigate("/login");
   };
 
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
+  const headers = [
+    "Name",
+    "Email",
+    "Role",
+    "Status",
+    "Phone",
+    "Created at",
+    "Updated at",
+    "Actions",
+  ];
 
-    const getUsers = async () => {
-      try {
-        const response = await axiosPrivate.get("/users", {
-          signal: controller.signal,
-        });
-        isMounted && setUsers(response.data);
-      } catch (err) {
-        console.error(err);
-        navigate("/login", { state: { from: location }, replace: true });
-      }
-    };
-
-    getUsers();
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, []);
-
-  return (
-    <div>
-      <div>Super Admin Home</div>
-
-      <article>
-        <h2>Users List</h2>
-        {users?.length ? (
-          <ul>
-            {users.map((user, i) => (
-              <li key={i}>{user?.username}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No users to display</p>
+  const rows = (admin) => (
+    <>
+      <Td fontWeight="bold">
+        {admin?.firstName} {admin?.lastName}
+      </Td>
+      <Td>{admin?.email}</Td>
+      <Td>{admin?.role}</Td>
+      <Td>{admin?.adminStatus}</Td>
+      <Td>{admin?.tel}</Td>
+      <Td>
+        {DateTime.fromJSDate(new Date(admin?.createdAt)).toFormat(
+          "dd-MM-yyyy 'à' HH:mm",
         )}
-      </article>
+      </Td>
+      <Td>
+        {DateTime.fromJSDate(new Date(admin?.updatedAt)).toFormat(
+          "dd-MM-yyyy 'à' HH:mm",
+        )}
+      </Td>
+      <Td>
+        <Flex justify="center">
+          <IconButton
+            label="Delete admin"
+            icon={<DeleteIcon />}
+            size="sm"
+            variant="ghost"
+            colorScheme="red"
+            onClick={() => deleteAdminHandler(admin?.id)}
+          />
+        </Flex>
+      </Td>
+    </>
+  );
+  return (
+    <Box w="100%">
+      <Flex
+        justify="space-between"
+        align="center"
+        w="100%"
+        py={2}
+        px={4}
+        bg="white"
+        shadow="md"
+      >
+        <Logo h="60px" w="unset" objectFit="unset" />
 
-      <button onClick={goBack}>Go Back</button>
-      <Button type="button" onClick={signOut}>
-        Sign Out
-      </Button>
-    </div>
+        <Button
+          colorScheme="primary"
+          variant="outline"
+          type="button"
+          size="sm"
+          onClick={signOut}
+        >
+          Sign Out
+        </Button>
+      </Flex>
+
+      <Box p={4} py={8}>
+        <Heading size="lg">Super Admin Home</Heading>
+
+        <Flex direction="column" py={8}>
+          <Heading size="md">Admins List</Heading>
+          {isLoading && (
+            <Spinner
+              thickness="4px"
+              emptyColor="gray.200"
+              color="primary.500"
+              size="xl"
+            />
+          )}
+
+          <Box py={8}>
+            <AdminsTable headers={headers} data={admins} rows={rows} />
+          </Box>
+        </Flex>
+      </Box>
+    </Box>
+  );
+};
+
+const AdminsTable = ({ data, headers, rows }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const createAdminHandler = () => {
+    onOpen();
+  };
+  return (
+    <>
+      <Flex direction="column" gap={4}>
+        <Flex>
+          <Button
+            variant="solid"
+            colorScheme="primary"
+            onClick={createAdminHandler}
+          >
+            Create an admin
+          </Button>
+        </Flex>
+
+        <DataTable data={data} headers={headers} rows={rows} />
+      </Flex>
+
+      <CreateAdminModal isOpen={isOpen} onClose={onClose} />
+    </>
   );
 };
 
