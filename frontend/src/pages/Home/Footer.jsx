@@ -11,7 +11,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
-import logoDark from "@/assets/logo-dark.png";
 
 const Footer = () => {
   const [newsletter, setNewsletter] = useState("");
@@ -26,7 +25,12 @@ const Footer = () => {
     <Box as="footer" backgroundColor="primary.900" color="white">
       <Flex p={10} gap={12}>
         <Flex direction="column" w="35%">
-          <Image objectFit="cover" src={logoDark} alt="logo" h="auto" />
+          <Image
+            objectFit="cover"
+            // src={logoDark}
+            alt="logo"
+            h="auto"
+          />
           <div>
             Discover our telemedicine platform, a modern and practical solution
             for accessing online medical consultations.
