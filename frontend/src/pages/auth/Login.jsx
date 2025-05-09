@@ -1,11 +1,15 @@
 // HOOKS
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useToast } from "@/hooks";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/store";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 
 // FUNCTIONS
-import { loginUser } from "@/services/authService";
+import { loginUser, forgotPassword } from "@/services/authService";
+import { loginValidator } from "@/validators/loginValidator";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 // COMPONENTS
 import Logo from "@/components/Logo";
@@ -16,12 +20,13 @@ import {
   Heading,
   Input,
   Button,
-  Link,
   Text,
   Image,
   InputGroup,
   InputRightElement,
   Icon,
+  FormErrorMessage,
+  FormControl,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -36,9 +41,12 @@ const Login = () => {
 
   const toast = useToast();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const { register, handleSubmit, formState, watch } = useForm({
+    resolver: yupResolver(loginValidator),
+  });
+
+  const email = watch("email");
 
   const roleBasedRedirect = (role) => {
     let userRole = "";
@@ -50,34 +58,49 @@ const Login = () => {
     navigate(`/${userRole}`, { replace: true });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const onSubmit = async (values) => {
+    loginMutation.mutate(values);
+  };
 
-    try {
-      const response = await loginUser({
-        email,
-        password,
-      });
+  const onLoginSuccess = (response, variables) => {
+    const accessToken = response?.data?.accessToken;
+    const role = response?.data?.user?.role;
 
-      const accessToken = response?.data?.accessToken;
-      const role = response?.data?.user?.role;
-      setAuth({ email, password, role, accessToken });
-      roleBasedRedirect(role);
-    } catch (error) {
-      if (!error?.response) {
-        toast("No Server Response", "error");
-      } else if (error.response?.status === 400) {
-        toast("Missing Email or Password", "error");
-      } else if (error.response?.status === 401) {
-        toast("Unauthorized", "error");
-      } else {
-        toast("Login Failed", "error");
-      }
-    } finally {
-      setLoading(false);
+    setAuth({ ...variables, role, accessToken });
+    roleBasedRedirect(role);
+  };
+
+  const onLoginError = (error) => {
+    const errorMessages = {
+      400: "Missing Email or Password",
+      401: "Unauthorized",
+    };
+    const message = !error?.response
+      ? "No Server Response"
+      : errorMessages[error.response?.status] || "Login Failed";
+    toast(message, "error");
+  };
+
+  const loginMutation = useMutation({
+    mutationFn: async (data) => await loginUser(data),
+    onSuccess: onLoginSuccess,
+    onError: onLoginError,
+  });
+
+  const forgotPasswordHandler = async () => {
+    const isValidEmail = !formState?.errors?.email && email !== "";
+    if (isValidEmail) {
+      forgotPasswordMutation.mutate(email);
+    } else {
+      toast("Invalid email", "error");
     }
   };
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (data) => await forgotPassword(data),
+    onSuccess: () => navigate("/reset-password", { state: { email } }),
+    onError: () => toast("Failed to send forgot password email", "error"),
+  });
 
   useEffect(() => {
     if (auth?.accessToken) {
@@ -100,7 +123,7 @@ const Login = () => {
           alignItems="center"
           justifyContent="center"
           gap={12}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <Flex cursor="pointer" onClick={() => navigate("/")}>
             <Logo w="120px" />
@@ -125,90 +148,60 @@ const Login = () => {
           </Flex>
 
           <Flex w="100%" direction="column" alignItems="end" gap={2}>
-            <InputGroup>
-              <Input
-                focusBorderColor="primary.500"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your email"
-                autoFocus
-                size="lg"
-              />
-              <InputRightElement width="4.5rem">
-                <Icon h="100%" as={MdOutlineMail} color="#000" />
-              </InputRightElement>
-            </InputGroup>
+            <FormControl isInvalid={formState?.errors?.email}>
+              <InputGroup>
+                <Input
+                  focusBorderColor="primary.500"
+                  type="email"
+                  placeholder="Enter your email"
+                  autoFocus
+                  size="lg"
+                  {...register("email")}
+                  _placeholder={{
+                    fontSize: "md",
+                  }}
+                />
+                <InputRightElement width="4.5rem">
+                  <Icon h="100%" as={MdOutlineMail} color="#000" />
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>
+                {formState?.errors?.email?.message}
+              </FormErrorMessage>
+            </FormControl>
 
-            <PasswordInput
-              size="lg"
-              focusBorderColor="primary.500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Link
-              as={NavLink}
-              to="/forgot-password"
-              color="primary.500"
-              _hover={{ textDecoration: "underline" }}
-              fontSize="sm"
+            <FormControl isInvalid={formState?.errors?.password}>
+              <PasswordInput
+                size="lg"
+                focusBorderColor="primary.500"
+                {...register("password")}
+              />
+              <FormErrorMessage>
+                {formState?.errors?.password?.message}
+              </FormErrorMessage>
+            </FormControl>
+            <Button
+              variant="link"
+              colorScheme="primary"
+              onClick={forgotPasswordHandler}
+              isLoading={forgotPasswordMutation.isPending}
+              pt={2}
+              pb={4}
             >
               Forgot your password?
-            </Link>
-
-            <Link
-              as={NavLink}
-              to="/admin"
-              color="primary.500"
-              _hover={{ textDecoration: "underline" }}
-              fontSize="sm"
-            >
-              ADMIN PAGE
-            </Link>
-
-            <Link
-              as={NavLink}
-              to="/super-admin"
-              color="primary.500"
-              _hover={{ textDecoration: "underline" }}
-              fontSize="sm"
-            >
-              SUPER ADMIN PAGE
-            </Link>
+            </Button>
 
             <Button
               type="submit"
               w="100%"
               leftIcon={<AiOutlineMail />}
-              isDisabled={!email || password.length < 6}
-              isLoading={loading}
+              isDisabled={Object.keys(formState.errors).length > 0}
+              isLoading={loginMutation.isPending}
               colorScheme="primary"
               size="lg"
-              _hover={{
-                opacity: email && password.length >= 6 && 0.8,
-              }}
             >
               Login
             </Button>
-          </Flex>
-
-          <Flex
-            fontSize={{ base: "sm", md: "md" }}
-            w="100%"
-            justifyContent="center"
-          >
-            <Text color="gray" mr={1}>
-              Don't have an account?
-            </Text>
-            <Link
-              as={NavLink}
-              to="/register"
-              color="primary.500"
-              fontWeight="semibold"
-              _hover={{ textDecoration: "underline" }}
-            >
-              Register
-            </Link>
           </Flex>
         </Flex>
       </Flex>

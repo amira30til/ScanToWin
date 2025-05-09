@@ -6,8 +6,7 @@ import LayoutSuperAdmin from "@/components/LayoutSuperAdmin";
 import LayoutAdmin from "@/components/LayoutAdmin";
 import NotFound from "@/components/NotFound";
 
-import Home from "@/pages/Home";
-import ForgotPassword from "@/pages/auth/ForgotPassword";
+import ResetPassword from "@/pages/auth/ResetPassword";
 import Login from "@/pages/auth/Login";
 import SuperAdminHome from "@/pages/super-admin/SuperAdminHome";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -28,10 +27,9 @@ const SuperAdmin = "SUPER_ADMIN";
 const App = () => {
   return (
     <Routes>
-      <Route exact path="/" element={<Home />} />
-      <Route path="forgot-password" element={<ForgotPassword />} />
-
+      <Route path="reset-password" element={<ResetPassword />} />
       <Route element={<PersistLogin />}>
+        <Route exact path="/" element={<Login />} />
         <Route path="login" element={<Login />} />
         <Route element={<RequireAuth allowedRole={SuperAdmin} />}>
           <Route path="/super-admin/*" element={<LayoutSuperAdmin />}>
