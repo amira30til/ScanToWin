@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef, useState } from "react";
 import {
   Input,
   InputGroup,
@@ -7,16 +7,20 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
 
-function PasswordInput(props) {
-  const [show, setShow] = React.useState(false);
+const PasswordInput = forwardRef((props, ref) => {
+  const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
   return (
     <InputGroup size={props.size}>
       <Input
+        ref={ref}
         pr="4.5rem"
         type={show ? "text" : "password"}
-        placeholder="Enter password"
+        placeholder="Enter a strong password"
+        _placeholder={{
+          fontSize: "md",
+        }}
         {...props}
       />
       <InputRightElement width="4.5rem">
@@ -30,6 +34,6 @@ function PasswordInput(props) {
       </InputRightElement>
     </InputGroup>
   );
-}
+});
 
 export default PasswordInput;
