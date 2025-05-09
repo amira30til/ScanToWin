@@ -138,17 +138,18 @@ const SuperAdminHome = () => {
 
         <Flex direction="column" py={8}>
           <Heading size="md">Admins List</Heading>
-          {isLoading && (
-            <Spinner
-              thickness="4px"
-              emptyColor="gray.200"
-              color="primary.500"
-              size="xl"
-            />
-          )}
 
           <Box py={8}>
             <AdminsTable headers={headers} data={admins} rows={rows} />
+
+            {isLoading && (
+              <Spinner
+                thickness="4px"
+                emptyColor="gray.200"
+                color="primary.500"
+                size="xl"
+              />
+            )}
           </Box>
         </Flex>
       </Box>

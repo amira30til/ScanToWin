@@ -1,22 +1,19 @@
 import axios from "@/api/axios";
 
 const LOGIN_URL = "/auth";
-const REGISTER_URL = "/auth/register";
 const REFRESH_URL = "/auth/refresh-token";
 const LOGOUT_URL = "/auth/logout";
-
-export const registerUser = async ({ email, password }) => {
-  return await axios.post(REGISTER_URL, JSON.stringify({ email, password }), {
-    headers: { "Content-Type": "application/json" },
-    withCredentials: true,
-  });
-};
+const FORGOT_URL = "/auth/forgot-password";
+const RESET_URL = "/auth/reset-password";
 
 export const loginUser = async ({ email, password }) => {
-  return await axios.post(LOGIN_URL, JSON.stringify({ email, password }), {
-    headers: { "Content-Type": "application/json" },
-    withCredentials: true,
-  });
+  return await axios.post(
+    LOGIN_URL,
+    { email, password },
+    {
+      withCredentials: true,
+    },
+  );
 };
 
 export const refreshToken = async () => {
@@ -37,4 +34,12 @@ export const logoutUser = async () => {
       withCredentials: true,
     },
   );
+};
+
+export const forgotPassword = async (email) => {
+  return await axios.post(FORGOT_URL, { email });
+};
+
+export const resetPassword = async (body) => {
+  return await axios.post(RESET_URL, body);
 };
