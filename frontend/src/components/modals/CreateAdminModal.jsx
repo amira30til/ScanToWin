@@ -24,6 +24,7 @@ import {
   FormHelperText,
   FormLabel,
 } from "@chakra-ui/react";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
 
 const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -34,15 +35,30 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
     resolver: yupResolver(createAdminValidator),
   });
 
+  const onCreateAdminSuccess = () => {
+    queryClient.invalidateQueries("admins");
+    reset();
+    onClose();
+    toast(SUCCESS_MESSAGES.ADMIN_CREATE_SUCCESS, "success");
+  };
+
+  const onCreateAdminError = (error) => {
+    const errorMessages = {
+      409: ERROR_MESSAGES.ADMIN_ALREADY_EXISTS,
+    };
+
+    const message = !error?.response
+      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      : errorMessages[error.response?.status] ||
+        ERROR_MESSAGES.ADMIN_CREATE_FAILED;
+
+    toast(message, "error");
+  };
+
   const createAdminMutation = useMutation({
     mutationFn: async (data) => await createAdmin(axiosPrivate, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries("admins");
-      reset();
-      onClose();
-      toast("Admin created successfully", "success");
-    },
-    onError: () => toast("Failed to create admin", "error"),
+    onSuccess: onCreateAdminSuccess,
+    onError: onCreateAdminError,
   });
 
   const onSubmit = async (values) => {

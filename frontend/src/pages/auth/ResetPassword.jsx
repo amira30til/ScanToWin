@@ -38,6 +38,7 @@ import {
 import loginImg from "@/assets/login.svg";
 import { MdOutlineMail } from "react-icons/md";
 import { LuShield } from "react-icons/lu";
+import { ERROR_MESSAGES } from "@/constants";
 
 const ResetPassword = () => {
   const toast = useToast();
@@ -66,8 +67,9 @@ const ResetPassword = () => {
 
   const onResetError = (error) => {
     const message = !error?.response
-      ? "No Server Response"
-      : "Reset Password Failed";
+      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      : ERROR_MESSAGES.AUTH_RESET_FAILED;
+
     toast(message, "error");
   };
 

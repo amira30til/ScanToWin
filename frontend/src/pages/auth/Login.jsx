@@ -34,6 +34,7 @@ import { AiOutlineMail } from "react-icons/ai";
 import loginImg from "@/assets/login.svg";
 import PasswordInput from "@/components/common/PasswordInput";
 import { MdOutlineMail } from "react-icons/md";
+import { ERROR_MESSAGES } from "@/constants";
 
 const Login = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -72,12 +73,16 @@ const Login = () => {
 
   const onLoginError = (error) => {
     const errorMessages = {
-      400: "Missing Email or Password",
-      401: "Unauthorized",
+      400: ERROR_MESSAGES.AUTH_EMAIL_PASSWORD_MISSING,
+      401: ERROR_MESSAGES.AUTH_UNAUTHORIZED,
+      404: ERROR_MESSAGES.AUTH_EMAIL_NOT_FOUND,
     };
+
     const message = !error?.response
-      ? "No Server Response"
-      : errorMessages[error.response?.status] || "Login Failed";
+      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      : errorMessages[error.response?.status] ||
+        ERROR_MESSAGES.AUTH_LOGIN_FAILED;
+
     toast(message, "error");
   };
 
