@@ -24,7 +24,7 @@ export class AdminsService {
     @InjectRepository(Admin)
     private adminsRepository: Repository<Admin>,
   ) {}
-  /*--------------------------------CREATE USER-------------------------------*/
+  /*--------------------------------CREATE USER(Admin or Super-Admin )-------------------------------*/
   async create(
     dto: CreateAdminDto,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
@@ -218,6 +218,37 @@ export class AdminsService {
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         admin: updatedAdmin,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  /*--------------------------------SUPER Admin section-------------------------------*/
+  async findAllAdmins(
+    page = 1,
+    limit = 10,
+  ): Promise<
+    | ApiResponseInterface<{
+        admins: Admin[];
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    | ErrorResponseInterface
+  > {
+    try {
+      const [admins, total] = await this.adminsRepository.findAndCount({
+        where: { role: 'ADMIN' },
+        skip: (page - 1) * limit,
+        take: limit,
+        order: { createdAt: 'DESC' },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        admins,
+        total,
+        page,
+        limit,
       });
     } catch (error) {
       return handleServiceError(error);

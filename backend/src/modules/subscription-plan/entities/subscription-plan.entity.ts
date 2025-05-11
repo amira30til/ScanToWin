@@ -3,11 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { SubscriptionStatus } from '../enums/subscription-plan-staus';
 import { SubscriptionType } from '../enums/subscription-type-enum';
+import { SubscriptionPermission } from 'src/modules/subscription-permission/entities/subscription-permission.entity';
 
 @Entity()
 export class SubscriptionPlan {
@@ -20,10 +22,10 @@ export class SubscriptionPlan {
   @Column({ default: SubscriptionStatus.ACTIVE })
   subscriptionStatus: string;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
   monthlyPrice: number;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
   annualPrice: number;
   @ApiProperty()
   @Column({ nullable: true })
@@ -35,7 +37,7 @@ export class SubscriptionPlan {
   @Column({ nullable: true })
   discount: number;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
   averageReviews: number;
   @ApiProperty()
   @Column({ default: SubscriptionType.MONTHLY })
@@ -46,7 +48,6 @@ export class SubscriptionPlan {
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
-
   @ApiProperty()
   @UpdateDateColumn({
     type: 'timestamp',
@@ -54,4 +55,9 @@ export class SubscriptionPlan {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @OneToMany(
+    () => SubscriptionPermission,
+    (subscriptionPermission) => subscriptionPermission.subscriptionPlan,
+  )
+  subscriptionPermissions: SubscriptionPermission[];
 }

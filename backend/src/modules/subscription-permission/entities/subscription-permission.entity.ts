@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Permission } from 'src/modules/permission/entities/permession.entity';
+import { SubscriptionPlan } from 'src/modules/subscription-plan/entities/subscription-plan.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,4 +32,21 @@ export class SubscriptionPermission {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @ManyToOne(
+    () => SubscriptionPlan,
+    (subscriptionPlan) => subscriptionPlan.subscriptionPermissions,
+  )
+  @JoinColumn({ name: 'subscriptionPlanId' })
+  subscriptionPlan: SubscriptionPlan;
+  @Column({ nullable: true })
+  subscriptionPlanId: number;
+
+  @ManyToOne(
+    () => Permission,
+    (permission) => permission.subscriptionPermissions,
+  )
+  @JoinColumn({ name: 'permissionId' })
+  permission: Permission;
+  @Column({ nullable: true })
+  permissionId: number;
 }

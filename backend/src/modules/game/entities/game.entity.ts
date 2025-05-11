@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ChosenGame } from 'src/modules/chosen-game/entities/chosen-game.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -28,4 +30,7 @@ export class Game {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @OneToMany(() => ChosenGame, (chosenGame) => chosenGame.game)
+  chosenGames: ChosenGame[];
 }
