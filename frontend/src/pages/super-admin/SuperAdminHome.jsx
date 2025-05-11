@@ -1,6 +1,6 @@
 // HOOKS
 import { useAxiosPrivate, useLogout, useToast } from "@/hooks";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // FUNCTIONS
@@ -30,7 +30,6 @@ import { DeleteIcon } from "@chakra-ui/icons";
 const SuperAdminHome = () => {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
-  const location = useLocation();
   const logout = useLogout();
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -41,13 +40,10 @@ const SuperAdminHome = () => {
       const response = await getAdmins(axiosPrivate);
       return response.data.data.admins;
     },
-    onError: (err) => {
-      console.log("Failed to fetch admins:", err);
-      navigate("/login", { state: { from: location }, replace: true });
-    },
+    onError: () => toast("Failed to fetch admins", "error"),
   });
 
-  const createAdminMutation = useMutation({
+  const deleteAdminMutation = useMutation({
     mutationFn: async (data) => await deleteAdmin(axiosPrivate, data),
     onSuccess: () => {
       queryClient.invalidateQueries("admins");
@@ -57,7 +53,7 @@ const SuperAdminHome = () => {
   });
 
   const deleteAdminHandler = (id) => {
-    createAdminMutation.mutate(id);
+    deleteAdminMutation.mutate(id);
   };
 
   const signOut = async () => {
@@ -109,6 +105,7 @@ const SuperAdminHome = () => {
       </Td>
     </>
   );
+
   return (
     <Box w="100%">
       <Flex
@@ -117,7 +114,7 @@ const SuperAdminHome = () => {
         w="100%"
         py={2}
         px={4}
-        bg="white"
+        bg="surface.navigation"
         shadow="md"
       >
         <Logo h="60px" w="unset" objectFit="unset" />
