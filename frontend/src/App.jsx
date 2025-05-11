@@ -21,6 +21,8 @@ import AdminReview from "./pages/admin/AdminReview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminAccount from "@/pages/admin/AdminAccount";
 
+import Play from "@/pages/client/Play";
+
 const Admin = "ADMIN";
 const SuperAdmin = "SUPER_ADMIN";
 
@@ -28,6 +30,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="reset-password" element={<ResetPassword />} />
+      <Route path="play" element={<Play />} />
       <Route element={<PersistLogin />}>
         <Route exact path="/" element={<Login />} />
         <Route path="login" element={<Login />} />
