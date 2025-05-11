@@ -3,12 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../enums/role.enum';
 import { AdminStatus } from '../enums/admin-status.enum';
+import { ChosenGame } from 'src/modules/chosen-game/entities/chosen-game.entity';
 
 @Entity()
 @Unique(['email'])
@@ -87,4 +89,6 @@ export class Admin {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @OneToMany(() => ChosenGame, (chosenGame) => chosenGame.admin)
+  chosenGames: ChosenGame[];
 }
