@@ -8,27 +8,29 @@ import {
   Delete,
   Query,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
-  ApiTags,
 } from '@nestjs/swagger';
 import { AdminStatus } from './enums/admin-status.enum';
-import { Role } from './enums/role.enum';
-@ApiTags('ADMINS')
+import { AdminGuard, SuperAdminGuard } from '../auth/guards/admins.guard';
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
   /*--------------------------------CREATE USER-------------------------------*/
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @ApiOperation({ summary: 'Create Admin or Super Admin' })
   create(@Body() createAdminDto: CreateAdminDto) {
     const payload = { ...createAdminDto, createdAt: new Date() };
@@ -36,6 +38,8 @@ export class AdminsController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @ApiOperation({
     summary: 'Get all admin users',
     description:
@@ -83,6 +87,8 @@ export class AdminsController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Get admin by ID',
     description:
@@ -112,7 +118,8 @@ export class AdminsController {
   findOne(@Param('id') id: string) {
     return this.adminsService.findOne(+id);
   }
-
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @Get('email/:email')
   @ApiOperation({
     summary: 'Get admin by email',
@@ -143,7 +150,8 @@ export class AdminsController {
   findByEmail(@Param('email') email: string) {
     return this.adminsService.findByEmail(email);
   }
-
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Patch(':id')
   @ApiOperation({
     summary: 'Update admin user',
@@ -182,7 +190,8 @@ export class AdminsController {
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminsService.update(+id, updateAdminDto);
   }
-
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @Delete(':id')
   @ApiOperation({
     summary: 'Delete admin user',
@@ -219,7 +228,8 @@ export class AdminsController {
   remove(@Param('id') id: string) {
     return this.adminsService.remove(+id);
   }
-
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @Patch(':id/status')
   @ApiOperation({
     summary: 'Update admin status',

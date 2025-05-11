@@ -6,6 +6,12 @@ import databaseConfig from './config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
+import { SubscriptionPermissionModule } from './modules/subscription-permission/subscription-permission.module';
+import { PermissionModule } from './modules/permission/permission.module';
+import { ChosenGameModule } from './modules/chosen-game/chosen-game.module';
+import { GameModule } from './modules/game/game.module';
+import { UserGameModule } from './modules/user-game/user-game.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -31,6 +37,12 @@ import { AdminsModule } from './modules/admins/admins.module';
     }),
     AuthModule,
     AdminsModule,
+    PermissionModule,
+    SubscriptionPermissionModule,
+    ChosenGameModule,
+    GameModule,
+    UserGameModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserGame } from 'src/modules/user-game/entities/user-game.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -39,4 +41,6 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @OneToMany(() => UserGame, (userGame) => userGame.user)
+  userGames: UserGame[];
 }

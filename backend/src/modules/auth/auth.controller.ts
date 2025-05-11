@@ -11,7 +11,6 @@ import {
 import { RefreshAuthGuard } from './guards/refresh-token.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Response, Request } from 'express';
-// import { JwtAuthGuard } from './guards/jwt-auth.guards';
 
 @Controller('auth')
 export class AuthController {

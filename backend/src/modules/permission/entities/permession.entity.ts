@@ -1,14 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { SubscriptionPermission } from 'src/modules/subscription-permission/entities/subscription-permission.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
-export class Permession {
+export class Permission {
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
@@ -28,4 +30,9 @@ export class Permession {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @OneToMany(
+    () => SubscriptionPermission,
+    (subscriptionPermission) => subscriptionPermission.permission,
+  )
+  subscriptionPermissions: SubscriptionPermission[];
 }
