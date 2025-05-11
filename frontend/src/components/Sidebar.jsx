@@ -72,10 +72,13 @@ const NavItem = (props) => {
   const hasHref = href !== undefined && href !== "";
   const urlPath = window.location.pathname;
   const isActive = hasHref && urlPath === `/admin/${href}`;
+
+  const isActiveColor = "primary.700";
+
   if (isActive) {
-    // rest.color = "primary.500";
-    rest.color = "gray.900";
-    rest.bg = "gray.100";
+    rest.color = isActiveColor;
+    // rest.color = "gray.900";
+    rest.bg = "primary.50";
   }
 
   return (
@@ -89,9 +92,9 @@ const NavItem = (props) => {
       cursor="pointer"
       color="inherit"
       _hover={{
-        bg: "gray.100",
-        // color: "primary.500",
-        color: "gray.900",
+        bg: "primary.50",
+        color: isActive ? isActiveColor : "primary.600",
+        // color: "gray.900",
       }}
       role="group"
       fontWeight="semibold"
@@ -131,7 +134,7 @@ const SidebarContent = (props) => {
       pb="10"
       overflowX="hidden"
       overflowY="auto"
-      bg="white"
+      bg="surface.navigation"
       border
       color="inherit"
       borderRightWidth="1px"
@@ -212,7 +215,7 @@ const Sidebar = ({ children }) => {
   return (
     <Box w="100%">
       <DrawerElement />
-      <Flex as="section" bg="gray.50" minH="100vh" w="100%">
+      <Flex as="section" minH="100vh" w="100%">
         <SidebarContent
           display={{
             base: "none",
@@ -227,7 +230,7 @@ const Sidebar = ({ children }) => {
           transition=".3s ease"
           w="100%"
         >
-          <Box as="main" p="4">
+          <Box as="main" bg="surface.main" h="100%">
             {children}
           </Box>
         </Box>
