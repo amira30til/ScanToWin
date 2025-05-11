@@ -156,7 +156,7 @@ const Header = () => (
             QR Code
           </MenuButton>
           <MenuList>
-            <MenuItem>
+            <MenuItem as="div">
               <Button
                 leftIcon={<CopyIcon />}
                 size="sm"
@@ -167,7 +167,7 @@ const Header = () => (
                 Copy QR Link
               </Button>
             </MenuItem>
-            <MenuItem>
+            <MenuItem as="div">
               <Button
                 leftIcon={<DownloadIcon />}
                 size="sm"
@@ -206,12 +206,14 @@ const Actions = () => {
       <>
         <Td>{action.position}</Td>
 
-        <Td as={Flex} align="center" gap={2}>
-          <IconComponent
-          //  color={primary500}
-          />
+        <Td>
+          <Flex align="center" gap={2}>
+            <IconComponent
+            //  color={primary500}
+            />
 
-          <Flex fontWeight="bold">{action.name}</Flex>
+            <Flex fontWeight="bold">{action.name}</Flex>
+          </Flex>
         </Td>
 
         <Td>
@@ -307,8 +309,8 @@ unique experience."
         justify="space-between"
         gap={8}
       >
-        {GAMES?.map((game) => (
-          <Game game={game} />
+        {GAMES?.map((game, index) => (
+          <Game key={index} game={game} />
         ))}
       </Flex>
     </Section>
@@ -436,9 +438,11 @@ const Gifts = () => {
 
   const rows = (gift) => (
     <>
-      <Td as={Flex} align="center" gap={2}>
-        <AddIcon color="primary.500" />
-        <Flex fontWeight="bold">{gift.name}</Flex>
+      <Td>
+        <Flex align="center" gap={2}>
+          <AddIcon color="primary.500" />
+          <Flex fontWeight="bold">{gift.name}</Flex>
+        </Flex>
       </Td>
 
       <Td>{gift.winnerCount}</Td>
