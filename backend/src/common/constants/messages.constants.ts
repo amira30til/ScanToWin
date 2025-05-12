@@ -88,3 +88,17 @@ export const UserGameMessages = {
   USER_GAME_NOT_FOUND: (id: number) => `User game with ID ${id} not found`,
   USER_GAME_ALREADY_EXISTS: 'User already has this game assigned',
 };
+
+export const ShopMessages = {
+  SHOP_NOT_FOUND: (id: number) => `Shop with ID ${id} not found`,
+  SHOP_NOT_FOUND_FOR_ADMIN: (id: number, adminId: number) =>
+    `Shop with ID ${id} not found for admin with ID ${adminId}`,
+  SHOP_ALREADY_EXISTS: (field: string) =>
+    `Shop with this ${field} already exists`,
+  SHOP_CREATION_SUCCESS: (name: string) =>
+    `Shop '${name}' created successfully`,
+  SHOP_UPDATE_SUCCESS: (id: number) =>
+    `Shop with ID ${id} updated successfully`,
+  SHOP_DELETE_SUCCESS: (id: number) =>
+    `Shop with ID ${id} deleted successfully`,
+};

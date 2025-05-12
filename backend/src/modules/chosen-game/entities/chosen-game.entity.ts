@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Admin } from 'src/modules/admins/entities/admin.entity';
 import { Game } from 'src/modules/game/entities/game.entity';
+import { Shop } from 'src/modules/shops/entities/shop.entity';
 import { UserGame } from 'src/modules/user-game/entities/user-game.entity';
 import {
   Entity,
@@ -49,4 +50,11 @@ export class ChosenGame {
   gameId: number;
   @OneToMany(() => UserGame, (userGame) => userGame.game)
   userGames: UserGame[];
+
+  @ManyToOne(() => Shop, (shop) => shop.chosenGames)
+  @JoinColumn({ name: 'shopId' })
+  shop: Shop;
+
+  @Column()
+  shopId: number;
 }
