@@ -21,9 +21,7 @@ export class ChosenGame {
   @ApiProperty()
   @Column({ nullable: true })
   name: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  qrCodeLink: string;
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -57,4 +55,7 @@ export class ChosenGame {
 
   @Column()
   shopId: number;
+  @ApiProperty()
+  @Column({ default: false })
+  isActive: boolean;
 }
