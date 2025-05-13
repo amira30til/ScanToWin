@@ -29,8 +29,8 @@ export class AdminsController {
 
   /*--------------------------------CREATE USER-------------------------------*/
   @Post()
-  //@ApiBearerAuth()
-  //@UseGuards(SuperAdminGuard)
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @ApiOperation({ summary: 'Create Admin or Super Admin' })
   create(@Body() createAdminDto: CreateAdminDto) {
     const payload = { ...createAdminDto, createdAt: new Date() };

@@ -96,4 +96,8 @@ export class Shop {
 
   @OneToMany(() => ChosenGame, (chosenGame) => chosenGame.shop)
   chosenGames: ChosenGame[];
+
+  @ApiProperty()
+  @Column({ unique: true })
+  qrCodeIdentifier: string;
 }
