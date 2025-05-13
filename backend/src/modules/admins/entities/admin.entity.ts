@@ -11,6 +11,7 @@ import {
 import { Role } from '../enums/role.enum';
 import { AdminStatus } from '../enums/admin-status.enum';
 import { ChosenGame } from 'src/modules/chosen-game/entities/chosen-game.entity';
+import { Shop } from 'src/modules/shops/entities/shop.entity';
 
 @Entity()
 @Unique(['email'])
@@ -31,15 +32,6 @@ export class Admin {
   password: string;
   @Column({ default: Role.ADMIN })
   role: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  country: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  city: string;
-  @ApiProperty()
-  @Column({ default: 0 })
-  zipCode: number;
   @ApiProperty()
   @Column({ type: 'varchar', length: 64, nullable: true, default: null })
   verificationCode: string | null;
@@ -65,21 +57,6 @@ export class Admin {
   @Column({ nullable: true })
   mailStatus: boolean;
   @ApiProperty()
-  @Column({ type: 'bigint', nullable: true })
-  nbSiret: number;
-  @ApiProperty()
-  @Column({ nullable: true })
-  gameColor1: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  gameColor2: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  gameCodePin: number;
-  @ApiProperty()
-  @Column({ nullable: true })
-  isGuaranteedWin: boolean;
-  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @ApiProperty()
@@ -91,4 +68,6 @@ export class Admin {
   updatedAt: Date;
   @OneToMany(() => ChosenGame, (chosenGame) => chosenGame.admin)
   chosenGames: ChosenGame[];
+  @OneToMany(() => Shop, (shop) => shop.admin)
+  shops: Shop[];
 }

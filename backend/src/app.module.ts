@@ -12,6 +12,7 @@ import { ChosenGameModule } from './modules/chosen-game/chosen-game.module';
 import { GameModule } from './modules/game/game.module';
 import { UserGameModule } from './modules/user-game/user-game.module';
 import { UsersModule } from './modules/users/users.module';
+import { ShopsModule } from './modules/shops/shops.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { UsersModule } from './modules/users/users.module';
     GameModule,
     UserGameModule,
     UsersModule,
+    ShopsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
