@@ -21,6 +21,9 @@ import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { Admin } from 'src/modules/admins/entities/admin.entity';
 import { ShopStatus } from './enums/shop-status.enum';
+import { Game } from '../game/entities/game.entity';
+import { ChosenGame } from '../chosen-game/entities/chosen-game.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ShopsService {
@@ -29,6 +32,10 @@ export class ShopsService {
     private shopsRepository: Repository<Shop>,
     @InjectRepository(Admin)
     private adminsRepository: Repository<Admin>,
+    @InjectRepository(Game)
+    private readonly gameRepository: Repository<Game>,
+    @InjectRepository(ChosenGame)
+    private readonly chosenGameRepository: Repository<ChosenGame>,
   ) {}
 
   async create(
@@ -383,5 +390,84 @@ export class ShopsService {
     } catch (error) {
       return handleServiceError(error);
     }
+  }
+
+  //////////////////////////////////////////////////////////////
+  async setActiveGameForShop(
+    shopId: number,
+    gameId: number,
+    adminId: number,
+  ): Promise<any> {
+    const shop = await this.shopsRepository.findOne({ where: { id: shopId } });
+    if (!shop) {
+      throw new NotFoundException(`Shop with ID ${shopId} not found`);
+    }
+
+    const game = await this.gameRepository.findOne({
+      where: { id: gameId, isActive: true },
+    });
+    if (!game) {
+      throw new NotFoundException(`Active game with ID ${gameId} not found`);
+    }
+
+    await this.chosenGameRepository.update(
+      { shopId, isActive: true },
+      { isActive: false },
+    );
+
+    const newActiveGame = this.chosenGameRepository.create({
+      shopId,
+      gameId,
+      adminId,
+      isActive: true,
+    });
+
+    return this.chosenGameRepository.save(newActiveGame);
+  }
+
+  async getActiveGameForShop(shopId: number): Promise<ChosenGame> {
+    const activeGame = await this.chosenGameRepository.findOne({
+      where: { shopId, isActive: true },
+      relations: ['game'],
+    });
+
+    if (!activeGame) {
+      throw new NotFoundException(
+        `No active game found for shop with ID ${shopId}`,
+      );
+    }
+
+    return activeGame;
+  }
+
+  async generateShopQrIdentifier(shopId: number): Promise<string> {
+    const shop = await this.shopsRepository.findOne({ where: { id: shopId } });
+
+    if (!shop) {
+      throw new NotFoundException(`Shop with ID ${shopId} not found`);
+    }
+
+    if (!shop.qrCodeIdentifier) {
+      shop.qrCodeIdentifier = uuidv4();
+      await this.shopsRepository.save(shop);
+    }
+
+    return shop.qrCodeIdentifier;
+  }
+
+  async getShopByQrIdentifier(
+    qrCodeIdentifier: string,
+  ): Promise<{ shop: Shop; activeGame: ChosenGame }> {
+    const shop = await this.shopsRepository.findOne({
+      where: { qrCodeIdentifier },
+    });
+
+    if (!shop) {
+      throw new NotFoundException(`Shop with this QR code not found`);
+    }
+
+    const activeGame = await this.getActiveGameForShop(shop.id);
+
+    return { shop, activeGame };
   }
 }
