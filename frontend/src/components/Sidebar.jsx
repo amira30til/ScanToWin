@@ -32,9 +32,37 @@ import {
   FaFacebook,
 } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaUsers } from "react-icons/fa6";
 import { BiLogOut } from "react-icons/bi";
+
+const Sidebar = ({ children }) => {
+  return (
+    <Box w="100%">
+      <DrawerElement />
+      <Flex as="section" minH="100vh" w="100%">
+        <SidebarContent
+          display={{
+            base: "none",
+            md: "unset",
+          }}
+        />
+        <Box
+          ml={{
+            base: 0,
+            md: 60,
+          }}
+          transition=".3s ease"
+          w="100%"
+        >
+          <Box as="main" bg="surface.main" h="100%">
+            {children}
+          </Box>
+        </Box>
+      </Flex>
+    </Box>
+  );
+};
 
 const DrawerElement = () => {
   const sidebar = useDisclosure();
@@ -59,7 +87,6 @@ const DrawerElement = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton zIndex={1101} />
-
           <SidebarContent w="full" borderRight="none" />
         </DrawerContent>
       </Drawer>
@@ -67,50 +94,11 @@ const DrawerElement = () => {
   );
 };
 
-const NavItem = (props) => {
-  const { icon, children, href, boxSize, ...rest } = props;
-  const hasHref = href !== undefined && href !== "";
-  const urlPath = window.location.pathname;
-  const isActive = hasHref && urlPath === `/admin/${href}`;
-
-  const isActiveColor = "primary.700";
-
-  if (isActive) {
-    rest.color = isActiveColor;
-    // rest.color = "gray.900";
-    rest.bg = "primary.50";
-  }
-
-  return (
-    <Flex
-      as={hasHref ? Link : "div"}
-      to={hasHref ? `/admin/${href}` : undefined}
-      align="center"
-      px="4"
-      pl="4"
-      py="3"
-      cursor="pointer"
-      color="inherit"
-      _hover={{
-        bg: "primary.50",
-        color: isActive ? isActiveColor : "primary.600",
-        // color: "gray.900",
-      }}
-      role="group"
-      fontWeight="semibold"
-      transition="all .15s ease"
-      {...rest}
-    >
-      {icon && <Icon mx="2" boxSize={boxSize} as={icon} />}
-      {children}
-    </Flex>
-  );
-};
-
 const SidebarContent = (props) => {
   const integrations = useDisclosure({ defaultIsOpen: true });
   const navigate = useNavigate();
   const logout = useLogout();
+  const { shopId } = useParams();
 
   const handleDropdown = (event) => {
     event.preventDefault();
@@ -152,7 +140,11 @@ const SidebarContent = (props) => {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <NavItem icon={MdOutlineSpaceDashboard} href="dashboard" boxSize={5}>
+        <NavItem
+          icon={MdOutlineSpaceDashboard}
+          href={`${shopId}/dashboard`}
+          boxSize={5}
+        >
           Dashboard
           <IconButton
             ml="auto"
@@ -169,35 +161,40 @@ const SidebarContent = (props) => {
           ></IconButton>
         </NavItem>
         <Collapse in={integrations.isOpen}>
-          <NavItem icon={FaGoogle} pl="10" py="2" href="google">
+          <NavItem icon={FaGoogle} pl="10" py="2" href={`${shopId}/google`}>
             Google Reviews
           </NavItem>
-          <NavItem icon={FaInstagram} pl="10" py="2" href="instagram">
+          <NavItem
+            icon={FaInstagram}
+            pl="10"
+            py="2"
+            href={`${shopId}/instagram`}
+          >
             Instagram Followers
           </NavItem>
-          <NavItem icon={FaTiktok} pl="10" py="2" href="tiktok">
+          <NavItem icon={FaTiktok} pl="10" py="2" href={`${shopId}/tiktok`}>
             TikTok Followers
           </NavItem>
-          <NavItem icon={FaFacebook} pl="10" py="2" href="facebook">
+          <NavItem icon={FaFacebook} pl="10" py="2" href={`${shopId}/facebook`}>
             Facebook Followers
           </NavItem>
-          <NavItem icon={FaUsers} pl="10" py="2" href="usersdata">
+          <NavItem icon={FaUsers} pl="10" py="2" href={`${shopId}/usersdata`}>
             Users Data
           </NavItem>
         </Collapse>
-        <NavItem icon={FaFolderOpen} href="campaign" boxSize={4}>
+        <NavItem icon={FaFolderOpen} href={`${shopId}/campaign`} boxSize={4}>
           My Campaign
         </NavItem>
-        <NavItem icon={MdMessage} href="sms" boxSize={4}>
+        <NavItem icon={MdMessage} href={`${shopId}/sms`} boxSize={4}>
           SMS Campaign
         </NavItem>
-        <NavItem icon={FaStar} href="review" boxSize={4}>
+        <NavItem icon={FaStar} href={`${shopId}/review`} boxSize={4}>
           Manage Reviews
         </NavItem>
-        <NavItem icon={FaUsers} href="users" boxSize={5}>
+        <NavItem icon={FaUsers} href={`${shopId}/users`} boxSize={5}>
           My Users
         </NavItem>
-        <NavItem icon={MdAccountCircle} href="account" boxSize={5}>
+        <NavItem icon={MdAccountCircle} href={`${shopId}/account`} boxSize={5}>
           Account
         </NavItem>
       </Flex>
@@ -211,31 +208,43 @@ const SidebarContent = (props) => {
   );
 };
 
-const Sidebar = ({ children }) => {
+const NavItem = (props) => {
+  const { icon, children, href, boxSize, ...rest } = props;
+  const hasHref = href !== undefined && href !== "";
+  const urlPath = window.location.pathname;
+  const isActive = hasHref && urlPath === `/admin/${href}`;
+
+  const isActiveColor = "primary.700";
+
+  if (isActive) {
+    rest.color = isActiveColor;
+    // rest.color = "gray.900";
+    rest.bg = "primary.50";
+  }
+
   return (
-    <Box w="100%">
-      <DrawerElement />
-      <Flex as="section" minH="100vh" w="100%">
-        <SidebarContent
-          display={{
-            base: "none",
-            md: "unset",
-          }}
-        />
-        <Box
-          ml={{
-            base: 0,
-            md: 60,
-          }}
-          transition=".3s ease"
-          w="100%"
-        >
-          <Box as="main" bg="surface.main" h="100%">
-            {children}
-          </Box>
-        </Box>
-      </Flex>
-    </Box>
+    <Flex
+      as={hasHref ? Link : "div"}
+      to={hasHref ? `/admin/${href}` : undefined}
+      align="center"
+      px="4"
+      pl="4"
+      py="3"
+      cursor="pointer"
+      color="inherit"
+      _hover={{
+        bg: "primary.50",
+        color: isActive ? isActiveColor : "primary.600",
+        // color: "gray.900",
+      }}
+      role="group"
+      fontWeight="semibold"
+      transition="all .15s ease"
+      {...rest}
+    >
+      {icon && <Icon mx="2" boxSize={boxSize} as={icon} />}
+      {children}
+    </Flex>
   );
 };
 
