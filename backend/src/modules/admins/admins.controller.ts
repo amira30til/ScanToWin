@@ -43,7 +43,7 @@ export class AdminsController {
   @ApiOperation({
     summary: 'Get all admin users',
     description:
-      'Retrieves all admin users with pagination. Requires SUPER_ADMIN or ADMIN role.',
+      'Retrieves all admin users with pagination. Requires SUPER_ADMIN role.',
   })
   @ApiQuery({
     name: 'page',
@@ -123,8 +123,7 @@ export class AdminsController {
   @Get('email/:email')
   @ApiOperation({
     summary: 'Get admin by email',
-    description:
-      'Retrieves an admin user by email. Requires SUPER_ADMIN or ADMIN role.',
+    description: 'Retrieves an admin user by email. Requires SUPER_ADMIN role.',
   })
   @ApiParam({ name: 'email', description: 'Admin email', type: String })
   @ApiResponse({
@@ -155,7 +154,8 @@ export class AdminsController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Update admin user',
-    description: 'Updates an admin user by ID. Requires SUPER_ADMIN role.',
+    description:
+      'Updates an admin user by ID. Requires SUPER_ADMIN or ADMIN role.',
   })
   @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
   @ApiBody({ type: UpdateAdminDto, description: 'Admin data to update' })
