@@ -21,6 +21,9 @@ import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { Admin } from 'src/modules/admins/entities/admin.entity';
 import { ShopStatus } from './enums/shop-status.enum';
+import { Game } from '../game/entities/game.entity';
+import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ShopsService {
@@ -29,6 +32,10 @@ export class ShopsService {
     private shopsRepository: Repository<Shop>,
     @InjectRepository(Admin)
     private adminsRepository: Repository<Admin>,
+    @InjectRepository(Game)
+    private readonly gameRepository: Repository<Game>,
+    @InjectRepository(ActiveGameAssignment)
+    private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
   ) {}
 
   async create(
@@ -59,6 +66,7 @@ export class ShopsService {
         ...dto,
         adminId: adminId,
         status: ShopStatus.ACTIVE,
+        qrCodeIdentifier: uuidv4(),
       });
 
       const shopSaved = await this.shopsRepository.save(newShop);
@@ -379,6 +387,77 @@ export class ShopsService {
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         shop: updatedShop,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async getShopsByStatus(
+    page = 1,
+    limit = 10,
+    status: ShopStatus,
+  ): Promise<
+    | ApiResponseInterface<{
+        shops: Shop[];
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    | ErrorResponseInterface
+  > {
+    try {
+      const [shops, total] = await this.shopsRepository.findAndCount({
+        where: { status },
+        skip: (page - 1) * limit,
+        take: limit,
+        order: { createdAt: 'DESC' },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        shops,
+        total,
+        page,
+        limit,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async getShopsByStatusAndAdmin(
+    status: ShopStatus,
+    adminId: number,
+    page = 1,
+    limit = 10,
+  ): Promise<
+    | ApiResponseInterface<{
+        shops: Shop[];
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    | ErrorResponseInterface
+  > {
+    try {
+      const admin = await this.adminsRepository.findOne({
+        where: { id: adminId },
+      });
+
+      if (!admin) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(adminId));
+      }
+
+      const [shops, total] = await this.shopsRepository.findAndCount({
+        where: { adminId, status },
+        skip: (page - 1) * limit,
+        take: limit,
+        order: { createdAt: 'DESC' },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        shops,
+        total,
+        page,
+        limit,
       });
     } catch (error) {
       return handleServiceError(error);

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChosenGameController } from './chosen-game.controller';
-import { ChosenGameService } from './chosen-game.service';
+import { ChosenGameController } from './active-game-assignment.controller';
+import { ChosenGameService } from './active-game-assignment.service';
 
 describe('ChosenGameController', () => {
   let controller: ChosenGameController;

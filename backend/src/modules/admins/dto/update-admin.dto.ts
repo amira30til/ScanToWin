@@ -8,9 +8,6 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  Matches,
-  MaxLength,
-  MinLength,
 } from 'class-validator';
 import { AdminStatus } from '../enums/admin-status.enum';
 import { Role } from '../enums/role.enum';
@@ -39,20 +36,6 @@ export class UpdateAdminDto implements Partial<CreateAdminDto> {
   @IsEmail()
   @IsOptional()
   email?: string;
-
-  @ApiPropertyOptional({
-    description:
-      'Admin password (min 8 chars with at least 1 letter and 1 number)',
-    example: 'NewPassword123',
-  })
-  @IsString()
-  @IsOptional()
-  @MinLength(8)
-  @MaxLength(30)
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/, {
-    message: 'Password must contain at least 1 letter and 1 number',
-  })
-  password?: string;
 
   @ApiPropertyOptional({
     description: 'Admin role',
