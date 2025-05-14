@@ -1,4 +1,3 @@
-import React from "react";
 import SideBar from "@/components/Sidebar";
 import { Outlet } from "react-router-dom";
 import { Flex } from "@chakra-ui/react";
