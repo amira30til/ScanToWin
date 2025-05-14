@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ChosenGame } from 'src/modules/chosen-game/entities/chosen-game.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -12,6 +11,7 @@ import {
 } from 'typeorm';
 import { ShopStatus } from '../enums/shop-status.enum';
 import { Admin } from 'src/modules/admins/entities/admin.entity';
+import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
 
 @Entity()
 export class Shop {
@@ -94,10 +94,10 @@ export class Shop {
   @Column()
   adminId: number;
 
-  @OneToMany(() => ChosenGame, (chosenGame) => chosenGame.shop)
-  chosenGames: ChosenGame[];
+  @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.shop)
+  activeGameAssignments: ActiveGameAssignment[];
 
   @ApiProperty()
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   qrCodeIdentifier: string;
 }

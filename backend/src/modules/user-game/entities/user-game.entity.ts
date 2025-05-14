@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ChosenGame } from 'src/modules/chosen-game/entities/chosen-game.entity';
+import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -35,9 +35,19 @@ export class UserGame {
   user: User;
   @Column({ nullable: true })
   userId: number;
-  @ManyToOne(() => ChosenGame, (chosenGame) => chosenGame.userGames)
-  @JoinColumn({ name: 'gameId' })
-  game: ChosenGame;
+  @ManyToOne(() => ActiveGameAssignment, (assignment) => assignment.userGames)
+  @JoinColumn({ name: 'activeGameAssignmentId' })
+  activeGameAssignment: ActiveGameAssignment;
+  @Column({ nullable: true })
+  activeGameAssignmentId: number;
   @Column({ nullable: true })
   gameId: number;
+
+  @ApiProperty()
+  @Column({ default: 1 })
+  playCount: number;
+
+  @ApiProperty()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  lastPlayedAt: Date;
 }
