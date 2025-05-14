@@ -20,8 +20,9 @@ import AdminSMS from "./pages/admin/AdminSMS";
 import AdminReview from "./pages/admin/AdminReview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminAccount from "@/pages/admin/AdminAccount";
-
+import AdminCreateShop from "@/pages/admin/AdminCreateShop";
 import Play from "@/pages/client/Play";
+import AdminEntryRedirect from "@/pages/admin/AdminEntryRedirect";
 
 const Admin = "ADMIN";
 const SuperAdmin = "SUPER_ADMIN";
@@ -45,7 +46,9 @@ const App = () => {
         </Route>
 
         <Route element={<RequireAuth allowedRole={Admin} />}>
-          <Route path="/admin/*" element={<LayoutAdmin />}>
+          <Route path="/admin/create-shop" element={<AdminCreateShop />} />
+
+          <Route path="/admin/:shopId/*" element={<LayoutAdmin />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="google" element={<AdminGoogle />} />
             <Route path="facebook" element={<AdminFacebook />} />
@@ -58,8 +61,9 @@ const App = () => {
             <Route path="users" element={<AdminUsers />} />
             <Route path="account" element={<AdminAccount />} />
 
-            <Route path="*" element={<Navigate to="/admin/dashboard" />} />
+            <Route path="*" element={<Navigate to="dashboard" />} />
           </Route>
+          <Route path="/admin" element={<AdminEntryRedirect />} />
         </Route>
       </Route>
 

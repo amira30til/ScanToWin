@@ -1,19 +1,19 @@
-const ADMINS_URL = "/admins";
+const ADMIN_URL = "/admins";
+const SHOP_URL = "/shops";
 
-export const getAdmins = async (axios) => {
-  return await axios.get(ADMINS_URL, {
-    withCredentials: true,
-  });
-};
+export const getAdmins = async (axios) => await axios.get(ADMIN_URL);
 
-export const createAdmin = async (axios, user) => {
-  return await axios.post(ADMINS_URL, user, {
-    withCredentials: true,
-  });
-};
+export const getAdminById = async (axios, id) =>
+  await axios.get(`${ADMIN_URL}/${id}`);
 
-export const deleteAdmin = async (axios, id) => {
-  return await axios.delete(`${ADMINS_URL}/${id}`, {
-    withCredentials: true,
-  });
-};
+export const createAdmin = async (axios, user) =>
+  await axios.post(ADMIN_URL, user);
+
+export const deleteAdmin = async (axios, id) =>
+  await axios.delete(`${ADMIN_URL}/${id}`);
+
+export const getAdminShops = async (axios, id) =>
+  await axios.get(`${SHOP_URL}/admin/${id}`);
+
+export const createShop = async (axios, id, shop) =>
+  await axios.post(`${SHOP_URL}/${id}`, shop);

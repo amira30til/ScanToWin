@@ -54,7 +54,7 @@ const FortuneSpinner = ({ onFortuneSelected }) => {
 
   return (
     <VStack spacing={8}>
-      <Box position="relative" w={["72", "80"]} h={["72", "80"]}>
+      <Box position="relative" w={["60", "80"]} h={["60", "80"]}>
         <Box
           position="absolute"
           top="-15px"
