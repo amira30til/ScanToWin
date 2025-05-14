@@ -61,13 +61,19 @@ export const GameMessages = {
   GAME_UPDATED: 'Game updated successfully',
   GAME_DELETED: 'Game deleted successfully',
   GAME_ACTIVATED: 'Game activated successfully',
-  GAME_ALREADY_ACTIVATED: 'Game already activated ',
-  GAME_ALREADY_DEACTIVATED: 'Game already deactivated ',
+  GAME_ALREADY_ACTIVATED: 'Game already activated',
+  GAME_ALREADY_DEACTIVATED: 'Game already deactivated',
   GAME_DEACTIVATED: 'Game deactivated successfully',
   GAME_NOT_FOUND: (id: number) => `Game with ID ${id} not found`,
   GAME_ALREADY_EXISTS: (field: string) =>
     `Game with this ${field} already exists`,
+  ACTIVE_GAME_NOT_FOUND: (id: number) => `Active game with ID ${id} not found`,
+  NO_ACTIVE_GAME_FOR_SHOP: (id: number) =>
+    `No active game found for shop with ID ${id}`,
+  ACTIVE_GAME_ASSIGNED: 'Active game assigned to shop successfully',
+  ACTIVE_GAME_FETCHED: 'Active game fetched successfully',
 };
+
 export const ChosenGameMessages = {
   CHOSEN_GAME_CREATED: 'Chosen game created successfully',
   CHOSEN_GAMES_FETCHED: 'Chosen games fetched successfully',
@@ -101,4 +107,7 @@ export const ShopMessages = {
     `Shop with ID ${id} updated successfully`,
   SHOP_DELETE_SUCCESS: (id: number) =>
     `Shop with ID ${id} deleted successfully`,
+  QR_CODE_GENERATED: 'QR code identifier generated successfully',
+  SHOP_QR_NOT_FOUND: 'Shop with this QR code not found',
+  SHOP_FETCHED_BY_QR: 'Shop and active game fetched by QR code successfully',
 };
