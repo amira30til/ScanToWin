@@ -1,6 +1,4 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { LuHome } from "react-icons/lu";
 import {
   Box,
   Container,
@@ -12,24 +10,26 @@ import {
   FormErrorMessage,
   Input,
   VStack,
-  useToast,
   Flex,
 } from "@chakra-ui/react";
-import * as yup from "yup";
-import { Link } from "react-router-dom";
-
+import Logo from "@/components/Logo";
+import { createShopValidator } from "@/validators/createShopValidator";
 import { yupResolver } from "@hookform/resolvers/yup";
-
-const shopFormSchema = yup.object().shape({
-  name: yup
-    .string()
-    .min(2, "Shop name must be at least 2 characters")
-    .required("Shop name is required"),
-});
+import { useToast, useAxiosPrivate } from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "@/store";
+import { createShop } from "@/services/superAdminService";
+import { decodeToken } from "@/utils/auth";
+import { queryClient } from "@/index";
 
 const AdminCreateShop = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
+  const auth = useAuthStore((state) => state.auth);
+  const axiosPrivate = useAxiosPrivate();
+
+  let adminId = decodeToken(auth?.accessToken);
 
   const {
     register,
@@ -37,40 +37,32 @@ const AdminCreateShop = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(shopFormSchema),
-    defaultValues: {
-      name: "",
-    },
+    resolver: yupResolver(createShopValidator),
   });
 
-  const onSubmit = async (data) => {
-    setIsLoading(true);
+  const onCreateShopSuccess = async () => {
+    await queryClient.invalidateQueries(["adminShops"]);
+    queryClient.refetchQueries(["adminShops"]);
+    navigate("/admin");
+    toast("Shop created!", "success");
+    reset();
+  };
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Form submitted successfully:", data);
-      toast({
-        title: "Shop created!",
-        description: `${data.name} has been successfully created.`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top-right",
-      });
-      reset();
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: "There was an error creating your shop. Please try again.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top-right",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const onCreateShopError = (error) => {
+    console.log(error);
+    toast("There was an error creating your shop.", "error");
+  };
+
+  const createShopMutation = useMutation({
+    mutationFn: async (values) =>
+      await createShop(axiosPrivate, adminId, values),
+    enabled: !!adminId,
+    onSuccess: onCreateShopSuccess,
+    onError: onCreateShopError,
+  });
+
+  const onSubmit = async (values) => {
+    createShopMutation.mutate(values);
   };
 
   return (
@@ -79,15 +71,11 @@ const AdminCreateShop = () => {
         as="header"
         maxW="7xl"
         mx="auto"
-        mb={6}
         align="center"
         justify="space-between"
       >
-        <Flex as={Link} to="/" align="center" gap={2}>
-          <LuHome size={24} color="#9333ea" />{" "}
-          <Text fontSize="xl" fontWeight="semibold" color="slate.800">
-            Scan2Win
-          </Text>
+        <Flex align="center">
+          <Logo w="70px" />
         </Flex>
       </Flex>
       <Container maxW="container.lg">
@@ -112,7 +100,7 @@ const AdminCreateShop = () => {
           mx="auto"
         >
           <VStack spacing={6} align="stretch">
-            <FormControl isInvalid={!!errors.name}>
+            <FormControl isInvalid={!!errors.name} isRequired>
               <FormLabel htmlFor="name">Shop Name</FormLabel>
               <Input
                 id="name"
@@ -123,10 +111,75 @@ const AdminCreateShop = () => {
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>
 
+            <FormControl isRequired isInvalid={errors.tel}>
+              <FormLabel htmlFor="tel">Phone Number</FormLabel>
+              <Input
+                id="tel"
+                placeholder="Enter phone number"
+                {...register("tel")}
+                focusBorderColor="primary.500"
+              />
+              <FormErrorMessage>
+                {errors.tel && errors.tel.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={errors.address}>
+              <FormLabel htmlFor="address">Address</FormLabel>
+              <Input
+                id="address"
+                placeholder="Enter street address"
+                {...register("address")}
+                focusBorderColor="primary.500"
+              />
+              <FormErrorMessage>
+                {errors.address && errors.address.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={errors.city}>
+              <FormLabel htmlFor="city">City</FormLabel>
+              <Input
+                id="city"
+                placeholder="Enter city"
+                {...register("city")}
+                focusBorderColor="primary.500"
+              />
+              <FormErrorMessage>
+                {errors.city && errors.city.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={errors.country}>
+              <FormLabel htmlFor="country">Country</FormLabel>
+              <Input
+                id="country"
+                placeholder="Enter country"
+                {...register("country")}
+                focusBorderColor="primary.500"
+              />
+              <FormErrorMessage>
+                {errors.country && errors.country.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={errors.zipCode}>
+              <FormLabel htmlFor="zipCode">Zip Code</FormLabel>
+              <Input
+                id="zipCode"
+                placeholder="Enter zip code"
+                {...register("zipCode")}
+                focusBorderColor="primary.500"
+              />
+              <FormErrorMessage>
+                {errors.zipCode && errors.zipCode.message}
+              </FormErrorMessage>
+            </FormControl>
+
             <Button
               mt={4}
               colorScheme="primary"
-              isLoading={isLoading}
+              isLoading={createShopMutation.isPending}
               type="submit"
               size="lg"
               width="full"

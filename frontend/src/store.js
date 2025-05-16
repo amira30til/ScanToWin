@@ -9,6 +9,7 @@ const useAuthStore = create((set) => ({
   shop: {},
   setShop: (shopUpdate) =>
     set((state) => ({ shop: { ...state.shop, ...shopUpdate } })),
+  setFullShop: (newShop) => set({ shop: newShop }),
 }));
 
 export default useAuthStore;
