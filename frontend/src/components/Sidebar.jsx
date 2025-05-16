@@ -14,6 +14,9 @@ import {
   IconButton,
   DrawerCloseButton,
   Divider,
+  Select,
+  Button,
+  VStack,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -35,8 +38,10 @@ import { FiMenu } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaUsers } from "react-icons/fa6";
 import { BiLogOut } from "react-icons/bi";
+import useAuthStore from "@/store";
+import { AddIcon } from "@chakra-ui/icons";
 
-const Sidebar = ({ children }) => {
+const Sidebar = ({ shops, children }) => {
   return (
     <Box w="100%">
       <DrawerElement />
@@ -46,6 +51,7 @@ const Sidebar = ({ children }) => {
             base: "none",
             md: "unset",
           }}
+          shops={shops}
         />
         <Box
           ml={{
@@ -94,11 +100,25 @@ const DrawerElement = () => {
   );
 };
 
-const SidebarContent = (props) => {
+const SidebarContent = ({ shops, ...rest }) => {
   const integrations = useDisclosure({ defaultIsOpen: true });
   const navigate = useNavigate();
   const logout = useLogout();
   const { shopId } = useParams();
+  const { shopId: currentShopId } = useParams();
+  const setFullShop = useAuthStore((state) => state.setFullShop);
+
+  const handleShopChange = (event) => {
+    const newShopId = event.target.value;
+    if (newShopId !== currentShopId) {
+      navigate(`/admin/${newShopId}/dashboard`);
+    }
+
+    const shop = shops?.find((shop) => shop.id === newShopId);
+    if (shop) {
+      setFullShop({ shop });
+    }
+  };
 
   const handleDropdown = (event) => {
     event.preventDefault();
@@ -127,10 +147,47 @@ const SidebarContent = (props) => {
       color="inherit"
       borderRightWidth="1px"
       w="60"
-      {...props}
+      {...rest}
     >
       <Flex px="4" py="5" align="center">
         <Logo w="70px" />
+      </Flex>
+      <VStack align="stretch" spacing={3} w="100%" px={4}>
+        <Button
+          leftIcon={<AddIcon />}
+          size="sm"
+          colorScheme="primary"
+          onClick={() => navigate("/admin/create-shop")}
+        >
+          Add Shop
+        </Button>
+        {shops && (
+          <Box>
+            {/* <Text fontSize="sm" fontWeight="semibold" mb={1} color="gray.600">
+              Current Shop
+            </Text> */}
+            <Select
+              value={currentShopId}
+              onChange={handleShopChange}
+              bg="white"
+              borderRadius="md"
+              // size="lg"
+              fontWeight="bold"
+              focusBorderColor="primary.500"
+              cursor="pointer"
+            >
+              {shops.map((shop) => (
+                <option key={shop.id} value={shop.id}>
+                  {shop.name}
+                </option>
+              ))}
+            </Select>
+          </Box>
+        )}
+      </VStack>
+
+      <Flex justify="center">
+        <Divider w="80%" my={4} h="1px" bg="gray.300" />
       </Flex>
 
       <Flex
