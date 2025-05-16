@@ -22,7 +22,6 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminAccount from "@/pages/admin/AdminAccount";
 import AdminCreateShop from "@/pages/admin/AdminCreateShop";
 import Play from "@/pages/client/Play";
-import AdminEntryRedirect from "@/pages/admin/AdminEntryRedirect";
 
 const Admin = "ADMIN";
 const SuperAdmin = "SUPER_ADMIN";
@@ -60,10 +59,9 @@ const App = () => {
             <Route path="review" element={<AdminReview />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="account" element={<AdminAccount />} />
-
-            <Route path="*" element={<Navigate to="dashboard" />} />
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
           </Route>
-          <Route path="/admin" element={<AdminEntryRedirect />} />
+          <Route path="/admin" element={<LayoutAdmin />} />
         </Route>
       </Route>
 
