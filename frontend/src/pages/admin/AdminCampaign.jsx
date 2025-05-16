@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TwoColorPicker from "@/components/TwoColorPicker";
 import IconButton from "@/components/common/IconButton";
 
@@ -38,6 +38,7 @@ import {
   FaQrcode,
 } from "react-icons/fa";
 import { FaFloppyDisk } from "react-icons/fa6";
+import useAuthStore from "@/store";
 
 const ACTIONS = [
   {
@@ -105,6 +106,12 @@ const GAMES = [
 const HAS_LOGO = true;
 
 const AdminCampaign = () => {
+  const shop = useAuthStore((state) => state.shop);
+
+  useEffect(() => {
+    console.log("campaign", shop);
+  }, [shop]);
+
   return (
     <Box pos="relative" w="100%">
       <Header />
