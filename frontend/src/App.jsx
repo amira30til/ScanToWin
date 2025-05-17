@@ -1,21 +1,21 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import PersistLogin from "@/components/PersistLogin";
-import RequireAuth from "@/components/RequireAuth";
-import LayoutSuperAdmin from "@/components/LayoutSuperAdmin";
-import LayoutAdmin from "@/components/LayoutAdmin";
-import NotFound from "@/components/NotFound";
+import PersistLogin from "./components/PersistLogin";
+import RequireAuth from "./components/RequireAuth";
+import LayoutSuperAdmin from "./components/LayoutSuperAdmin";
+import LayoutAdmin from "./components/LayoutAdmin";
+import NotFound from "./components/NotFound";
 
-import ResetPassword from "@/pages/auth/ResetPassword";
-import Login from "@/pages/auth/Login";
-import SuperAdminHome from "@/pages/super-admin/SuperAdminHome";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminGoogle from "@/pages/admin/AdminGoogle";
-import AdminFacebook from "@/pages/admin/AdminFacebook";
-import AdminInstagram from "@/pages/admin/AdminInstagram";
-import AdminTiktok from "@/pages/admin/AdminTiktok";
-import AdminUsersData from "@/pages/admin/AdminUsersData";
-import AdminCampaign from "@/pages/admin/AdminCampaign";
+import ResetPassword from "./pages/auth/ResetPassword";
+import Login from "./pages/auth/Login";
+import SuperAdminHome from "./pages/super-admin/SuperAdminHome";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminGoogle from "./pages/admin/AdminGoogle";
+import AdminFacebook from "./pages/admin/AdminFacebook";
+import AdminInstagram from "./pages/admin/AdminInstagram";
+import AdminTiktok from "./pages/admin/AdminTiktok";
+import AdminUsersData from "./pages/admin/AdminUsersData";
+import AdminCampaign from "./pages/admin/campaign";
 import AdminSMS from "./pages/admin/AdminSMS";
 import AdminReview from "./pages/admin/AdminReview";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -30,7 +30,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="reset-password" element={<ResetPassword />} />
-      <Route path="play" element={<Play />} />
+      <Route path="play/:shopId" element={<Play />} />
       <Route element={<PersistLogin />}>
         <Route exact path="/" element={<Login />} />
         <Route path="login" element={<Login />} />

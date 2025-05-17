@@ -6,7 +6,7 @@ import { useAxiosPrivate, useToast } from "@/hooks";
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createAdminValidator } from "@/validators/createAdminValidator";
-import { createAdmin } from "@/services/superAdminService";
+import { createAdmin } from "@/services/adminService";
 
 // STYLE
 import {
