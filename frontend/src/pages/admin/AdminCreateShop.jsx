@@ -19,7 +19,7 @@ import { useToast, useAxiosPrivate } from "@/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/store";
-import { createShop } from "@/services/superAdminService";
+import { createShop } from "@/services/shopService";
 import { decodeToken } from "@/utils/auth";
 import { queryClient } from "@/index";
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosPrivate } from "@/hooks";
-import { getAdminShops } from "@/services/superAdminService";
+import { getAdminShops } from "@/services/shopService";
 
 const useAdminRedirect = (adminId) => {
   const navigate = useNavigate();
