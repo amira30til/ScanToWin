@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useAxiosPrivate, useToast } from "@/hooks";
 import { FormProvider, useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { decodeToken } from "@/utils/auth";
 import useAuthStore from "@/store";
@@ -36,8 +36,7 @@ const CustomizeGame = ({ shop }) => {
   const { shopId } = useParams();
   const auth = useAuthStore((state) => state.auth);
   const toast = useToast();
-
-  console.log(shop);
+  const queryClient = useQueryClient();
 
   const defaultValues = {
     gameColor1: "#0000ff",
@@ -54,7 +53,8 @@ const CustomizeGame = ({ shop }) => {
 
   let adminId = decodeToken(auth?.accessToken);
 
-  const onUpdateShopSuccess = () => {
+  const onUpdateShopSuccess = async () => {
+    await queryClient.invalidateQueries(["adminShops"]);
     toast("Game color updated!", "success");
   };
 
