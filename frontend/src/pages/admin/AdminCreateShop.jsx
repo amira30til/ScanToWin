@@ -41,8 +41,7 @@ const AdminCreateShop = () => {
   });
 
   const onCreateShopSuccess = async () => {
-    await queryClient.invalidateQueries(["adminShops"]);
-    queryClient.refetchQueries(["adminShops"]);
+    await queryClient.refetchQueries(["adminShops"]);
     navigate("/admin");
     toast("Shop created!", "success");
     reset();
