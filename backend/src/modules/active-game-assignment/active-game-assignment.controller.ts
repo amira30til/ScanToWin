@@ -21,7 +21,7 @@ export class ActiveGameAssignmentController {
   constructor(
     private readonly activeGameAssignmentService: ActiveGameAssignmentService,
   ) {}
-  @Post(':shopId/games/:gameId/assign')
+  @Post(':shopId/games/:gameId/assign/:adminId')
   @ApiOperation({
     summary: 'Set active game for a shop',
     description:
