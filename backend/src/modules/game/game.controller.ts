@@ -6,12 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { SuperAdminGuard } from '../auth/guards/admins.guard';
 
+@ApiBearerAuth()
+@UseGuards(SuperAdminGuard)
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
