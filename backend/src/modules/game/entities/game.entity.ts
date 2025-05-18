@@ -22,6 +22,9 @@ export class Game {
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+  @ApiProperty()
+  @Column({ nullable: true })
+  pictureUrl: string;
 
   @ApiProperty()
   @UpdateDateColumn({
