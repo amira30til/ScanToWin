@@ -142,6 +142,7 @@ export class ActiveGameAssignmentService {
     }
   }
   ///////////////////////////////////////////////////////////////////////
+
   async setActiveGameForShop(
     shopId: number,
     gameId: number,
@@ -164,29 +165,41 @@ export class ActiveGameAssignmentService {
         throw new NotFoundException(GameMessages.ACTIVE_GAME_NOT_FOUND(gameId));
       }
 
-      await this.activeGameAssignmentRepository.update(
-        { shopId, isActive: true },
-        { isActive: false },
-      );
-
-      const newActiveGame = this.activeGameAssignmentRepository.create({
-        shopId,
-        gameId,
-        adminId,
-        isActive: true,
+      let activeGame = await this.activeGameAssignmentRepository.findOne({
+        where: { shopId },
       });
 
-      const savedGame =
-        await this.activeGameAssignmentRepository.save(newActiveGame);
-      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        savedGame,
-        message: GameMessages.ACTIVE_GAME_ASSIGNED,
-      });
+      if (activeGame) {
+        activeGame.gameId = gameId;
+        activeGame.adminId = adminId;
+        activeGame.isActive = true;
+
+        const updatedGame =
+          await this.activeGameAssignmentRepository.save(activeGame);
+
+        return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+          data: updatedGame,
+          message: GameMessages.ACTIVE_GAME_UPDATED,
+        });
+      } else {
+        const newActiveGame = this.activeGameAssignmentRepository.create({
+          shopId,
+          gameId,
+          adminId,
+          isActive: true,
+        });
+
+        const savedGame =
+          await this.activeGameAssignmentRepository.save(newActiveGame);
+        return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+          data: savedGame,
+          message: GameMessages.ACTIVE_GAME_ASSIGNED,
+        });
+      }
     } catch (error) {
       return handleServiceError(error);
     }
   }
-
   async getActiveGameForShop(
     shopId: number,
   ): Promise<

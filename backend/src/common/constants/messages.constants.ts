@@ -72,6 +72,7 @@ export const GameMessages = {
     `No active game found for shop with ID ${id}`,
   ACTIVE_GAME_ASSIGNED: 'Active game assigned to shop successfully',
   ACTIVE_GAME_FETCHED: 'Active game fetched successfully',
+  ACTIVE_GAME_UPDATED: 'Active game activated successfully ',
 };
 
 export const ChosenGameMessages = {
