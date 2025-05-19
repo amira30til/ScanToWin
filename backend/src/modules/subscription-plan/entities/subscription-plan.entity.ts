@@ -13,8 +13,8 @@ import { SubscriptionPermission } from 'src/modules/subscription-permission/enti
 
 @Entity()
 export class SubscriptionPlan {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ nullable: true })
   name: string;

@@ -43,9 +43,9 @@ export class ActiveGameAssignmentController {
     description: 'Shop or game not found',
   })
   async setActiveGameForShop(
-    @Param('shopId') shopId: number,
-    @Param('gameId') gameId: number,
-    @Param('adminId') adminId: number,
+    @Param('shopId') shopId: string,
+    @Param('gameId') gameId: string,
+    @Param('adminId') adminId: string,
   ): Promise<
     ApiResponseInterface<ActiveGameAssignment> | ErrorResponseInterface
   > {
@@ -70,7 +70,7 @@ export class ActiveGameAssignmentController {
   @ApiResponse({ status: 200, description: 'Chosen game fetched successfully' })
   @ApiResponse({ status: 404, description: 'Chosen game not found' })
   async findOne(@Param('id') id: string) {
-    return this.activeGameAssignmentService.findOne(+id);
+    return this.activeGameAssignmentService.findOne(id);
   }
 
   @Delete(':id')
@@ -78,7 +78,7 @@ export class ActiveGameAssignmentController {
   @ApiResponse({ status: 200, description: 'Chosen game deleted successfully' })
   @ApiResponse({ status: 404, description: 'Chosen game not found' })
   async remove(@Param('id') id: string) {
-    return this.activeGameAssignmentService.remove(+id);
+    return this.activeGameAssignmentService.remove(id);
   }
 
   @Get('by-admin/:adminId')
@@ -89,7 +89,7 @@ export class ActiveGameAssignmentController {
   })
   @ApiResponse({ status: 404, description: 'Admin not found' })
   async findByAdmin(@Param('adminId') adminId: string) {
-    return this.activeGameAssignmentService.findByAdmin(+adminId);
+    return this.activeGameAssignmentService.findByAdmin(adminId);
   }
 
   @Get('by-game/:gameId')
@@ -100,7 +100,7 @@ export class ActiveGameAssignmentController {
   })
   @ApiResponse({ status: 404, description: 'Game not found' })
   async findByGame(@Param('gameId') gameId: string) {
-    return this.activeGameAssignmentService.findByGame(+gameId);
+    return this.activeGameAssignmentService.findByGame(gameId);
   }
   //////////////////////////////////////////
 
@@ -121,7 +121,7 @@ export class ActiveGameAssignmentController {
     description: 'Shop not found or no active game for shop',
   })
   async getActiveGameForShop(
-    @Param('shopId') shopId: number,
+    @Param('shopId') shopId: string,
   ): Promise<
     ApiResponseInterface<ActiveGameAssignment> | ErrorResponseInterface
   > {
@@ -150,7 +150,7 @@ export class ActiveGameAssignmentController {
     description: 'Shop not found',
   })
   async generateShopQrIdentifier(
-    @Param('shopId') shopId: number,
+    @Param('shopId') shopId: string,
   ): Promise<ApiResponseInterface<string> | ErrorResponseInterface> {
     return await this.activeGameAssignmentService.generateShopQrIdentifier(
       shopId,

@@ -48,7 +48,7 @@ export class ActiveGameAssignmentService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const activeGame = await this.activeGameAssignmentRepository.findOne({
@@ -72,7 +72,7 @@ export class ActiveGameAssignmentService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const chosenGame = await this.activeGameAssignmentRepository.findOne({
@@ -95,7 +95,7 @@ export class ActiveGameAssignmentService {
   }
 
   async findByAdmin(
-    adminId: number,
+    adminId: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsService.findOne(adminId);
@@ -118,7 +118,7 @@ export class ActiveGameAssignmentService {
   }
 
   async findByGame(
-    gameId: number,
+    gameId: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const game = await this.gameRepository.findOne({
@@ -144,9 +144,9 @@ export class ActiveGameAssignmentService {
   ///////////////////////////////////////////////////////////////////////
 
   async setActiveGameForShop(
-    shopId: number,
-    gameId: number,
-    adminId: number,
+    shopId: string,
+    gameId: string,
+    adminId: string,
   ): Promise<
     ApiResponseInterface<ActiveGameAssignment> | ErrorResponseInterface
   > {
@@ -165,7 +165,7 @@ export class ActiveGameAssignmentService {
         throw new NotFoundException(GameMessages.ACTIVE_GAME_NOT_FOUND(gameId));
       }
 
-      let activeGame = await this.activeGameAssignmentRepository.findOne({
+      const activeGame = await this.activeGameAssignmentRepository.findOne({
         where: { shopId },
       });
 
@@ -201,7 +201,7 @@ export class ActiveGameAssignmentService {
     }
   }
   async getActiveGameForShop(
-    shopId: number,
+    shopId: string,
   ): Promise<
     ApiResponseInterface<ActiveGameAssignment> | ErrorResponseInterface
   > {
@@ -234,7 +234,7 @@ export class ActiveGameAssignmentService {
   }
 
   async generateShopQrIdentifier(
-    shopId: number,
+    shopId: string,
   ): Promise<ApiResponseInterface<string> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({

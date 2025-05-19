@@ -16,8 +16,8 @@ import {
 
 @Entity()
 export class ActiveGameAssignment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   // @ApiProperty()
   // @Column({ nullable: true })
   // name: string;
@@ -38,14 +38,14 @@ export class ActiveGameAssignment {
   admin: Admin;
 
   @Column({ nullable: true })
-  adminId: number;
+  adminId: string;
 
   @ManyToOne(() => Game, (game) => game.activeGameAssignments)
   @JoinColumn({ name: 'gameId' })
   game: Game;
 
   @Column({ nullable: true })
-  gameId: number;
+  gameId: string;
   @OneToMany(() => UserGame, (userGame) => userGame.activeGameAssignment)
   userGames: UserGame[];
 
@@ -53,8 +53,8 @@ export class ActiveGameAssignment {
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 
-  @Column()
-  shopId: number;
+  @Column({ nullable: true })
+  shopId: string;
   @ApiProperty()
   @Column({ default: false })
   isActive: boolean;

@@ -81,7 +81,7 @@ export class SubscriptionPermissionService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<
     ApiResponseInterface<SubscriptionPermission> | ErrorResponseInterface
   > {
@@ -106,7 +106,7 @@ export class SubscriptionPermissionService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateSubscriptionPermissionDto: UpdateSubscriptionPermissionDto,
   ): Promise<
     ApiResponseInterface<SubscriptionPermission> | ErrorResponseInterface
@@ -170,7 +170,7 @@ export class SubscriptionPermissionService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<void> | ErrorResponseInterface> {
     try {
       const permission = await this.subscriptionPermissionRepository.findOne({

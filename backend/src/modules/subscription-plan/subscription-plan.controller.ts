@@ -51,7 +51,7 @@ export class SubscriptionPlanController {
   })
   @ApiResponse({ status: 404, description: 'Subscription plan not found.' })
   findOne(@Param('id') id: string) {
-    return this.subscriptionPlanService.findOne(+id);
+    return this.subscriptionPlanService.findOne(id);
   }
 
   @Patch(':id')
@@ -66,7 +66,7 @@ export class SubscriptionPlanController {
     @Param('id') id: string,
     @Body() updateSubscriptionPlanDto: UpdateSubscriptionPlanDto,
   ) {
-    return this.subscriptionPlanService.update(+id, updateSubscriptionPlanDto);
+    return this.subscriptionPlanService.update(id, updateSubscriptionPlanDto);
   }
 
   @Delete(':id')
@@ -77,6 +77,6 @@ export class SubscriptionPlanController {
   })
   @ApiResponse({ status: 404, description: 'Subscription plan not found.' })
   remove(@Param('id') id: string) {
-    return this.subscriptionPlanService.remove(+id);
+    return this.subscriptionPlanService.remove(id);
   }
 }

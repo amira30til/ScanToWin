@@ -39,7 +39,7 @@ export class GameController {
   @ApiResponse({ status: 200, description: 'Game fetched successfully' })
   @ApiResponse({ status: 404, description: 'Game not found' })
   async findOne(@Param('id') id: string) {
-    return this.gameService.findOne(+id);
+    return this.gameService.findOne(id);
   }
 
   @Patch(':id')
@@ -47,7 +47,7 @@ export class GameController {
   @ApiResponse({ status: 200, description: 'Game updated successfully' })
   @ApiResponse({ status: 404, description: 'Game not found' })
   async update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
-    return this.gameService.update(+id, updateGameDto);
+    return this.gameService.update(id, updateGameDto);
   }
 
   @Delete(':id')
@@ -55,7 +55,7 @@ export class GameController {
   @ApiResponse({ status: 200, description: 'Game deleted successfully' })
   @ApiResponse({ status: 404, description: 'Game not found' })
   async remove(@Param('id') id: string) {
-    return this.gameService.remove(+id);
+    return this.gameService.remove(id);
   }
 
   @Patch(':id/activate')
@@ -63,7 +63,7 @@ export class GameController {
   @ApiResponse({ status: 200, description: 'Game activated successfully' })
   @ApiResponse({ status: 404, description: 'Game not found' })
   async activate(@Param('id') id: string) {
-    return this.gameService.activateGame(+id);
+    return this.gameService.activateGame(id);
   }
 
   @Patch(':id/deactivate')
@@ -71,6 +71,6 @@ export class GameController {
   @ApiResponse({ status: 200, description: 'Game deactivated successfully' })
   @ApiResponse({ status: 404, description: 'Game not found' })
   async deactivate(@Param('id') id: string) {
-    return this.gameService.deactivateGame(+id);
+    return this.gameService.deactivateGame(id);
   }
 }
