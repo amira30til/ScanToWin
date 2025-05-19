@@ -9,5 +9,5 @@ export class SetActiveGameDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
-  gameId: number;
+  gameId: string;
 }

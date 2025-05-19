@@ -113,7 +113,7 @@ export class UserGameService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<UserGame> | ErrorResponseInterface> {
     try {
       const userGame = await this.userGameRepository.findOne({
@@ -135,7 +135,7 @@ export class UserGameService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateDto: UpdateUserGameDto,
   ): Promise<ApiResponseInterface<UserGame> | ErrorResponseInterface> {
     try {
@@ -219,7 +219,7 @@ export class UserGameService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<UserGame> | ErrorResponseInterface> {
     try {
       const userGame = await this.userGameRepository.findOne({
@@ -248,7 +248,7 @@ export class UserGameService {
   }
 
   async incrementPlayCount(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<UserGame> | ErrorResponseInterface> {
     try {
       const userGame = await this.userGameRepository.findOne({
@@ -280,7 +280,7 @@ export class UserGameService {
   }
 
   async findByUser(
-    userId: number,
+    userId: string,
   ): Promise<ApiResponseInterface<UserGame[]> | ErrorResponseInterface> {
     try {
       const user = await this.userRepository.findOne({
@@ -305,7 +305,7 @@ export class UserGameService {
   }
 
   async findByChosenGame(
-    gameId: number,
+    gameId: string,
   ): Promise<ApiResponseInterface<UserGame[]> | ErrorResponseInterface> {
     try {
       const chosenGame = await this.activeGameAssignmentRepository.findOne({
@@ -331,7 +331,7 @@ export class UserGameService {
   /////////////////////////////////////////////////////////
 
   async registerUserPlay(
-    userId: number,
+    userId: string,
     qrCodeIdentifier: string,
   ): Promise<UserGame> {
     // Validate the user exists
@@ -391,7 +391,7 @@ export class UserGameService {
     return this.userGameRepository.save(userPlay);
   }
 
-  async processQrGamePlay(qrCodeIdentifier: string, userId: number) {
+  async processQrGamePlay(qrCodeIdentifier: string, userId: string) {
     try {
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
@@ -488,7 +488,7 @@ export class UserGameService {
     }
   }
 
-  async canUserPlay(userId: number, qrCodeIdentifier: string) {
+  async canUserPlay(userId: string, qrCodeIdentifier: string) {
     try {
       const response =
         await this.activeGameAssignmentService.getShopByQrIdentifier(

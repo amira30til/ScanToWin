@@ -16,8 +16,8 @@ import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entitie
 @Entity()
 @Unique(['email'])
 export class Admin {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ nullable: true })
   firstName: string;
