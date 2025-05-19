@@ -154,14 +154,6 @@ export class AdminsService {
         updateAdminDto.email = updateAdminDto.email.toLowerCase();
       }
 
-      if (updateAdminDto.password) {
-        const salt = await bcrypt.genSalt();
-        updateAdminDto.password = await bcrypt.hash(
-          updateAdminDto.password,
-          salt,
-        );
-      }
-
       await this.adminsRepository.update(id, updateAdminDto);
 
       const updatedAdmin = await this.adminsRepository.findOne({

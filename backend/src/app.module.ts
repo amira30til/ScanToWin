@@ -8,11 +8,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
 import { SubscriptionPermissionModule } from './modules/subscription-permission/subscription-permission.module';
 import { PermissionModule } from './modules/permission/permission.module';
-import { ChosenGameModule } from './modules/chosen-game/chosen-game.module';
 import { GameModule } from './modules/game/game.module';
 import { UserGameModule } from './modules/user-game/user-game.module';
 import { UsersModule } from './modules/users/users.module';
 import { ShopsModule } from './modules/shops/shops.module';
+import { ActiveGameAssignmentModule } from './modules/active-game-assignment/active-game-assignment.module';
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { ShopsModule } from './modules/shops/shops.module';
     AdminsModule,
     PermissionModule,
     SubscriptionPermissionModule,
-    ChosenGameModule,
+    ActiveGameAssignmentModule,
     GameModule,
     UserGameModule,
     UsersModule,

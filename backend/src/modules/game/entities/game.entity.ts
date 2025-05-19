@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ChosenGame } from 'src/modules/chosen-game/entities/chosen-game.entity';
+import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -22,6 +22,9 @@ export class Game {
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+  @ApiProperty()
+  @Column({ nullable: true })
+  pictureUrl: string;
 
   @ApiProperty()
   @UpdateDateColumn({
@@ -31,6 +34,6 @@ export class Game {
   })
   updatedAt: Date;
 
-  @OneToMany(() => ChosenGame, (chosenGame) => chosenGame.game)
-  chosenGames: ChosenGame[];
+  @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.game)
+  activeGameAssignments: ActiveGameAssignment[];
 }

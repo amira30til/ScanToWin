@@ -25,6 +25,10 @@ import {
 import { Shop } from './entities/shop.entity';
 import { ShopStatus } from './enums/shop-status.enum';
 import { AdminGuard, SuperAdminGuard } from '../auth/guards/admins.guard';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
 
 @ApiTags('shops')
 @ApiBearerAuth()
@@ -311,9 +315,11 @@ export class ShopsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+  @UseGuards(SuperAdminGuard)
   @Patch(':id/admin/:adminId/status')
-  @ApiOperation({ summary: 'Update shop status for specific admin' })
+  @ApiOperation({
+    summary: 'Update shop status for specific admin only by SUPER ADMIN',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Shop status updated successfully',
@@ -345,5 +351,63 @@ export class ShopsController {
     @Query('status') status: string,
   ) {
     return this.shopsService.updateStatusByAdmin(id, adminId, status);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  @Get('by-status')
+  @ApiOperation({ summary: 'Get all shops by status' })
+  @ApiQuery({ name: 'status', enum: ShopStatus, required: true })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiResponse({ status: 200, description: 'List of shops by status' })
+  async getShopsByStatus(
+    @Query('page', new ParseIntPipe()) page = 1,
+    @Query('limit', new ParseIntPipe()) limit = 10,
+    @Query('status') status: ShopStatus,
+  ): Promise<
+    | ApiResponseInterface<{
+        shops: Shop[];
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    | ErrorResponseInterface
+  > {
+    return await this.shopsService.getShopsByStatus(page, limit, status);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  @Get('by-status-admin')
+  @ApiOperation({ summary: 'Get shops by status and admin ID' })
+  @ApiQuery({ name: 'status', enum: ShopStatus, required: true })
+  @ApiQuery({ name: 'adminId', type: Number, required: true })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'List of shops by status and admin ID',
+  })
+  async getShopsByStatusAndAdmin(
+    @Query('status') status: ShopStatus,
+    @Query('adminId', new ParseIntPipe()) adminId: number,
+    @Query('page', new ParseIntPipe()) page = 1,
+    @Query('limit', new ParseIntPipe()) limit = 10,
+  ): Promise<
+    | ApiResponseInterface<{
+        shops: Shop[];
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    | ErrorResponseInterface
+  > {
+    return await this.shopsService.getShopsByStatusAndAdmin(
+      status,
+      adminId,
+      page,
+      limit,
+    );
   }
 }
