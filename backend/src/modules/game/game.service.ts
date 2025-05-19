@@ -65,7 +65,7 @@ export class GameService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const game = await this.gameRepository.findOne({ where: { id } });
@@ -84,7 +84,7 @@ export class GameService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateGameDto: UpdateGameDto,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
@@ -117,7 +117,7 @@ export class GameService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const game = await this.gameRepository.findOne({ where: { id } });
@@ -137,7 +137,7 @@ export class GameService {
   }
 
   async activateGame(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const game = await this.gameRepository.findOne({ where: { id } });
@@ -162,7 +162,7 @@ export class GameService {
   }
 
   async deactivateGame(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const game = await this.gameRepository.findOne({ where: { id } });

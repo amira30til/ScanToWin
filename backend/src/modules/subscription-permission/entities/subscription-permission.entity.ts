@@ -13,8 +13,8 @@ import {
 
 @Entity()
 export class SubscriptionPermission {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ nullable: true })
   displayOrder: number;
@@ -39,7 +39,7 @@ export class SubscriptionPermission {
   @JoinColumn({ name: 'subscriptionPlanId' })
   subscriptionPlan: SubscriptionPlan;
   @Column({ nullable: true })
-  subscriptionPlanId: number;
+  subscriptionPlanId: string;
 
   @ManyToOne(
     () => Permission,
@@ -48,5 +48,5 @@ export class SubscriptionPermission {
   @JoinColumn({ name: 'permissionId' })
   permission: Permission;
   @Column({ nullable: true })
-  permissionId: number;
+  permissionId: string;
 }

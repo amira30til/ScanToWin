@@ -56,11 +56,11 @@ export class ShopsController {
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin to create shop for',
-    type: Number,
+    type: String,
     required: true,
   })
   create(
-    @Param('adminId', ParseIntPipe) adminId: number,
+    @Param('adminId', ParseIntPipe) adminId: string,
     @Body() createShopDto: CreateShopDto,
   ) {
     return this.shopsService.create(adminId, createShopDto);
@@ -119,10 +119,10 @@ export class ShopsController {
     name: 'limit',
     description: 'Number of items per page',
     required: false,
-    type: Number,
+    type: String,
   })
   findAllByAdmin(
-    @Param('adminId') adminId: number,
+    @Param('adminId') adminId: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
@@ -145,9 +145,9 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to retrieve',
-    type: Number,
+    type: String,
   })
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.shopsService.findOne(id);
   }
 
@@ -172,9 +172,9 @@ export class ShopsController {
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
-  findOneByAdmin(@Param('id') id: number, @Param('adminId') adminId: number) {
+  findOneByAdmin(@Param('id') id: string, @Param('adminId') adminId: string) {
     return this.shopsService.findOneByAdmin(id, adminId);
   }
 
@@ -198,9 +198,9 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to update',
-    type: Number,
+    type: String,
   })
-  update(@Param('id') id: number, @Body() updateShopDto: UpdateShopDto) {
+  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
     return this.shopsService.update(id, updateShopDto);
   }
 
@@ -229,11 +229,11 @@ export class ShopsController {
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
   updateByAdmin(
-    @Param('id') id: number,
-    @Param('adminId') adminId: number,
+    @Param('id') id: string,
+    @Param('adminId') adminId: string,
     @Body() updateShopDto: UpdateShopDto,
   ) {
     return this.shopsService.updateByAdmin(id, adminId, updateShopDto);
@@ -254,9 +254,9 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to delete',
-    type: Number,
+    type: String,
   })
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.shopsService.remove(id);
   }
 
@@ -275,14 +275,14 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to delete',
-    type: Number,
+    type: String,
   })
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
-  removeByAdmin(@Param('id') id: number, @Param('adminId') adminId: number) {
+  removeByAdmin(@Param('id') id: string, @Param('adminId') adminId: string) {
     return this.shopsService.removeByAdmin(id, adminId);
   }
 
@@ -302,7 +302,7 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to update status',
-    type: Number,
+    type: String,
   })
   @ApiQuery({
     name: 'status',
@@ -310,7 +310,7 @@ export class ShopsController {
     enum: ShopStatus,
     required: true,
   })
-  updateStatus(@Param('id') id: number, @Query('status') status: string) {
+  updateStatus(@Param('id') id: string, @Query('status') status: string) {
     return this.shopsService.updateStatus(id, status);
   }
 
@@ -346,8 +346,8 @@ export class ShopsController {
     required: true,
   })
   updateStatusByAdmin(
-    @Param('id') id: number,
-    @Param('adminId') adminId: number,
+    @Param('id') id: string,
+    @Param('adminId') adminId: string,
     @Query('status') status: string,
   ) {
     return this.shopsService.updateStatusByAdmin(id, adminId, status);
@@ -382,7 +382,7 @@ export class ShopsController {
   @Get('by-status-admin')
   @ApiOperation({ summary: 'Get shops by status and admin ID' })
   @ApiQuery({ name: 'status', enum: ShopStatus, required: true })
-  @ApiQuery({ name: 'adminId', type: Number, required: true })
+  @ApiQuery({ name: 'adminId', type: String, required: true })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @ApiResponse({
@@ -391,7 +391,7 @@ export class ShopsController {
   })
   async getShopsByStatusAndAdmin(
     @Query('status') status: ShopStatus,
-    @Query('adminId', new ParseIntPipe()) adminId: number,
+    @Query('adminId') adminId: string,
     @Query('page', new ParseIntPipe()) page = 1,
     @Query('limit', new ParseIntPipe()) limit = 10,
   ): Promise<

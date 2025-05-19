@@ -85,7 +85,7 @@ export class SubscriptionPlanService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<SubscriptionPlan> | ErrorResponseInterface> {
     try {
       const plan = await this.subscriptionPlanRepository.findOne({
@@ -107,7 +107,7 @@ export class SubscriptionPlanService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateSubscriptionPlanDto: UpdateSubscriptionPlanDto,
   ): Promise<ApiResponseInterface<SubscriptionPlan> | ErrorResponseInterface> {
     try {
@@ -157,7 +157,7 @@ export class SubscriptionPlanService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<void> | ErrorResponseInterface> {
     try {
       const plan = await this.subscriptionPlanRepository.findOne({

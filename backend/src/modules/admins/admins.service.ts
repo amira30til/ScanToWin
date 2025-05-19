@@ -88,7 +88,7 @@ export class AdminsService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({
@@ -128,7 +128,7 @@ export class AdminsService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateAdminDto: UpdateAdminDto,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
@@ -169,7 +169,7 @@ export class AdminsService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<
     ApiResponseInterface<{ message: string }> | ErrorResponseInterface
   > {
@@ -193,7 +193,7 @@ export class AdminsService {
   }
 
   async updateStatus(
-    id: number,
+    id: string,
     status: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {

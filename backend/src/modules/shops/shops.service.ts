@@ -39,7 +39,7 @@ export class ShopsService {
   ) {}
 
   async create(
-    adminId: number,
+    adminId: string,
     dto: CreateShopDto,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
@@ -111,7 +111,7 @@ export class ShopsService {
   }
 
   async findAllByAdmin(
-    adminId: number,
+    adminId: string,
     page = 1,
     limit = 10,
   ): Promise<
@@ -151,7 +151,7 @@ export class ShopsService {
   }
 
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({
@@ -172,8 +172,8 @@ export class ShopsService {
   }
 
   async findOneByAdmin(
-    id: number,
-    adminId: number,
+    id: string,
+    adminId: string,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({
@@ -198,7 +198,7 @@ export class ShopsService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateShopDto: UpdateShopDto,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
@@ -239,8 +239,8 @@ export class ShopsService {
   }
 
   async updateByAdmin(
-    id: number,
-    adminId: number,
+    id: string,
+    adminId: string,
     updateShopDto: UpdateShopDto,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
@@ -286,7 +286,7 @@ export class ShopsService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<
     ApiResponseInterface<{ message: string }> | ErrorResponseInterface
   > {
@@ -310,8 +310,8 @@ export class ShopsService {
   }
 
   async removeByAdmin(
-    id: number,
-    adminId: number,
+    id: string,
+    adminId: string,
   ): Promise<
     ApiResponseInterface<{ message: string }> | ErrorResponseInterface
   > {
@@ -340,7 +340,7 @@ export class ShopsService {
   }
 
   async updateStatus(
-    id: number,
+    id: string,
     status: string,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
@@ -364,8 +364,8 @@ export class ShopsService {
   }
 
   async updateStatusByAdmin(
-    id: number,
-    adminId: number,
+    id: string,
+    adminId: string,
     status: string,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
@@ -425,7 +425,7 @@ export class ShopsService {
   }
   async getShopsByStatusAndAdmin(
     status: ShopStatus,
-    adminId: number,
+    adminId: string,
     page = 1,
     limit = 10,
   ): Promise<
