@@ -49,7 +49,12 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalExceptionFilter());
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/', app, document);
+  SwaggerModule.setup('/', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      //operationsSorter: 'alpha',
+    },
+  });
 
   await app.listen(3000);
 }

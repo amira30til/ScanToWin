@@ -33,6 +33,7 @@ export class CreateAdminDto {
   @IsOptional()
   lastName?: string;
 
+  //the email update disabled in the club  should i removed it ?
   @ApiProperty({
     description: 'Admin email address',
     example: 'admin@example.com',
@@ -67,30 +68,6 @@ export class CreateAdminDto {
   @IsEnum(Role)
   @IsOptional()
   role?: string;
-
-  @ApiPropertyOptional({
-    description: 'Admin country',
-    example: 'United States',
-  })
-  @IsString()
-  @IsOptional()
-  country?: string;
-
-  @ApiPropertyOptional({
-    description: 'Admin city',
-    example: 'New York',
-  })
-  @IsString()
-  @IsOptional()
-  city?: string;
-
-  @ApiPropertyOptional({
-    description: 'Admin zip code',
-    example: 10001,
-  })
-  @IsNumber()
-  @IsOptional()
-  zipCode?: number;
 
   @ApiPropertyOptional({
     description: 'Admin phone number',
@@ -159,12 +136,4 @@ export class CreateAdminDto {
   @IsOptional()
   @IsPositive()
   gameCodePin?: number;
-
-  @ApiPropertyOptional({
-    description: 'Is guaranteed win flag',
-    example: false,
-  })
-  @IsBoolean()
-  @IsOptional()
-  isGuaranteedWin?: boolean;
 }

@@ -28,7 +28,9 @@ export class AdminGuard implements CanActivate {
         secret: jwtSecret,
       });
 
-      if (payload.role !== Role.ADMIN) throw new UnauthorizedException();
+      const allowedRoles = [Role.ADMIN, Role.SUPER_ADMIN];
+      if (!allowedRoles.includes(payload.role))
+        throw new UnauthorizedException();
 
       request['user'] = payload;
     } catch {

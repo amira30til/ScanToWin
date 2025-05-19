@@ -15,15 +15,13 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class ChosenGame {
+export class ActiveGameAssignment {
   @PrimaryGeneratedColumn()
   id: number;
-  @ApiProperty()
-  @Column({ nullable: true })
-  name: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  qrCodeLink: string;
+  // @ApiProperty()
+  // @Column({ nullable: true })
+  // name: string;
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -35,26 +33,29 @@ export class ChosenGame {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  @ManyToOne(() => Admin, (admin) => admin.chosenGames)
+  @ManyToOne(() => Admin, (admin) => admin.activeGameAssignments)
   @JoinColumn({ name: 'adminId' })
   admin: Admin;
 
   @Column({ nullable: true })
   adminId: number;
 
-  @ManyToOne(() => Game, (game) => game.chosenGames)
+  @ManyToOne(() => Game, (game) => game.activeGameAssignments)
   @JoinColumn({ name: 'gameId' })
   game: Game;
 
   @Column({ nullable: true })
   gameId: number;
-  @OneToMany(() => UserGame, (userGame) => userGame.game)
+  @OneToMany(() => UserGame, (userGame) => userGame.activeGameAssignment)
   userGames: UserGame[];
 
-  @ManyToOne(() => Shop, (shop) => shop.chosenGames)
+  @ManyToOne(() => Shop, (shop) => shop.activeGameAssignments)
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 
   @Column()
   shopId: number;
+  @ApiProperty()
+  @Column({ default: false })
+  isActive: boolean;
 }

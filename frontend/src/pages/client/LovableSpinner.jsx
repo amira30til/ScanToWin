@@ -7,27 +7,24 @@ import {
   Heading,
   Text,
   VStack,
-  useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
+import { useToast } from "@/hooks";
 
 const LovableSpinner = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedFortune, setSelectedFortune] = useState(null);
   const toast = useToast();
 
   const handleFortuneSelected = (fortune) => {
     setSelectedFortune(fortune);
-    toast({
-      title: "Fortune revealed!",
-      description: "Your daily fortune has been unveiled.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    toast("Fortune revealed!", "success");
+    onOpen();
   };
 
   return (
     <Box
-      minH="100vh"
+      h="100vh"
       py={12}
       px={4}
       bg="gray.50"
@@ -48,18 +45,19 @@ const LovableSpinner = () => {
             <Heading as="h2" fontSize="3xl" color="secondary.500" mb={4}>
               Fortune Spinner
             </Heading>
-            <Text fontSize="xl" color="gray.600" maxW="md">
-              Spin the wheel to reveal your daily fortune! What will the
-              universe tell you today?
+            <Text fontSize="sm" color="gray.600" maxW="md">
+              Tournez la roue pour découvrir votre gain ! Cliquez sur 'Lancer'
+              et attendez que la roue s'arrête.
             </Text>
           </VStack>
 
           <FortuneSpinner onFortuneSelected={handleFortuneSelected} />
-          <FortuneResult fortune={selectedFortune} />
-
-          <Text mt={16} fontSize="sm" color="gray.500">
-            Discover a new fortune every day!
-          </Text>
+          <FortuneResult
+            // fortune={selectedFortune}
+            gift="Drink"
+            isOpen={isOpen}
+            onClose={onClose}
+          />
         </VStack>
       </Container>
     </Box>
