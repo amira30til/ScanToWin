@@ -1,26 +1,26 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import PersistLogin from "@/components/PersistLogin";
-import RequireAuth from "@/components/RequireAuth";
-import LayoutSuperAdmin from "@/components/LayoutSuperAdmin";
-import LayoutAdmin from "@/components/LayoutAdmin";
-import NotFound from "@/components/NotFound";
+import PersistLogin from "./components/PersistLogin";
+import RequireAuth from "./components/RequireAuth";
+import LayoutSuperAdmin from "./components/LayoutSuperAdmin";
+import LayoutAdmin from "./components/LayoutAdmin";
+import NotFound from "./components/NotFound";
 
-import ResetPassword from "@/pages/auth/ResetPassword";
-import Login from "@/pages/auth/Login";
-import SuperAdminHome from "@/pages/super-admin/SuperAdminHome";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminGoogle from "@/pages/admin/AdminGoogle";
-import AdminFacebook from "@/pages/admin/AdminFacebook";
-import AdminInstagram from "@/pages/admin/AdminInstagram";
-import AdminTiktok from "@/pages/admin/AdminTiktok";
-import AdminUsersData from "@/pages/admin/AdminUsersData";
-import AdminCampaign from "@/pages/admin/AdminCampaign";
+import ResetPassword from "./pages/auth/ResetPassword";
+import Login from "./pages/auth/Login";
+import SuperAdminHome from "./pages/super-admin/SuperAdminHome";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminGoogle from "./pages/admin/AdminGoogle";
+import AdminFacebook from "./pages/admin/AdminFacebook";
+import AdminInstagram from "./pages/admin/AdminInstagram";
+import AdminTiktok from "./pages/admin/AdminTiktok";
+import AdminUsersData from "./pages/admin/AdminUsersData";
+import AdminCampaign from "./pages/admin/campaign";
 import AdminSMS from "./pages/admin/AdminSMS";
 import AdminReview from "./pages/admin/AdminReview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminAccount from "@/pages/admin/AdminAccount";
-
+import AdminCreateShop from "@/pages/admin/AdminCreateShop";
 import Play from "@/pages/client/Play";
 
 const Admin = "ADMIN";
@@ -30,7 +30,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="reset-password" element={<ResetPassword />} />
-      <Route path="play" element={<Play />} />
+      <Route path="play/:shopId" element={<Play />} />
       <Route element={<PersistLogin />}>
         <Route exact path="/" element={<Login />} />
         <Route path="login" element={<Login />} />
@@ -45,7 +45,9 @@ const App = () => {
         </Route>
 
         <Route element={<RequireAuth allowedRole={Admin} />}>
-          <Route path="/admin/*" element={<LayoutAdmin />}>
+          <Route path="/admin/create-shop" element={<AdminCreateShop />} />
+
+          <Route path="/admin/:shopId/*" element={<LayoutAdmin />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="google" element={<AdminGoogle />} />
             <Route path="facebook" element={<AdminFacebook />} />
@@ -57,9 +59,9 @@ const App = () => {
             <Route path="review" element={<AdminReview />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="account" element={<AdminAccount />} />
-
-            <Route path="*" element={<Navigate to="/admin/dashboard" />} />
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
           </Route>
+          <Route path="/admin" element={<LayoutAdmin />} />
         </Route>
       </Route>
 
