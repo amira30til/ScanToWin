@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // FUNCTIONS
-import { getAdmins, deleteAdmin } from "@/services/superAdminService";
+import { getAdmins, deleteAdmin } from "@/services/adminService";
 import { DateTime } from "luxon";
 
 // COMPONENTS

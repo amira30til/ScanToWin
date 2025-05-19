@@ -8,8 +8,15 @@ import {
 import { FiSearch } from "react-icons/fi";
 import { FaBell } from "react-icons/fa";
 import { Icon } from "@chakra-ui/icons";
-
+import { useEffect } from "react";
+import useAuthStore from "@/store";
 const AdminDashboard = () => {
+  const shop = useAuthStore((state) => state.shop);
+
+  useEffect(() => {
+    console.log("dashboard shop", shop);
+  }, [shop]);
+
   return (
     <>
       <Flex justify="space-between">
