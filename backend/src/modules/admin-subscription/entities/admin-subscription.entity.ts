@@ -10,8 +10,8 @@ import { BillingPeriodeEnum } from '../enums/billing-periode-enum';
 
 @Entity()
 export class AdminSubscription {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ default: BillingPeriodeEnum.ACTIVE })
   BillingPeriode: string;

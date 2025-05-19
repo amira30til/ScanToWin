@@ -58,7 +58,7 @@ export class SubscriptionPermissionController {
     description: 'Subscription permission not found.',
   })
   findOne(@Param('id') id: string) {
-    return this.subscriptionPermissionService.findOne(+id);
+    return this.subscriptionPermissionService.findOne(id);
   }
 
   @Patch(':id')
@@ -77,7 +77,7 @@ export class SubscriptionPermissionController {
     @Body() updateSubscriptionPermissionDto: UpdateSubscriptionPermissionDto,
   ) {
     return this.subscriptionPermissionService.update(
-      +id,
+      id,
       updateSubscriptionPermissionDto,
     );
   }
@@ -93,6 +93,6 @@ export class SubscriptionPermissionController {
     description: 'Subscription permission not found.',
   })
   remove(@Param('id') id: string) {
-    return this.subscriptionPermissionService.remove(+id);
+    return this.subscriptionPermissionService.remove(id);
   }
 }

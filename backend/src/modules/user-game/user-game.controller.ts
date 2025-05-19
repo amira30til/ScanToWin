@@ -35,7 +35,7 @@ export class UserGameController {
   @ApiResponse({ status: 200, description: 'User game fetched successfully' })
   @ApiResponse({ status: 404, description: 'User game not found' })
   async findOne(@Param('id') id: string) {
-    return this.userGameService.findOne(+id);
+    return this.userGameService.findOne(id);
   }
 
   @Patch(':id')
@@ -43,7 +43,7 @@ export class UserGameController {
   @ApiResponse({ status: 200, description: 'User game updated successfully' })
   @ApiResponse({ status: 404, description: 'User game not found' })
   async update(@Param('id') id: string, @Body() updateDto: UpdateUserGameDto) {
-    return this.userGameService.update(+id, updateDto);
+    return this.userGameService.update(id, updateDto);
   }
 
   @Delete(':id')
@@ -51,7 +51,7 @@ export class UserGameController {
   @ApiResponse({ status: 200, description: 'User game deleted successfully' })
   @ApiResponse({ status: 404, description: 'User game not found' })
   async remove(@Param('id') id: string) {
-    return this.userGameService.remove(+id);
+    return this.userGameService.remove(id);
   }
 
   @Post(':id/increment-play')
@@ -62,7 +62,7 @@ export class UserGameController {
   })
   @ApiResponse({ status: 404, description: 'User game not found' })
   async incrementPlayCount(@Param('id') id: string) {
-    return this.userGameService.incrementPlayCount(+id);
+    return this.userGameService.incrementPlayCount(id);
   }
 
   @Get('by-user/:userId')
@@ -70,7 +70,7 @@ export class UserGameController {
   @ApiResponse({ status: 200, description: 'User games fetched successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
   async findByUser(@Param('userId') userId: string) {
-    return this.userGameService.findByUser(+userId);
+    return this.userGameService.findByUser(userId);
   }
 
   @Get('by-game/:gameId')
@@ -78,6 +78,6 @@ export class UserGameController {
   @ApiResponse({ status: 200, description: 'User games fetched successfully' })
   @ApiResponse({ status: 404, description: 'Chosen game not found' })
   async findByChosenGame(@Param('gameId') gameId: string) {
-    return this.userGameService.findByChosenGame(+gameId);
+    return this.userGameService.findByChosenGame(gameId);
   }
 }

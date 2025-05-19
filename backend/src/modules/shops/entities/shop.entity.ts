@@ -15,8 +15,8 @@ import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entitie
 
 @Entity()
 export class Shop {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ApiProperty()
   @Column()
@@ -91,8 +91,8 @@ export class Shop {
   @JoinColumn({ name: 'adminId' })
   admin: Admin;
 
-  @Column()
-  adminId: number;
+  @Column({ nullable: true })
+  adminId: string;
 
   @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.shop)
   activeGameAssignments: ActiveGameAssignment[];
