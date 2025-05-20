@@ -11,6 +11,7 @@ import { DateTime } from "luxon";
 import CreateAdminModal from "@/components/modals/CreateAdminModal";
 import DataTable from "@/components/DataTable";
 import Logo from "@/components/Logo";
+import SuperAdminGames from "./SuperAdminGames";
 
 // STYLES
 import {
@@ -174,6 +175,8 @@ const AdminsTable = ({ data, headers, rows }) => {
         </Flex>
 
         <DataTable data={data} headers={headers} rows={rows} />
+
+        <SuperAdminGames />
       </Flex>
 
       <CreateAdminModal isOpen={isOpen} onClose={onClose} />

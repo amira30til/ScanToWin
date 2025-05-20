@@ -1,4 +1,4 @@
-import LovableSpinner from "./LovableSpinner";
+import FortuneWheel from "./FortuneWheel";
 // import { useParams } from "react-router-dom";
 
 const Play = () => {
@@ -6,11 +6,7 @@ const Play = () => {
 
   // fetch Shop
 
-  return (
-    <>
-      <LovableSpinner />
-    </>
-  );
+  return <FortuneWheel />;
 };
 
 export default Play;

@@ -32,22 +32,22 @@ const ColorPicker = ({ name, label }) => {
   } = useFormContext();
 
   return (
-    <FormControl isInvalid={!!errors[name]}>
-      <Controller
-        name={name}
-        control={control}
-        render={({ field: { value, onChange } }) => (
-          <>
-            <DebouncedColorInput
-              label={label}
-              value={value}
-              onChange={onChange}
-            />
-            <FormErrorMessage>{errors[name]?.message}</FormErrorMessage>
-          </>
-        )}
-      />
-    </FormControl>
+    <FormControl
+      isInvalid={!!errors[name]}
+      as={Controller}
+      name={name}
+      control={control}
+      render={({ field: { value, onChange } }) => (
+        <>
+          <DebouncedColorInput
+            label={label}
+            value={value}
+            onChange={onChange}
+          />
+          <FormErrorMessage>{errors[name]?.message}</FormErrorMessage>
+        </>
+      )}
+    />
   );
 };
 
