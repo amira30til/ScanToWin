@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   ModalFooter,
   Button,
@@ -17,6 +17,9 @@ import {
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
+import { submitClientDataValidator } from "@/validators/submitClientDataValidator";
+import { yupResolver } from "@hookform/resolvers/yup";
+
 const celebrate = keyframes`
   0%   { transform: scale(0.95); opacity: 0; }
   25%  { transform: scale(1.05); opacity: 1; }
@@ -30,13 +33,27 @@ const float = keyframes`
 `;
 
 const FortuneResult = ({ gift, onClose, isOpen }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(submitClientDataValidator),
+  });
+
+  const onSubmit = (values) => {
+    console.log(values);
+    reset();
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      size="sm"
+      size="xs"
       onClose={onClose}
       isCentered
-      mt={6}
       p={6}
       bg="white"
       borderRadius="xl"
@@ -49,7 +66,7 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
       <ModalOverlay />
       <ModalContent
         as="form"
-        //  onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit)}
         animation={isOpen ? `${celebrate} 0.8s ease-out forwards` : "none"}
         opacity={isOpen ? 1 : 0}
       >
@@ -86,11 +103,11 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
                 placeholder="your name"
                 autoFocus
                 size="sm"
-                // {...register("name")}
+                {...register("name")}
               />
 
               <FormHelperText color="red.500">
-                {/* {formState.errors.name?.message} */}
+                {errors.name?.message}
               </FormHelperText>
             </FormControl>
             <FormControl>
@@ -102,11 +119,11 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
                 type="email"
                 placeholder="email"
                 size="sm"
-                // {...register("email")}
+                {...register("email")}
               />
 
               <FormHelperText color="red.500">
-                {/* {formState.errors.email?.message} */}
+                {errors.email?.message}
               </FormHelperText>
             </FormControl>
             <FormControl>
@@ -118,11 +135,11 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
                 type="tel"
                 placeholder="your phone number"
                 size="sm"
-                // {...register("phone")}
+                {...register("tel")}
               />
 
               <FormHelperText color="red.500">
-                {/* {formState.errors.phone?.message} */}
+                {errors.tel?.message}
               </FormHelperText>
             </FormControl>
           </Flex>
