@@ -70,7 +70,7 @@ export class PermessionController {
   findOne(
     @Param('id') id: string,
   ): Promise<ApiResponseInterface<Permission> | ErrorResponseInterface> {
-    return this.permissionService.findOne(+id);
+    return this.permissionService.findOne(id);
   }
   @Patch(':id')
   @ApiOperation({ summary: 'Update a permission' })
@@ -84,7 +84,7 @@ export class PermessionController {
     @Param('id') id: string,
     @Body() updatePermissionDto: CreatePermissionDto,
   ) {
-    return this.permissionService.update(+id, updatePermissionDto);
+    return this.permissionService.update(id, updatePermissionDto);
   }
 
   @Delete(':id')
@@ -95,6 +95,6 @@ export class PermessionController {
   })
   @ApiResponse({ status: 404, description: 'Permission not found.' })
   remove(@Param('id') id: string) {
-    return this.permissionService.remove(+id);
+    return this.permissionService.remove(id);
   }
 }

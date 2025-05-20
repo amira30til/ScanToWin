@@ -4,11 +4,11 @@ import { IsNumber } from 'class-validator';
 export class CreateUserGameDto {
   @ApiProperty()
   @IsNumber()
-  userId: number;
+  userId: string;
 
   @ApiProperty()
   @IsNumber()
-  gameId: number;
+  gameId: string;
 
   @ApiProperty({ required: false, default: 0 })
   @IsNumber()

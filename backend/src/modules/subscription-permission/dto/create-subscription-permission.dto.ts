@@ -31,8 +31,8 @@ export class CreateSubscriptionPermissionDto {
   @IsInt({ message: 'Subscription plan ID must be an integer' })
   @IsNotEmpty({ message: 'Subscription plan ID is required' })
   @Min(1, { message: 'Subscription plan ID must be at least 1' })
-  @Type(() => Number)
-  subscriptionPlanId: number;
+  @Type(() => String)
+  subscriptionPlanId: string;
 
   @ApiProperty({
     description: 'ID of the associated permission',
@@ -41,6 +41,6 @@ export class CreateSubscriptionPermissionDto {
   @IsInt({ message: 'Permission ID must be an integer' })
   @IsNotEmpty({ message: 'Permission ID is required' })
   @Min(1, { message: 'Permission ID must be at least 1' })
-  @Type(() => Number)
-  permissionId: number;
+  @Type(() => String)
+  permissionId: string;
 }

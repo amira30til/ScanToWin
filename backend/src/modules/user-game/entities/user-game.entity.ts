@@ -13,8 +13,8 @@ import {
 
 @Entity()
 export class UserGame {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ nullable: true })
   nbPlayedTimes: number;
@@ -34,14 +34,14 @@ export class UserGame {
   @JoinColumn({ name: 'userId' })
   user: User;
   @Column({ nullable: true })
-  userId: number;
+  userId: string;
   @ManyToOne(() => ActiveGameAssignment, (assignment) => assignment.userGames)
   @JoinColumn({ name: 'activeGameAssignmentId' })
   activeGameAssignment: ActiveGameAssignment;
   @Column({ nullable: true })
-  activeGameAssignmentId: number;
+  activeGameAssignmentId: string;
   @Column({ nullable: true })
-  gameId: number;
+  gameId: string;
 
   @ApiProperty()
   @Column({ default: 1 })
