@@ -9,6 +9,7 @@ import IconButton from "@/components/common/IconButton";
 import DataTable from "@/components/DataTable";
 import AdminSection from "@/components/common/AdminSection";
 import CustomizeGame from "./CustomizeGame";
+import ChooseGame from "./ChooseGame";
 
 // STYLE
 import {
@@ -16,8 +17,6 @@ import {
   Flex,
   Heading,
   Button,
-  Text,
-  Image,
   Td,
   FormControl,
   FormLabel,
@@ -27,7 +26,6 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import gameImg from "@/assets/game.jpeg";
 import {
   AddIcon,
   DeleteIcon,
@@ -91,27 +89,6 @@ const GIFTS = [
   },
 ];
 
-const GAMES = [
-  {
-    title: "Spin the Wheel",
-    description: "A classic wheel of fortune game",
-    image: gameImg,
-    isSelected: true,
-  },
-  {
-    title: "Spin the Wheel",
-    description: "A classic wheel of fortune game",
-    image: gameImg,
-    isSelected: false,
-  },
-  {
-    title: "Spin the Wheel",
-    description: "A classic wheel of fortune game",
-    image: gameImg,
-    isSelected: false,
-  },
-];
-
 const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
 
@@ -126,7 +103,7 @@ const AdminCampaign = () => {
       <Flex direction="column" gap={10} h="3400px" px={8} py={10}>
         <Actions />
 
-        <Games />
+        <ChooseGame />
 
         <CustomizeGame shop={shop} />
 
@@ -275,68 +252,6 @@ const Actions = () => {
           data={ACTIONS}
           bg="surface.navigation"
         />
-      </Flex>
-    </AdminSection>
-  );
-};
-
-const Games = () => {
-  const Game = ({ game }) => {
-    const borderColor = game.isSelected ? "primary.500" : "gray.300";
-    const border = game.isSelected ? "2px" : "1px";
-
-    return (
-      <Flex
-        direction="column"
-        border={border}
-        borderColor={borderColor}
-        borderRadius="3xl"
-        gap={6}
-        p={8}
-        // maxW="325px"
-        // maxH="325px"
-        justify="center"
-        align="center"
-        transition="all 0.1s ease-in-out"
-        _hover={{
-          borderColor: "primary.500",
-          cursor: "pointer",
-          transform: "translateY(-8px)",
-          shadow: "xl",
-          transition: "all 0.1s ease-in-out",
-          bg: "white",
-        }}
-      >
-        <Flex direction="column" gap={1} justify="center" align="center">
-          <Text fontWeight="bold">{game.title}</Text>
-          <Text fontSize="sm" color="gray">
-            {game.description}
-          </Text>
-        </Flex>
-        <Image
-          borderRadius="full"
-          src={game.image}
-          // maxW="200px"
-          // maxH="200px"
-        ></Image>
-      </Flex>
-    );
-  };
-
-  return (
-    <AdminSection
-      title="Game selection"
-      description="Choose from 3 interactive games to engage your users and create a
-unique experience."
-    >
-      <Flex
-        direction={{ base: "column", md: "row" }}
-        justify="space-between"
-        gap={8}
-      >
-        {GAMES?.map((game, index) => (
-          <Game key={index} game={game} />
-        ))}
       </Flex>
     </AdminSection>
   );
