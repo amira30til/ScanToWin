@@ -60,7 +60,7 @@ export class ShopsController {
     required: true,
   })
   create(
-    @Param('adminId', ParseIntPipe) adminId: string,
+    @Param('adminId') adminId: string,
     @Body() createShopDto: CreateShopDto,
   ) {
     return this.shopsService.create(adminId, createShopDto);
