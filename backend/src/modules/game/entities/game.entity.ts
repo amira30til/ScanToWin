@@ -11,8 +11,8 @@ import {
 
 @Entity()
 export class Game {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ nullable: true })
   name: string;

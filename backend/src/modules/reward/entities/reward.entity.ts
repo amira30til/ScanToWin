@@ -9,8 +9,8 @@ import {
 
 @Entity()
 export class Reward {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @ApiProperty()
   @Column({ nullable: true })
   name: string;

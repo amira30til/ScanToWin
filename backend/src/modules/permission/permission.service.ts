@@ -63,7 +63,7 @@ export class PermissionService {
     }
   }
   async findOne(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<Permission> | ErrorResponseInterface> {
     try {
       const permission = await this.permissionRepository.findOne({
@@ -85,7 +85,7 @@ export class PermissionService {
   }
 
   async update(
-    id: number,
+    id: string,
     updatePermissionDto: CreatePermissionDto,
   ): Promise<ApiResponseInterface<Permission> | ErrorResponseInterface> {
     try {
@@ -131,7 +131,7 @@ export class PermissionService {
   }
 
   async remove(
-    id: number,
+    id: string,
   ): Promise<ApiResponseInterface<void> | ErrorResponseInterface> {
     try {
       const permission = await this.permissionRepository.findOne({

@@ -2,7 +2,7 @@ export const UserMessages = {
   USER_CREATED: 'User created successfully',
   USER_ALREADY_EXISTS: (field: string) =>
     `User with this ${field} already exists`,
-  USER_NOT_FOUND: (id: number) => `User with ID ${id} not found`,
+  USER_NOT_FOUND: (id: string) => `User with ID ${id} not found`,
   USER_REFRESH_TOKEN_NOT_FOUND: 'User with this refresh token not found',
   EMAIL_USER_NOT_FOUND: (email: string) => `User with Email ${email} not found`,
   PHONE_USER_NOT_FOUND: (tel: number) => `User with tel ${tel} not found`,
@@ -11,8 +11,8 @@ export const UserMessages = {
 
 export const CategoryMessages = {
   CATEGORY_CREATED: 'Category created successfully',
-  CATEGORY_NOT_FOUND: (id: number) => `Category with ID ${id} not found`,
-  CATEGORIES_NOT_FOUND: (missingCategoryIds: number[]) =>
+  CATEGORY_NOT_FOUND: (id: string) => `Category with ID ${id} not found`,
+  CATEGORIES_NOT_FOUND: (missingCategoryIds: string[]) =>
     `Categories with IDs ${missingCategoryIds.join(', ')} not found`,
 };
 
@@ -25,7 +25,7 @@ export const AuthMessages = {
 };
 
 export const SubscriptionPlanMessages = {
-  SUB_PLAN_NOT_FOUND: (id: number) =>
+  SUB_PLAN_NOT_FOUND: (id: string) =>
     `Subscription Plan with ID ${id} not found`,
   SUB_PLAN_CREATED: 'Subscription Plan created successfully',
   SUB_PLAN_ALREADY_EXISTS: (name: string) =>
@@ -37,7 +37,7 @@ export const PermissionMessages = {
   PERMISSION_CREATED: 'Permission created successfully',
   PERMISSION_ALREADY_EXISTS: (name: string) =>
     `Permission with name ${name} already exists`,
-  PERMISSION_NOT_FOUND: (id: number) => `Permission with ID ${id} not found`,
+  PERMISSION_NOT_FOUND: (id: string) => `Permission with ID ${id} not found`,
   PERMISSION_UPDATED: 'Permission updated successfully',
   PERMISSION_DELETED: 'Permission deleted successfully',
 };
@@ -46,7 +46,7 @@ export const SubscriptionPermissionMessages = {
     'Subscription permission created successfully',
   SUBSCRIPTION_PERMISSION_ALREADY_EXISTS:
     'Subscription permission already exists for this plan and permission',
-  SUBSCRIPTION_PERMISSION_NOT_FOUND: (id: number) =>
+  SUBSCRIPTION_PERMISSION_NOT_FOUND: (id: string) =>
     `Subscription permission with ID ${id} not found`,
   SUBSCRIPTION_PERMISSION_UPDATED:
     'Subscription permission updated successfully',
@@ -64,11 +64,11 @@ export const GameMessages = {
   GAME_ALREADY_ACTIVATED: 'Game already activated',
   GAME_ALREADY_DEACTIVATED: 'Game already deactivated',
   GAME_DEACTIVATED: 'Game deactivated successfully',
-  GAME_NOT_FOUND: (id: number) => `Game with ID ${id} not found`,
+  GAME_NOT_FOUND: (id: string) => `Game with ID ${id} not found`,
   GAME_ALREADY_EXISTS: (field: string) =>
     `Game with this ${field} already exists`,
-  ACTIVE_GAME_NOT_FOUND: (id: number) => `Active game with ID ${id} not found`,
-  NO_ACTIVE_GAME_FOR_SHOP: (id: number) =>
+  ACTIVE_GAME_NOT_FOUND: (id: string) => `Active game with ID ${id} not found`,
+  NO_ACTIVE_GAME_FOR_SHOP: (id: string) =>
     `No active game found for shop with ID ${id}`,
   ACTIVE_GAME_ASSIGNED: 'Active game assigned to shop successfully',
   ACTIVE_GAME_FETCHED: 'Active game fetched successfully',
@@ -81,7 +81,7 @@ export const ChosenGameMessages = {
   CHOSEN_GAME_FETCHED: 'Chosen game fetched successfully',
   CHOSEN_GAME_UPDATED: 'Chosen game updated successfully',
   CHOSEN_GAME_DELETED: 'Chosen game deleted successfully',
-  CHOSEN_GAME_NOT_FOUND: (id: number) => `Chosen game with ID ${id} not found`,
+  CHOSEN_GAME_NOT_FOUND: (id: string) => `Chosen game with ID ${id} not found`,
   CHOSEN_GAME_ALREADY_EXISTS: (field: string) =>
     `Chosen game with this ${field} already exists for this admin`,
 };
@@ -92,21 +92,21 @@ export const UserGameMessages = {
   USER_GAME_UPDATED: 'User game updated successfully',
   USER_GAME_DELETED: 'User game deleted successfully',
   PLAY_COUNT_INCREMENTED: 'Play count incremented successfully',
-  USER_GAME_NOT_FOUND: (id: number) => `User game with ID ${id} not found`,
+  USER_GAME_NOT_FOUND: (id: string) => `User game with ID ${id} not found`,
   USER_GAME_ALREADY_EXISTS: 'User already has this game assigned',
 };
 
 export const ShopMessages = {
-  SHOP_NOT_FOUND: (id: number) => `Shop with ID ${id} not found`,
-  SHOP_NOT_FOUND_FOR_ADMIN: (id: number, adminId: number) =>
+  SHOP_NOT_FOUND: (id: string) => `Shop with ID ${id} not found`,
+  SHOP_NOT_FOUND_FOR_ADMIN: (id: string, adminId: string) =>
     `Shop with ID ${id} not found for admin with ID ${adminId}`,
   SHOP_ALREADY_EXISTS: (field: string) =>
     `Shop with this ${field} already exists`,
   SHOP_CREATION_SUCCESS: (name: string) =>
     `Shop '${name}' created successfully`,
-  SHOP_UPDATE_SUCCESS: (id: number) =>
+  SHOP_UPDATE_SUCCESS: (id: string) =>
     `Shop with ID ${id} updated successfully`,
-  SHOP_DELETE_SUCCESS: (id: number) =>
+  SHOP_DELETE_SUCCESS: (id: string) =>
     `Shop with ID ${id} deleted successfully`,
   QR_CODE_GENERATED: 'QR code identifier generated successfully',
   SHOP_QR_NOT_FOUND: 'Shop with this QR code not found',

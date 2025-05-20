@@ -116,7 +116,7 @@ export class AdminsController {
     description: 'Forbidden - requires SUPER_ADMIN or ADMIN role',
   })
   findOne(@Param('id') id: string) {
-    return this.adminsService.findOne(+id);
+    return this.adminsService.findOne(id);
   }
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
@@ -188,7 +188,7 @@ export class AdminsController {
     description: 'Forbidden - requires SUPER_ADMIN role',
   })
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminsService.update(+id, updateAdminDto);
+    return this.adminsService.update(id, updateAdminDto);
   }
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
@@ -226,7 +226,7 @@ export class AdminsController {
     description: 'Forbidden - requires SUPER_ADMIN role',
   })
   remove(@Param('id') id: string) {
-    return this.adminsService.remove(+id);
+    return this.adminsService.remove(id);
   }
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
@@ -274,6 +274,6 @@ export class AdminsController {
     description: 'Forbidden - requires SUPER_ADMIN role',
   })
   updateStatus(@Param('id') id: string, @Body('status') status: string) {
-    return this.adminsService.updateStatus(+id, status);
+    return this.adminsService.updateStatus(id, status);
   }
 }
