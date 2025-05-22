@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
-import { submitClientDataValidator } from "@/validators/submitClientDataValidator";
+import { submitUserDataValidator } from "@/validators/submitUserDataValidator";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const celebrate = keyframes`
@@ -39,7 +39,7 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(submitClientDataValidator),
+    resolver: yupResolver(submitUserDataValidator),
   });
 
   const onSubmit = (values) => {

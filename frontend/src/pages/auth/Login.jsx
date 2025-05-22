@@ -179,6 +179,7 @@ const Login = () => {
               <PasswordInput
                 size="lg"
                 focusBorderColor="primary.500"
+                placeholder="Enter your password"
                 {...register("password")}
               />
               <FormErrorMessage>

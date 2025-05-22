@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const submitClientDataValidator = yup.object().shape({
+export const submitUserDataValidator = yup.object().shape({
   name: yup
     .string()
     .min(2, "name must be at least 2 characters")

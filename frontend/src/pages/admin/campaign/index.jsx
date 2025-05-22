@@ -93,7 +93,7 @@ const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
 
   useEffect(() => {
-    console.log("campaign", shop);
+    console.log("shop", shop);
   }, [shop]);
 
   return (
@@ -103,7 +103,7 @@ const AdminCampaign = () => {
       <Flex direction="column" gap={10} h="3400px" px={8} py={10}>
         <Actions />
 
-        <ChooseGame />
+        <ChooseGame shop={shop} />
 
         <CustomizeGame shop={shop} />
 
