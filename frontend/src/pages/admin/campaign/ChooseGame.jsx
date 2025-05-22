@@ -1,42 +1,81 @@
 // HOOKS
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
 import { useAxiosPrivate, useToast } from "@/hooks";
 
 // FUNCTIONS
-import { getGames } from "@/services/adminService";
+import { getGames, selectGame } from "@/services/adminService";
 
 // COMPONENTS
 import AdminSection from "@/components/common/AdminSection";
 
 // STYLE
-import {
-  Flex,
-  Text,
-  Image,
-  // useToken,
-} from "@chakra-ui/react";
+import { Flex, Text, Image, Button } from "@chakra-ui/react";
 
 // ASSETS
 import gameImg from "@/assets/game.jpeg";
+import { useEffect } from "react";
 
-const ChooseGame = () => {
+const ChooseGame = ({ shop }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
+  const queryClient = useQueryClient();
 
-  const { data: games } = useQuery({
+  const { data: games = [] } = useQuery({
     queryKey: ["games"],
     queryFn: async () => {
       const response = await getGames(axiosPrivate);
       return response.data.data.games;
     },
-    onError: () => toast("Failed to fetch games", "error"),
+    onError: (error) => {
+      console.log(error);
+      toast("Failed to fetch games", "error");
+    },
   });
+
+  const { control, watch } = useForm({
+    defaultValues: {
+      selectedGameId: null,
+    },
+  });
+
+  const selectedGameId = watch("selectedGameId");
+
+  const onSelectGameSuccess = async () => {
+    await queryClient.refetchQueries(["adminGames"]);
+  };
+
+  const onSelectGameError = (error) => {
+    console.log(error);
+    toast("There was an error selecting your game.", "error");
+  };
+
+  const selectGameMutation = useMutation({
+    mutationFn: async (values) =>
+      await selectGame(
+        axiosPrivate,
+        shop.id,
+        selectedGameId,
+        shop?.adminId,
+        values,
+      ),
+    enabled: !!shop?.id && !!shop?.adminId,
+    onSuccess: onSelectGameSuccess,
+    onError: onSelectGameError,
+  });
+
+  const onSubmit = () => {
+    selectGameMutation.mutate({ isActive: true });
+  };
+
+  useEffect(() => {
+    console.log(selectedGameId);
+  }, [selectedGameId]);
 
   return (
     <AdminSection
       title="Game selection"
-      description="Choose from 3 interactive games to engage your users and create a
-  unique experience."
+      description="Choose from 3 interactive games to engage your users and create a unique experience."
     >
       <Flex
         direction={{ base: "column", md: "row" }}
@@ -44,16 +83,32 @@ const ChooseGame = () => {
         gap={8}
       >
         {games?.map((game) => (
-          <Game key={game.id} game={game} />
+          <Controller
+            key={game.id}
+            control={control}
+            name="selectedGameId"
+            render={({ field: { onChange, value } }) => (
+              <SelectableGameCard
+                game={game}
+                isSelected={value === game.id}
+                onSelect={() => onChange(game.id)}
+              />
+            )}
+          />
         ))}
+      </Flex>
+      <Flex justify="flex-end">
+        <Button colorScheme="primary" onClick={onSubmit}>
+          Save
+        </Button>
       </Flex>
     </AdminSection>
   );
 };
 
-const Game = ({ game }) => {
-  const borderColor = game.isActive ? "primary.500" : "gray.300";
-  const border = game.isActive ? "2px" : "1px";
+const SelectableGameCard = ({ game, isSelected, onSelect }) => {
+  const borderColor = isSelected ? "primary.500" : "gray.300";
+  const border = isSelected ? "2px" : "1px";
 
   return (
     <Flex
@@ -62,9 +117,8 @@ const Game = ({ game }) => {
       borderColor={borderColor}
       borderRadius="3xl"
       gap={6}
+      m={1}
       p={8}
-      // maxW="325px"
-      // maxH="325px"
       justify="center"
       align="center"
       transition="all 0.1s ease-in-out"
@@ -76,6 +130,8 @@ const Game = ({ game }) => {
         transition: "all 0.1s ease-in-out",
         bg: "white",
       }}
+      onClick={onSelect}
+      bg={isSelected ? "white" : "inherit"}
     >
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
@@ -83,12 +139,7 @@ const Game = ({ game }) => {
           hard coded description hard coded description hard
         </Text>
       </Flex>
-      <Image
-        borderRadius="full"
-        src={gameImg}
-        // maxW="200px"
-        // maxH="200px"
-      ></Image>
+      <Image borderRadius="full" src={gameImg} />
     </Flex>
   );
 };
