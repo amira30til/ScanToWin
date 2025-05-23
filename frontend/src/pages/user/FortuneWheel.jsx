@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import FortuneSpinner from "./FortuneSpinner";
+import { useState } from "react";
+import Wheel from "./Wheel";
 import FortuneResult from "./FortuneResult";
 import {
   Box,
@@ -9,16 +9,17 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useToast } from "@/hooks";
+import Logo from "@/components/Logo";
 
-const LovableSpinner = () => {
+const primaryColor = "#FF6B6B";
+const secondaryColor = "#615EFC";
+
+const FortuneWheel = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedFortune, setSelectedFortune] = useState(null);
-  const toast = useToast();
+  const [gift, setGift] = useState(null);
 
-  const handleFortuneSelected = (fortune) => {
-    setSelectedFortune(fortune);
-    toast("Fortune revealed!", "success");
+  const giftHandler = (gift) => {
+    setGift(gift);
     onOpen();
   };
 
@@ -33,17 +34,13 @@ const LovableSpinner = () => {
     >
       <Container maxW="md">
         <VStack textAlign="center" spacing={10}>
-          <VStack spacing={4}>
-            <Heading
-              as="h1"
-              fontSize="5xl"
-              color="primary.500"
-              letterSpacing="tight"
-            >
+          <VStack spacing={6}>
+            <Logo w="60px" />
+            <Heading as="h1" fontSize="3xl" letterSpacing="tight">
               Welcome!
             </Heading>
             <Heading as="h2" fontSize="3xl" color="secondary.500" mb={4}>
-              Fortune Spinner
+              Fortune Wheel
             </Heading>
             <Text fontSize="sm" color="gray.600" maxW="md">
               Tournez la roue pour découvrir votre gain ! Cliquez sur 'Lancer'
@@ -51,17 +48,16 @@ const LovableSpinner = () => {
             </Text>
           </VStack>
 
-          <FortuneSpinner onFortuneSelected={handleFortuneSelected} />
-          <FortuneResult
-            // fortune={selectedFortune}
-            gift="Drink"
-            isOpen={isOpen}
-            onClose={onClose}
+          <Wheel
+            onGift={giftHandler}
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
           />
+          <FortuneResult gift={gift} isOpen={isOpen} onClose={onClose} />
         </VStack>
       </Container>
     </Box>
   );
 };
 
-export default LovableSpinner;
+export default FortuneWheel;
