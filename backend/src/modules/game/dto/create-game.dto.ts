@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
+import { GameStatus } from '../enums/game-status.enums';
 
 export class CreateGameDto {
   @ApiProperty()
   @IsString()
   name: string;
 
-  @ApiProperty({ required: false, default: true })
-  @IsBoolean()
+  @ApiProperty({ required: false, default: GameStatus.ACTIVE })
   @IsOptional()
-  isActive?: boolean;
+  status?: GameStatus;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  description?: string;
 }
