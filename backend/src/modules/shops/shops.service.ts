@@ -66,7 +66,6 @@ export class ShopsService {
         ...dto,
         adminId: adminId,
         status: ShopStatus.ACTIVE,
-        qrCodeIdentifier: uuidv4(),
       });
 
       const shopSaved = await this.shopsRepository.save(newShop);
