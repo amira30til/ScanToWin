@@ -129,10 +129,10 @@ export class ShopsController {
     return this.shopsService.findAllByAdmin(adminId, page, limit);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(SuperAdminGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(SuperAdminGuard)
   @Get(':id')
-  @ApiOperation({ summary: 'Get a shop by ID (Super Admin only)' })
+  @ApiOperation({ summary: 'Get a shop by ID ' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Retrieved shop successfully',

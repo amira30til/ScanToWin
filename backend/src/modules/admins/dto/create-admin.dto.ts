@@ -69,13 +69,6 @@ export class CreateAdminDto {
   @IsOptional()
   role?: string;
 
-  @ApiPropertyOptional({
-    description: 'Admin phone number',
-    example: 123456789,
-  })
-  @IsNumber()
-  @IsOptional()
-  tel?: number;
 
   @ApiPropertyOptional({
     description: 'Admin status',

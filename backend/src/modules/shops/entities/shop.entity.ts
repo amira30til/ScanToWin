@@ -97,7 +97,4 @@ export class Shop {
   @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.shop)
   activeGameAssignments: ActiveGameAssignment[];
 
-  @ApiProperty()
-  @Column({ unique: true, nullable: true })
-  qrCodeIdentifier: string;
 }
