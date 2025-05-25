@@ -37,15 +37,14 @@ export class RewardService {
 
   async create(
     dto: CreateRewardDto,
-    shopId: string,
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     try {
       const shop = await this.shopRepository.findOne({
-        where: { id: shopId },
+        where: { id: dto.shopId },
       });
 
       if (!shop) {
-        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
       }
 
       if (dto.categoryId) {
@@ -61,7 +60,7 @@ export class RewardService {
       }
 
       const existingReward = await this.rewardRepository.findOne({
-        where: { name: dto.name, shop: { id: shopId } },
+        where: { name: dto.name, shop: { id: dto.shopId } },
       });
 
       if (existingReward) {
@@ -72,7 +71,6 @@ export class RewardService {
 
       const newReward = this.rewardRepository.create({
         ...dto,
-        shop: { id: shopId } as Shop,
       });
 
       const savedReward = await this.rewardRepository.save(newReward);
@@ -85,25 +83,56 @@ export class RewardService {
       return handleServiceError(error);
     }
   }
-
   async findAll(
-    shopId?: string,
+    page = 1,
+    limit = 10,
   ): Promise<ApiResponseInterface<Reward[]> | ErrorResponseInterface> {
     try {
+      const skip = (page - 1) * limit;
+
+      const queryOptions: any = {
+        order: { createdAt: 'DESC' },
+        skip,
+        take: limit,
+      };
+
+      const [rewards, total] =
+        await this.rewardRepository.findAndCount(queryOptions);
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        rewards,
+        total: total,
+        message: RewardMessages.REWARDS_RETRIEVED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async findAllByShop(
+    shopId?: string,
+    page = 1,
+    limit = 10,
+  ): Promise<ApiResponseInterface<Reward[]> | ErrorResponseInterface> {
+    try {
+      const skip = (page - 1) * limit;
+
       const queryOptions: any = {
         relations: ['category', 'shop'],
         order: { createdAt: 'DESC' },
+        skip,
+        take: limit,
       };
 
       if (shopId) {
         queryOptions.where = { shop: { id: shopId } };
       }
 
-      const rewards = await this.rewardRepository.find(queryOptions);
+      const [rewards, total] =
+        await this.rewardRepository.findAndCount(queryOptions);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         rewards,
-        count: rewards.length,
+        total: total,
         message: RewardMessages.REWARDS_RETRIEVED,
       });
     } catch (error) {
@@ -111,21 +140,41 @@ export class RewardService {
     }
   }
 
-  async findOne(
+  async findOneById(
     id: string,
-    shopId?: string,
+  ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
+    const reward = await this.rewardRepository.findOne({
+      where: { id },
+      relations: ['category', 'shop'],
+    });
+
+    if (!reward) {
+      throw new NotFoundException(RewardMessages.REWARD_NOT_FOUND(id));
+    }
+
+    return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+      reward,
+      message: RewardMessages.REWARD_RETRIEVED,
+    });
+  }
+
+  async findOneByIdAndShop(
+    id: string,
+    shopId: string,
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     try {
-      const queryOptions: any = {
-        where: { id, status: RewardStatus.ACTIVE },
+      console.log('id shop', shopId);
+      console.log('id reward', id);
+
+      const reward = await this.rewardRepository.findOne({
+        where: {
+          id,
+          status: RewardStatus.ACTIVE,
+          shopId,
+        },
         relations: ['category', 'shop'],
-      };
-
-      if (shopId) {
-        queryOptions.where.shop = { id: shopId };
-      }
-
-      const reward = await this.rewardRepository.findOne(queryOptions);
+      });
+      console.log('aaaaaaaaaa', reward);
 
       if (!reward) {
         throw new NotFoundException(RewardMessages.REWARD_NOT_FOUND(id));
@@ -142,14 +191,16 @@ export class RewardService {
 
   async update(
     id: string,
-    dto: UpdateRewardDto,
     shopId: string,
+    dto: UpdateRewardDto,
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     try {
       const reward = await this.rewardRepository.findOne({
         where: { id, shop: { id: shopId } },
         relations: ['shop'],
       });
+
+      console.log('reward', reward);
 
       if (!reward) {
         throw new NotFoundException(
@@ -161,7 +212,6 @@ export class RewardService {
         const category = await this.rewardCategoryRepository.findOne({
           where: { id: dto.categoryId },
         });
-
         if (!category) {
           throw new NotFoundException(
             RewardMessages.CATEGORY_NOT_FOUND(dto.categoryId),
@@ -173,7 +223,6 @@ export class RewardService {
         const existingReward = await this.rewardRepository.findOne({
           where: { name: dto.name, shop: { id: shopId } },
         });
-
         if (existingReward) {
           throw new ConflictException(
             RewardMessages.REWARD_NAME_EXISTS(dto.name),
@@ -182,6 +231,7 @@ export class RewardService {
       }
 
       await this.rewardRepository.update(id, dto);
+
       const updatedReward = await this.rewardRepository.findOne({
         where: { id },
         relations: ['category', 'shop'],
@@ -195,7 +245,6 @@ export class RewardService {
       return handleServiceError(error);
     }
   }
-
   async remove(
     id: string,
     shopId: string,
@@ -216,6 +265,30 @@ export class RewardService {
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         data: null,
         message: RewardMessages.REWARD_DELETED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async findByStatus(status: RewardStatus, page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      const [rewards, total] = await this.rewardRepository.findAndCount({
+        where: { status },
+        relations: ['category', 'shop'],
+        order: { createdAt: 'DESC' },
+        skip,
+        take: limit,
+      });
+
+      if (rewards.length === 0) {
+        throw new NotFoundException(`No rewards found with status: ${status}`);
+      }
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        rewards,
+        total,
       });
     } catch (error) {
       return handleServiceError(error);

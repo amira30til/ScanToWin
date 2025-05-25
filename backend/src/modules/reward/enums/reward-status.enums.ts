@@ -1,6 +1,6 @@
 export enum RewardStatus {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-    ARCHIVED = 'archived ',
+    ACTIVE = 'Active',
+    INACTIVE = 'Inactive',
+    ARCHIVED = 'Archived ',
   }
   

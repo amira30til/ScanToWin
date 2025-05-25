@@ -53,4 +53,11 @@ export class CreateRewardDto {
   @IsString()
   @IsOptional()
   categoryId?: string;
+  @ApiProperty({
+    description: 'shop ID for the reward',
+    example: 'uuid-string',
+    required: true,
+  })
+  @IsString()
+  shopId: string;
 }
