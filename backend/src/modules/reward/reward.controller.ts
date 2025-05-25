@@ -9,12 +9,26 @@ import {
   HttpStatus,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { RewardService } from './reward.service';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { UpdateRewardDto } from './dto/update-reward.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AdminGuard } from '../auth/guards/admins.guard';
+import { RewardStatus } from './enums/reward-status.enums';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
+import { Reward } from './entities/reward.entity';
 
 @Controller('reward')
 export class RewardController {
@@ -55,6 +69,7 @@ export class RewardController {
                 isUnlimited: { type: 'boolean', example: false },
                 isActive: { type: 'boolean', example: true },
                 categoryId: { type: 'string', example: 'category-uuid' },
+                shopId: { type: 'string', example: 'shop-uuid' },
                 createdAt: { type: 'string', example: '2024-01-15T10:30:00Z' },
                 updatedAt: { type: 'string', example: '2024-01-15T10:30:00Z' },
               },
@@ -73,62 +88,42 @@ export class RewardController {
     status: HttpStatus.NOT_FOUND,
     description: 'Shop or category not found',
   })
-  async create(@Body() createRewardDto: CreateRewardDto, @Req() req: any) {
-    const shopId = req.user.shopId;
-    return this.rewardService.create(createRewardDto, shopId);
+  async create(@Body() createRewardDto: CreateRewardDto) {
+    return this.rewardService.create(createRewardDto);
   }
-
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({
     summary: 'Get all rewards',
-    description:
-      'Retrieves all rewards. If accessed by shop owner, returns only their rewards.',
+    description: 'Retrieves all rewards with optional pagination.',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Rewards retrieved successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean', example: true },
-        statusCode: { type: 'number', example: 200 },
-        data: {
-          type: 'object',
-          properties: {
-            rewards: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string', example: 'uuid-string' },
-                  name: { type: 'string', example: 'iPhone 15 Pro' },
-                  icon: {
-                    type: 'string',
-                    example: 'https://example.com/icons/iphone.png',
-                  },
-                  winnerCount: { type: 'number', example: 5 },
-                  isUnlimited: { type: 'boolean', example: false },
-                  isActive: { type: 'boolean', example: true },
-                  category: { type: 'object' },
-                  shop: { type: 'object' },
-                },
-              },
-            },
-            count: { type: 'number', example: 10 },
-            message: {
-              type: 'string',
-              example: 'Rewards retrieved successfully',
-            },
-          },
-        },
-      },
-    },
-  })
-  async findAll(@Req() req: any) {
-    const shopId = req.user.role === 'SHOP_OWNER' ? req.user.shopId : undefined;
-    return this.rewardService.findAll(shopId);
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.rewardService.findAll(page, limit);
   }
 
+  @UseGuards(AdminGuard)
+  @Get('by-shop/:shopId')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get rewards by shop',
+    description:
+      'Retrieves rewards for the authenticated shop with optional pagination.',
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async findAllByShop(
+    @Param('shopId') shopId: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.rewardService.findAllByShop(shopId, page, limit);
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({
     summary: 'Get a reward by ID',
@@ -149,12 +144,37 @@ export class RewardController {
     status: HttpStatus.NOT_FOUND,
     description: 'Reward not found',
   })
-  async findOne(@Param('id') id: string, @Req() req: any) {
-    const shopId = req.user.role === 'SHOP_OWNER' ? req.user.shopId : undefined;
-    return this.rewardService.findOne(id, shopId);
+  async findOneById(@Param('id') id: string) {
+    return this.rewardService.findOneById(id);
   }
 
-  @Patch(':id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @Get('by-shop/:id/shopId/:shopId')
+  @ApiOperation({
+    summary: 'Get a reward by ID and Shop ID',
+    description: 'Retrieves a specific active reward belonging to a shop.',
+  })
+  @ApiParam({ name: 'id', required: true, description: 'Reward ID' })
+  @ApiParam({ name: 'shopId', required: true, description: 'Shop ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Reward retrieved successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Reward not found',
+  })
+  async findOneByIdAndShop(
+    @Param('id') id: string,
+    @Param('shopId') shopId: string,
+  ) {
+    return this.rewardService.findOneByIdAndShop(id, shopId);
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @Patch(':id/shop/:shopId')
   @ApiOperation({
     summary: 'Update a reward',
     description:
@@ -184,14 +204,18 @@ export class RewardController {
   })
   async update(
     @Param('id') id: string,
+    @Param('shopId') shopId: string,
     @Body() updateRewardDto: UpdateRewardDto,
-    @Req() req: any,
   ) {
-    const shopId = req.user.shopId;
-    return this.rewardService.update(id, updateRewardDto, shopId);
+    console.log('shopp', shopId);
+    console.log('ids', id);
+
+    return this.rewardService.update(id, shopId, updateRewardDto);
   }
 
-  @Delete(':id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @Delete(':id/shopId')
   @ApiOperation({
     summary: 'Delete a reward',
     description:
@@ -203,6 +227,12 @@ export class RewardController {
     type: 'string',
     example: 'uuid-string',
   })
+  @ApiParam({
+    name: 'shopId',
+    description: 'Shop ID',
+    type: 'string',
+    example: 'uuid-string',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Reward deleted successfully',
@@ -211,8 +241,21 @@ export class RewardController {
     status: HttpStatus.NOT_FOUND,
     description: 'Reward not found',
   })
-  async remove(@Param('id') id: string, @Req() req: any) {
-    const shopId = req.user.shopId;
+  async remove(@Param('id') id: string, @Param('shopId') shopId: string) {
     return this.rewardService.remove(id, shopId);
+  }
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @Get('rewards/by-status')
+  @ApiOperation({ summary: 'Get rewards by status' })
+  @ApiQuery({ name: 'status', enum: RewardStatus, required: true })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  async getByStatus(
+    @Query('status') status: RewardStatus,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.rewardService.findByStatus(status, page, limit);
   }
 }
