@@ -112,3 +112,26 @@ export const ShopMessages = {
   SHOP_QR_NOT_FOUND: 'Shop with this QR code not found',
   SHOP_FETCHED_BY_QR: 'Shop and active game fetched by QR code successfully',
 };
+export const RewardMessages = {
+  CATEGORY_CREATED: 'Reward category created successfully',
+  CATEGORY_UPDATED: 'Reward category updated successfully',
+  CATEGORY_DELETED: 'Reward category deleted successfully',
+  CATEGORY_RETRIEVED: 'Reward category retrieved successfully',
+  CATEGORIES_RETRIEVED: 'Reward categories retrieved successfully',
+  CATEGORY_NOT_FOUND: (id: string) =>
+    `Reward category with ID '${id}' not found`,
+  CATEGORY_NAME_EXISTS: (name: string) =>
+    `Reward category with name '${name}' already exists`,
+  CATEGORY_HAS_REWARDS:
+    'Cannot delete reward category that has associated rewards. Please reassign or delete rewards first.',
+
+  REWARD_CREATED: 'Reward created successfully',
+  REWARD_UPDATED: 'Reward updated successfully',
+  REWARD_DELETED: 'Reward deleted successfully',
+  REWARD_RETRIEVED: 'Reward retrieved successfully',
+  REWARDS_RETRIEVED: 'Rewards retrieved successfully',
+  REWARD_NOT_FOUND: (id: string) => `Reward with ID '${id}' not found`,
+  REWARD_NAME_EXISTS: (name: string) =>
+    `Reward with name '${name}' already exists for this shop`,
+  SHOP_NOT_FOUND: (id: string) => `Shop with ID '${id}' not found`,
+};
