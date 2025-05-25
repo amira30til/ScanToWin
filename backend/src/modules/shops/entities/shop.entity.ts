@@ -12,6 +12,7 @@ import {
 import { ShopStatus } from '../enums/shop-status.enum';
 import { Admin } from 'src/modules/admins/entities/admin.entity';
 import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
+import { Reward } from 'src/modules/reward/entities/reward.entity';
 
 @Entity()
 export class Shop {
@@ -96,5 +97,6 @@ export class Shop {
 
   @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.shop)
   activeGameAssignments: ActiveGameAssignment[];
-
+  @OneToMany(() => Reward, (reward) => reward.shop)
+  rewards: Reward[];
 }
