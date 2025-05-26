@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Game } from './entities/game.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Admin } from '../admins/entities/admin.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Game, Admin])],
   controllers: [GameController],
-  providers: [GameService, JwtService],
+  providers: [GameService, JwtService, CloudinaryService],
   exports: [GameService],
 })
 export class GameModule {}

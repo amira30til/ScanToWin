@@ -24,6 +24,7 @@ import { ShopStatus } from './enums/shop-status.enum';
 import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ShopsService {
@@ -36,17 +37,18 @@ export class ShopsService {
     private readonly gameRepository: Repository<Game>,
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async create(
     adminId: string,
     dto: CreateShopDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({
         where: { id: adminId },
       });
-
       if (!admin) {
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(adminId));
       }
@@ -57,15 +59,27 @@ export class ShopsService {
           adminId: adminId,
         },
       });
-
       if (shopExists) {
         throw new ConflictException(ShopMessages.SHOP_ALREADY_EXISTS('name'));
+      }
+
+      let logoUrl: string | undefined = undefined;
+      if (file) {
+        try {
+          const uploadResult =
+            await this.cloudinaryService.uploadImageToCloudinary(file);
+          logoUrl = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Logo upload failed:', uploadError);
+          logoUrl = undefined;
+        }
       }
 
       const newShop = this.shopsRepository.create({
         ...dto,
         adminId: adminId,
         status: ShopStatus.ACTIVE,
+        logo: logoUrl,
       });
 
       const shopSaved = await this.shopsRepository.save(newShop);

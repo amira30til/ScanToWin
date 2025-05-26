@@ -15,6 +15,7 @@ import {
 } from 'class-validator';
 import { Role } from '../enums/role.enum';
 import { AdminStatus } from '../enums/admin-status.enum';
+import { Type } from 'class-transformer';
 
 export class CreateAdminDto {
   @ApiProperty({
@@ -47,7 +48,7 @@ export class CreateAdminDto {
   @MinLength(8)
   @MaxLength(30)
   @ApiProperty({
-   example: 'StrongP@ss123' ,
+    example: 'StrongP@ss123',
     description:
       'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character',
   })
@@ -68,7 +69,6 @@ export class CreateAdminDto {
   @IsEnum(Role)
   @IsOptional()
   role?: string;
-
 
   @ApiPropertyOptional({
     description: 'Admin status',
@@ -94,6 +94,7 @@ export class CreateAdminDto {
   })
   @IsBoolean()
   @IsOptional()
+  @Type(() => Boolean)
   mailStatus?: boolean;
 
   @ApiPropertyOptional({
@@ -103,6 +104,7 @@ export class CreateAdminDto {
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   nbSiret?: number;
 
   @ApiPropertyOptional({
@@ -128,5 +130,8 @@ export class CreateAdminDto {
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   gameCodePin?: number;
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  file?: any;
 }

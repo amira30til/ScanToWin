@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateAdminDto } from './create-admin.dto';
 import {
   IsBoolean,
@@ -144,4 +144,7 @@ export class UpdateAdminDto implements Partial<CreateAdminDto> {
   @IsBoolean()
   @IsOptional()
   isGuaranteedWin?: boolean;
+
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  file?: any;
 }
