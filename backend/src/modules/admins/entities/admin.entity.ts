@@ -52,7 +52,7 @@ export class Admin {
   adminStatus: string;
   @ApiProperty()
   @Column({ nullable: true })
-  profilPicture: string;
+  profilPicture?: string;
   @ApiProperty()
   @Column({ nullable: true })
   mailStatus: boolean;

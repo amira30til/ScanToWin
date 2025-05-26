@@ -17,30 +17,48 @@ import {
 } from 'src/common/interfaces/response.interface';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { GameStatus } from './enums/game-status.enums';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(Game)
     private readonly gameRepository: Repository<Game>,
+    private cloudinaryService: CloudinaryService,
   ) {}
   async create(
     createGameDto: CreateGameDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const existingGame = await this.gameRepository.findOne({
         where: { name: createGameDto.name },
       });
-
       if (existingGame) {
         throw new ConflictException(GameMessages.GAME_ALREADY_EXISTS('name'));
       }
 
+      let pictureUrl: string | undefined = undefined;
+      if (file) {
+        try {
+          const uploadResult =
+            await this.cloudinaryService.uploadImageToCloudinary(file);
+          pictureUrl = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Game picture upload failed:', uploadError);
+          pictureUrl = undefined;
+        }
+      }
+
+      // Create new game
       const newGame = this.gameRepository.create({
         ...createGameDto,
+        status: GameStatus.ACTIVE, 
+        pictureUrl: pictureUrl,
       });
 
       const savedGame = await this.gameRepository.save(newGame);
+
       return ApiResponse.success(HttpStatusCodes.CREATED, {
         game: savedGame,
         message: GameMessages.GAME_CREATED,
