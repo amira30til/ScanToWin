@@ -53,7 +53,7 @@ export class GameService {
       // Create new game
       const newGame = this.gameRepository.create({
         ...createGameDto,
-        status: GameStatus.ACTIVE, 
+        status: GameStatus.ACTIVE,
         pictureUrl: pictureUrl,
       });
 
@@ -106,6 +106,7 @@ export class GameService {
   async update(
     id: string,
     updateGameDto: UpdateGameDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const game = await this.gameRepository.findOne({ where: { id } });
@@ -122,6 +123,11 @@ export class GameService {
         if (existingGame) {
           throw new ConflictException(GameMessages.GAME_ALREADY_EXISTS('name'));
         }
+      }
+      if (file) {
+        const result =
+          await this.cloudinaryService.uploadImageToCloudinary(file);
+        updateGameDto.pictureUrl = result.url;
       }
 
       Object.assign(game, updateGameDto);

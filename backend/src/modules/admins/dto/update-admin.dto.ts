@@ -6,11 +6,11 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
 } from 'class-validator';
 import { AdminStatus } from '../enums/admin-status.enum';
 import { Role } from '../enums/role.enum';
+import { Type } from 'class-transformer';
 
 export class UpdateAdminDto implements Partial<CreateAdminDto> {
   @ApiPropertyOptional({
@@ -63,19 +63,12 @@ export class UpdateAdminDto implements Partial<CreateAdminDto> {
   city?: string;
 
   @ApiPropertyOptional({
-    description: 'Admin zip code',
-    example: 10001,
-  })
-  @IsNumber()
-  @IsOptional()
-  zipCode?: number;
-
-  @ApiPropertyOptional({
     description: 'Admin phone number',
     example: 123456789,
   })
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   tel?: number;
 
   @ApiPropertyOptional({
@@ -88,63 +81,19 @@ export class UpdateAdminDto implements Partial<CreateAdminDto> {
   adminStatus?: string;
 
   @ApiPropertyOptional({
-    description: 'Admin profile picture URL',
-    example: 'https://example.com/profile.jpg',
-  })
-  @IsString()
-  @IsOptional()
-  profilPicture?: string;
-
-  @ApiPropertyOptional({
     description: 'Admin mail status',
     example: true,
   })
   @IsBoolean()
   @IsOptional()
+  @Type(() => Boolean)
   mailStatus?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Admin SIRET number (France)',
-    example: 12345678900010,
+    description: 'Admin profile picture URL',
+    example: 'https://example.com/profile.jpg',
   })
-  @IsNumber()
-  @IsOptional()
-  @IsPositive()
-  nbSiret?: number;
-
-  @ApiPropertyOptional({
-    description: 'Game primary color (HEX code)',
-    example: '#FF5733',
-  })
-  @IsString()
-  @IsOptional()
-  gameColor1?: string;
-
-  @ApiPropertyOptional({
-    description: 'Game secondary color (HEX code)',
-    example: '#33FF57',
-  })
-  @IsString()
-  @IsOptional()
-  gameColor2?: string;
-
-  @ApiPropertyOptional({
-    description: 'Game PIN code',
-    example: 1234,
-  })
-  @IsNumber()
-  @IsOptional()
-  @IsPositive()
-  gameCodePin?: number;
-
-  @ApiPropertyOptional({
-    description: 'Is guaranteed win flag',
-    example: false,
-  })
-  @IsBoolean()
-  @IsOptional()
-  isGuaranteedWin?: boolean;
-
   @ApiProperty({ type: 'string', format: 'binary', required: false })
-  file?: any;
+  @IsOptional()
+  profilPicture?: any;
 }

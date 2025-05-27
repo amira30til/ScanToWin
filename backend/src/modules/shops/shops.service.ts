@@ -23,7 +23,6 @@ import { Admin } from 'src/modules/admins/entities/admin.entity';
 import { ShopStatus } from './enums/shop-status.enum';
 import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
-import { v4 as uuidv4 } from 'uuid';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
@@ -43,7 +42,7 @@ export class ShopsService {
   async create(
     adminId: string,
     dto: CreateShopDto,
-    file?: Express.Multer.File,
+    logo?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({
@@ -64,10 +63,10 @@ export class ShopsService {
       }
 
       let logoUrl: string | undefined = undefined;
-      if (file) {
+      if (logo) {
         try {
           const uploadResult =
-            await this.cloudinaryService.uploadImageToCloudinary(file);
+            await this.cloudinaryService.uploadImageToCloudinary(logo);
           logoUrl = uploadResult.secure_url;
         } catch (uploadError) {
           console.error('Logo upload failed:', uploadError);
@@ -213,6 +212,7 @@ export class ShopsService {
   async update(
     id: string,
     updateShopDto: UpdateShopDto,
+    logo?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({
@@ -235,6 +235,11 @@ export class ShopsService {
           throw new ConflictException(ShopMessages.SHOP_ALREADY_EXISTS('name'));
         }
       }
+      if (logo) {
+        const result =
+          await this.cloudinaryService.uploadImageToCloudinary(logo);
+        updateShopDto.logo = result.url;
+      }
 
       await this.shopsRepository.update(id, updateShopDto);
 
@@ -255,6 +260,7 @@ export class ShopsService {
     id: string,
     adminId: string,
     updateShopDto: UpdateShopDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({
@@ -282,6 +288,11 @@ export class ShopsService {
         if (shopExists) {
           throw new ConflictException(ShopMessages.SHOP_ALREADY_EXISTS('name'));
         }
+      }
+      if (file) {
+        const result =
+          await this.cloudinaryService.uploadImageToCloudinary(file);
+        updateShopDto.logo = result.url;
       }
 
       await this.shopsRepository.update(id, updateShopDto);

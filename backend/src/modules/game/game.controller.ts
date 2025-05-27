@@ -8,12 +8,16 @@ import {
   Delete,
   UseGuards,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -21,17 +25,24 @@ import {
 import { SuperAdminGuard } from '../auth/guards/admins.guard';
 import { GameStatus } from './enums/game-status.enums';
 import { Game } from './entities/game.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
+  @UseInterceptors(FileInterceptor('pictureUrl'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateGameDto })
   @Post()
   @ApiOperation({ summary: 'Create a new game' })
   @ApiResponse({ status: 201, description: 'Game created successfully' })
-  async create(@Body() createGameDto: CreateGameDto) {
-    return this.gameService.create(createGameDto);
+  async create(
+    @Body() createGameDto: CreateGameDto,
+    @UploadedFile() pictureUrl: Express.Multer.File,
+  ) {
+    return this.gameService.create(createGameDto, pictureUrl);
   }
 
   @Get()
@@ -51,12 +62,20 @@ export class GameController {
 
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
+  @UseInterceptors(FileInterceptor('pictureUrl'))
+  @ApiConsumes('multipart/form-data')
   @Patch(':id')
   @ApiOperation({ summary: 'Update a game' })
   @ApiResponse({ status: 200, description: 'Game updated successfully' })
   @ApiResponse({ status: 404, description: 'Game not found' })
-  async update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
-    return this.gameService.update(id, updateGameDto);
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateGameDto })
+  async update(
+    @Param('id') id: string,
+    @Body() updateGameDto: UpdateGameDto,
+    @UploadedFile() pictureUrl: Express.Multer.File,
+  ) {
+    return this.gameService.update(id, updateGameDto, pictureUrl);
   }
 
   @ApiBearerAuth()

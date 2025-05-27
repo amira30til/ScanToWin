@@ -29,7 +29,7 @@ export class AdminsService {
   /*--------------------------------CREATE USER(Admin or Super-Admin )-------------------------------*/
   async create(
     dto: CreateAdminDto,
-    file?: Express.Multer.File,
+    profilPicture?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       if (dto.email) {
@@ -44,10 +44,10 @@ export class AdminsService {
       }
 
       let profilePictureUrl: string | null = null;
-      if (file) {
+      if (profilPicture) {
         try {
           const uploadResult =
-            await this.cloudinaryService.uploadImageToCloudinary(file);
+            await this.cloudinaryService.uploadImageToCloudinary(profilPicture);
           profilePictureUrl = uploadResult.secure_url;
         } catch (uploadError) {
           console.error('Image upload failed:', uploadError);
@@ -67,7 +67,7 @@ export class AdminsService {
 
       const userSaved = await this.adminsRepository.save(newUser);
 
-      const { password, ...userResponse } = userSaved as Admin;
+      const { ...userResponse } = userSaved;
 
       return ApiResponse.success(HttpStatusCodes.CREATED, {
         user: userResponse,
@@ -149,7 +149,7 @@ export class AdminsService {
   async update(
     id: string,
     updateAdminDto: UpdateAdminDto,
-    file?: Express.Multer.File,
+    profilPicture?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({ where: { id } });
@@ -172,13 +172,13 @@ export class AdminsService {
         updateAdminDto.email = updateAdminDto.email.toLowerCase();
       }
 
-      if (file) {
+      if (profilPicture) {
         const result =
-          await this.cloudinaryService.uploadImageToCloudinary(file);
+          await this.cloudinaryService.uploadImageToCloudinary(profilPicture);
         updateAdminDto.profilPicture = result.url;
       }
-      if (file) {
-        console.log('fileeeeeee received:', file);
+      if (profilPicture) {
+        console.log('profilPictureeeeeee received:', profilPicture);
       }
 
       await this.adminsRepository.update(id, updateAdminDto);
