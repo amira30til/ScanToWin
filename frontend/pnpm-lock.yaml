@@ -77,9 +77,6 @@ dependencies:
   react-router-dom:
     specifier: ^6.19.0
     version: 6.30.0(react-dom@18.3.1)(react@18.3.1)
-  react-wheel-of-prizes:
-    specifier: ^1.0.6
-    version: 1.0.6(react@18.3.1)
   vite:
     specifier: ^5.2.12
     version: 5.4.19
@@ -4972,15 +4969,6 @@ packages:
       get-nonce: 1.0.1
       react: 18.3.1
       tslib: 2.8.1
-    dev: false
-
-  /react-wheel-of-prizes@1.0.6(react@18.3.1):
-    resolution: {integrity: sha512-MmYgI28b27WiS5UgcEsWc5SlSYVZywH53Vn/oDSWWCmaGNWxaiNZjGktarhRqq2Qo4BTkKX30QmkbZaMphQ7Hw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: ^16.0.0
-    dependencies:
-      react: 18.3.1
     dev: false
 
   /react@18.3.1:

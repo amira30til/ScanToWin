@@ -16,8 +16,9 @@ import {
 } from 'src/common/interfaces/response.interface';
 import { AdminsService } from '../admins/admins.service';
 import { ActiveGameAssignment } from './entities/active-game-assignment.entity';
-import { v4 as uuidv4 } from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 import { Shop } from '../shops/entities/shop.entity';
+import { GameStatus } from '../game/enums/game-status.enums';
 
 @Injectable()
 export class ActiveGameAssignmentService {
@@ -159,7 +160,7 @@ export class ActiveGameAssignmentService {
       }
 
       const game = await this.gameRepository.findOne({
-        where: { id: gameId, isActive: true },
+        where: { id: gameId, status: GameStatus.ACTIVE },
       });
       if (!game) {
         throw new NotFoundException(GameMessages.ACTIVE_GAME_NOT_FOUND(gameId));
@@ -233,6 +234,7 @@ export class ActiveGameAssignmentService {
     }
   }
 
+  //Ill leave this methode for the future just incase we wanted to decode the shop id
   async generateShopQrIdentifier(
     shopId: string,
   ): Promise<ApiResponseInterface<string> | ErrorResponseInterface> {
@@ -245,13 +247,13 @@ export class ActiveGameAssignmentService {
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
       }
 
-      if (!shop.qrCodeIdentifier) {
-        shop.qrCodeIdentifier = uuidv4();
-        await this.shopsRepository.save(shop);
-      }
+      // if (!shop.qrCodeIdentifier) {
+      //   shop.qrCodeIdentifier = uuidv4();
+      //   await this.shopsRepository.save(shop);
+      // }
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        data: shop.qrCodeIdentifier,
+        data: 'shop.qrCodeIdentifier',
         message: ShopMessages.QR_CODE_GENERATED,
       });
     } catch (error) {
@@ -259,36 +261,36 @@ export class ActiveGameAssignmentService {
     }
   }
 
-  async getShopByQrIdentifier(
-    qrCodeIdentifier: string,
-  ): Promise<
-    | ApiResponseInterface<{ shop: Shop; activeGame: ActiveGameAssignment }>
-    | ErrorResponseInterface
-  > {
-    try {
-      const shop = await this.shopsRepository.findOne({
-        where: { qrCodeIdentifier },
-      });
+  // async getShopByQrIdentifier(
+  //   qrCodeIdentifier: string,
+  // ): Promise<
+  //   | ApiResponseInterface<{ shop: Shop; activeGame: ActiveGameAssignment }>
+  //   | ErrorResponseInterface
+  // > {
+  //   try {
+  //     const shop = await this.shopsRepository.findOne({
+  //       where: { qrCodeIdentifier },
+  //     });
 
-      if (!shop) {
-        throw new NotFoundException(ShopMessages.SHOP_QR_NOT_FOUND);
-      }
+  //     if (!shop) {
+  //       throw new NotFoundException(ShopMessages.SHOP_QR_NOT_FOUND);
+  //     }
 
-      const activeGameResponse = await this.getActiveGameForShop(shop.id);
+  //     const activeGameResponse = await this.getActiveGameForShop(shop.id);
 
-      if ('error' in activeGameResponse) {
-        return activeGameResponse;
-      }
+  //     if ('error' in activeGameResponse) {
+  //       return activeGameResponse;
+  //     }
 
-      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        data: {
-          shop,
-          activeGame: activeGameResponse.data,
-        },
-        message: ShopMessages.SHOP_FETCHED_BY_QR,
-      });
-    } catch (error) {
-      return handleServiceError(error);
-    }
-  }
+  //     return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+  //       data: {
+  //         shop,
+  //         activeGame: activeGameResponse.data,
+  //       },
+  //       message: ShopMessages.SHOP_FETCHED_BY_QR,
+  //     });
+  //   } catch (error) {
+  //     return handleServiceError(error);
+  //   }
+  // }
 }

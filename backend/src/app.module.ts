@@ -13,6 +13,9 @@ import { UserGameModule } from './modules/user-game/user-game.module';
 import { UsersModule } from './modules/users/users.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { ActiveGameAssignmentModule } from './modules/active-game-assignment/active-game-assignment.module';
+import { RewardModule } from './modules/reward/reward.module';
+import { RewardCategoryModule } from './modules/reward-category/reward-category.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -45,6 +48,9 @@ import { ActiveGameAssignmentModule } from './modules/active-game-assignment/act
     UserGameModule,
     UsersModule,
     ShopsModule,
+    RewardModule,
+    RewardCategoryModule,
+    MulterModule.register({}),
   ],
   controllers: [AppController],
   providers: [AppService],

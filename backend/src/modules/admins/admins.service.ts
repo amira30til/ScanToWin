@@ -17,16 +17,19 @@ import * as bcrypt from 'bcrypt';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class AdminsService {
   constructor(
     @InjectRepository(Admin)
     private adminsRepository: Repository<Admin>,
+    private cloudinaryService: CloudinaryService,
   ) {}
   /*--------------------------------CREATE USER(Admin or Super-Admin )-------------------------------*/
   async create(
     dto: CreateAdminDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       if (dto.email) {
@@ -40,23 +43,39 @@ export class AdminsService {
         }
       }
 
+      let profilePictureUrl: string | null = null;
+      if (file) {
+        try {
+          const uploadResult =
+            await this.cloudinaryService.uploadImageToCloudinary(file);
+          profilePictureUrl = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+
+          profilePictureUrl = null;
+        }
+      }
+
       const newUser = this.adminsRepository.create({
         ...dto,
         email: dto.email?.toLowerCase(),
+        profilPicture: profilePictureUrl || undefined,
       });
 
       const salt = await bcrypt.genSalt();
       newUser.password = await bcrypt.hash(newUser.password, salt);
+
       const userSaved = await this.adminsRepository.save(newUser);
 
+      const { password, ...userResponse } = userSaved as Admin;
+
       return ApiResponse.success(HttpStatusCodes.CREATED, {
-        user: userSaved,
+        user: userResponse,
       });
     } catch (error) {
       return handleServiceError(error);
     }
   }
-
   async findAll(
     page = 1,
     limit = 10,
@@ -130,11 +149,10 @@ export class AdminsService {
   async update(
     id: string,
     updateAdminDto: UpdateAdminDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
-      const admin = await this.adminsRepository.findOne({
-        where: { id },
-      });
+      const admin = await this.adminsRepository.findOne({ where: { id } });
 
       if (!admin) {
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
@@ -154,7 +172,17 @@ export class AdminsService {
         updateAdminDto.email = updateAdminDto.email.toLowerCase();
       }
 
+      if (file) {
+        const result =
+          await this.cloudinaryService.uploadImageToCloudinary(file);
+        updateAdminDto.profilPicture = result.url;
+      }
+      if (file) {
+        console.log('fileeeeeee received:', file);
+      }
+
       await this.adminsRepository.update(id, updateAdminDto);
+      console.log('Update data:', updateAdminDto);
 
       const updatedAdmin = await this.adminsRepository.findOne({
         where: { id },

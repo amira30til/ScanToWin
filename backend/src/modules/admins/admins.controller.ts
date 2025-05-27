@@ -9,6 +9,8 @@ import {
   Query,
   HttpStatus,
   UseGuards,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -16,6 +18,7 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -23,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { AdminStatus } from './enums/admin-status.enum';
 import { AdminGuard, SuperAdminGuard } from '../auth/guards/admins.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
@@ -31,10 +35,39 @@ export class AdminsController {
   @Post()
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Create Admin with optional profile picture',
+    schema: {
+      type: 'object',
+      properties: {
+        firstName: { type: 'string', example: 'John' },
+        lastName: { type: 'string', example: 'Doe' },
+        email: { type: 'string', example: 'admin@example.com' },
+        password: { type: 'string', example: 'StrongP@ss123' },
+        role: { type: 'string', example: 'ADMIN' },
+        adminStatus: { type: 'string', example: 'ACTIVE' },
+        mailStatus: { type: 'boolean', example: true },
+        nbSiret: { type: 'number', example: 12345678900010 },
+        gameColor1: { type: 'string', example: '#FF5733' },
+        gameColor2: { type: 'string', example: '#33FF57' },
+        gameCodePin: { type: 'number', example: 1234 },
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['email', 'password'],
+    },
+  })
   @ApiOperation({ summary: 'Create Admin or Super Admin' })
-  create(@Body() createAdminDto: CreateAdminDto) {
+  async create(
+    @Body() createAdminDto: CreateAdminDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     const payload = { ...createAdminDto, createdAt: new Date() };
-    return this.adminsService.create(payload);
+    return this.adminsService.create(payload, file);
   }
 
   @Get()
@@ -149,16 +182,18 @@ export class AdminsController {
   findByEmail(@Param('email') email: string) {
     return this.adminsService.findByEmail(email);
   }
+  @Patch(':id')
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
-  @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data') 
+  @ApiBody({ type: UpdateAdminDto }) 
   @ApiOperation({
     summary: 'Update admin user',
     description:
       'Updates an admin user by ID. Requires SUPER_ADMIN or ADMIN role.',
   })
-  @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
-  @ApiBody({ type: UpdateAdminDto, description: 'Admin data to update' })
+  @ApiParam({ name: 'id', description: 'Admin ID', type: String })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Admin user updated successfully',
@@ -176,19 +211,17 @@ export class AdminsController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'User with this email already exists',
+    description: 'Email already in use',
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data',
-  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden - requires SUPER_ADMIN role',
-  })
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminsService.update(id, updateAdminDto);
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden' })
+  update(
+    @Param('id') id: string,
+    @Body() updateAdminDto: UpdateAdminDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.adminsService.update(id, updateAdminDto, file);
   }
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)

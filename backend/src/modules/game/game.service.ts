@@ -16,31 +16,49 @@ import {
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
 import { ApiResponse } from 'src/common/utils/response.util';
+import { GameStatus } from './enums/game-status.enums';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(Game)
     private readonly gameRepository: Repository<Game>,
+    private cloudinaryService: CloudinaryService,
   ) {}
   async create(
     createGameDto: CreateGameDto,
+    file?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Game> | ErrorResponseInterface> {
     try {
       const existingGame = await this.gameRepository.findOne({
         where: { name: createGameDto.name },
       });
-
       if (existingGame) {
         throw new ConflictException(GameMessages.GAME_ALREADY_EXISTS('name'));
       }
 
+      let pictureUrl: string | undefined = undefined;
+      if (file) {
+        try {
+          const uploadResult =
+            await this.cloudinaryService.uploadImageToCloudinary(file);
+          pictureUrl = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Game picture upload failed:', uploadError);
+          pictureUrl = undefined;
+        }
+      }
+
+      // Create new game
       const newGame = this.gameRepository.create({
         ...createGameDto,
-        isActive: createGameDto.isActive ?? true,
+        status: GameStatus.ACTIVE, 
+        pictureUrl: pictureUrl,
       });
 
       const savedGame = await this.gameRepository.save(newGame);
+
       return ApiResponse.success(HttpStatusCodes.CREATED, {
         game: savedGame,
         message: GameMessages.GAME_CREATED,
@@ -54,7 +72,9 @@ export class GameService {
     ApiResponseInterface<Game> | ErrorResponseInterface
   > {
     try {
-      const games = await this.gameRepository.find();
+      const games = await this.gameRepository.find({
+        where: { status: GameStatus.ACTIVE },
+      });
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         games,
         message: GameMessages.GAMES_FETCHED,
@@ -146,10 +166,10 @@ export class GameService {
         throw new NotFoundException(GameMessages.GAME_NOT_FOUND(id));
       }
 
-      if (game.isActive) {
+      if (game.status == GameStatus.ACTIVE) {
         throw new ConflictException(GameMessages.GAME_ALREADY_ACTIVATED);
       }
-      game.isActive = true;
+      game.status = GameStatus.ACTIVE;
       const updatedGame = await this.gameRepository.save(game);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
@@ -170,15 +190,32 @@ export class GameService {
       if (!game) {
         throw new NotFoundException(GameMessages.GAME_NOT_FOUND(id));
       }
-      if (!game.isActive) {
+      if (game.status !== GameStatus.ACTIVE) {
         throw new ConflictException(GameMessages.GAME_ALREADY_DEACTIVATED);
       }
-      game.isActive = false;
+      game.status = GameStatus.INACTIVE;
       const updatedGame = await this.gameRepository.save(game);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         game: updatedGame,
         message: GameMessages.GAME_DEACTIVATED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  async getGamesByStatus(
+    status: GameStatus,
+  ): Promise<ApiResponseInterface<Game[]> | ErrorResponseInterface> {
+    try {
+      const games = await this.gameRepository.find({
+        where: { status },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        data: games,
+        message: `${games.length} game(s) with status ${status} fetched successfully.`,
       });
     } catch (error) {
       return handleServiceError(error);
