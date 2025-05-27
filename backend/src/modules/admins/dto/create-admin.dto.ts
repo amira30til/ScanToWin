@@ -15,6 +15,7 @@ import {
 } from 'class-validator';
 import { Role } from '../enums/role.enum';
 import { AdminStatus } from '../enums/admin-status.enum';
+import { Type } from 'class-transformer';
 
 export class CreateAdminDto {
   @ApiProperty({
@@ -70,14 +71,6 @@ export class CreateAdminDto {
   role?: string;
 
   @ApiPropertyOptional({
-    description: 'Admin phone number',
-    example: 123456789,
-  })
-  @IsNumber()
-  @IsOptional()
-  tel?: number;
-
-  @ApiPropertyOptional({
     description: 'Admin status',
     enum: AdminStatus,
     default: AdminStatus.ACTIVE,
@@ -101,6 +94,7 @@ export class CreateAdminDto {
   })
   @IsBoolean()
   @IsOptional()
+  @Type(() => Boolean)
   mailStatus?: boolean;
 
   @ApiPropertyOptional({
@@ -110,6 +104,7 @@ export class CreateAdminDto {
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   nbSiret?: number;
 
   @ApiPropertyOptional({
@@ -135,5 +130,8 @@ export class CreateAdminDto {
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   gameCodePin?: number;
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  file?: any;
 }

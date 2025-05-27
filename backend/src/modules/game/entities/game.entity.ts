@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { GameStatus } from '../enums/game-status.enums';
 
 @Entity()
 export class Game {
@@ -17,15 +18,17 @@ export class Game {
   @Column({ nullable: true })
   name: string;
   @ApiProperty()
-  @Column({ nullable: true })
-  isActive: boolean;
+  @Column({ nullable: true, default: GameStatus.ACTIVE })
+  status: GameStatus;
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @ApiProperty()
   @Column({ nullable: true })
   pictureUrl: string;
-
+  @ApiProperty()
+  @Column({ nullable: true })
+  description: string;
   @ApiProperty()
   @UpdateDateColumn({
     type: 'timestamp',
