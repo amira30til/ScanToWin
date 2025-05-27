@@ -35,7 +35,7 @@ export class AdminsController {
   @Post()
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('profilPicture'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Create Admin with optional profile picture',
@@ -49,11 +49,7 @@ export class AdminsController {
         role: { type: 'string', example: 'ADMIN' },
         adminStatus: { type: 'string', example: 'ACTIVE' },
         mailStatus: { type: 'boolean', example: true },
-        nbSiret: { type: 'number', example: 12345678900010 },
-        gameColor1: { type: 'string', example: '#FF5733' },
-        gameColor2: { type: 'string', example: '#33FF57' },
-        gameCodePin: { type: 'number', example: 1234 },
-        file: {
+        profilPicture: {
           type: 'string',
           format: 'binary',
         },
@@ -64,10 +60,10 @@ export class AdminsController {
   @ApiOperation({ summary: 'Create Admin or Super Admin' })
   async create(
     @Body() createAdminDto: CreateAdminDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() profilPicture: Express.Multer.File,
   ) {
     const payload = { ...createAdminDto, createdAt: new Date() };
-    return this.adminsService.create(payload, file);
+    return this.adminsService.create(payload, profilPicture);
   }
 
   @Get()
@@ -185,9 +181,9 @@ export class AdminsController {
   @Patch(':id')
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiConsumes('multipart/form-data') 
-  @ApiBody({ type: UpdateAdminDto }) 
+  @UseInterceptors(FileInterceptor('profilPicture'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateAdminDto })
   @ApiOperation({
     summary: 'Update admin user',
     description:
@@ -219,9 +215,9 @@ export class AdminsController {
   update(
     @Param('id') id: string,
     @Body() updateAdminDto: UpdateAdminDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() profilPicture: Express.Multer.File,
   ) {
-    return this.adminsService.update(id, updateAdminDto, file);
+    return this.adminsService.update(id, updateAdminDto, profilPicture);
   }
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
