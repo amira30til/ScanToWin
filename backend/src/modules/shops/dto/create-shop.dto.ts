@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -15,15 +16,6 @@ export class CreateShopDto {
   @IsNotEmpty()
   @IsString()
   name: string;
-
-  @ApiProperty({
-    description: 'Logo URL of the shop',
-    required: false,
-    example: 'https://example.com/logo.png',
-  })
-  @IsOptional()
-  @IsString()
-  logo?: string;
 
   @ApiProperty({
     description: 'Address of the shop',
@@ -59,6 +51,7 @@ export class CreateShopDto {
   })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   zipCode?: number;
 
   @ApiProperty({
@@ -68,6 +61,7 @@ export class CreateShopDto {
   })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   nbSiret?: number;
 
   @ApiProperty({
@@ -104,6 +98,7 @@ export class CreateShopDto {
   })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   gameCodePin?: number;
 
   @ApiProperty({
@@ -114,5 +109,14 @@ export class CreateShopDto {
   })
   @IsOptional()
   @IsBoolean()
+  @Type(() => Boolean)
   isGuaranteedWin?: boolean;
+  @ApiProperty({
+    description: 'Logo URL of the shop',
+    required: false,
+    example: 'https://example.com/logo.png',
+  })
+  @IsOptional()
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  logo?: any;
 }
