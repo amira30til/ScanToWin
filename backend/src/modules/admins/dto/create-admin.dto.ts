@@ -15,6 +15,7 @@ import {
 } from 'class-validator';
 import { Role } from '../enums/role.enum';
 import { AdminStatus } from '../enums/admin-status.enum';
+import { Type } from 'class-transformer';
 
 export class CreateAdminDto {
   @ApiProperty({
@@ -69,7 +70,6 @@ export class CreateAdminDto {
   @IsOptional()
   role?: string;
 
-
   @ApiPropertyOptional({
     description: 'Admin status',
     enum: AdminStatus,
@@ -94,6 +94,7 @@ export class CreateAdminDto {
   })
   @IsBoolean()
   @IsOptional()
+  @Type(() => Boolean)
   mailStatus?: boolean;
 
   @ApiPropertyOptional({
@@ -103,6 +104,7 @@ export class CreateAdminDto {
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   nbSiret?: number;
 
   @ApiPropertyOptional({
@@ -128,5 +130,8 @@ export class CreateAdminDto {
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @Type(() => Number)
   gameCodePin?: number;
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  file?: any;
 }

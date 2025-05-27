@@ -7,13 +7,14 @@ import { ActiveGameAssignment } from './entities/active-game-assignment.entity';
 import { ActiveGameAssignmentController } from './active-game-assignment.controller';
 import { ActiveGameAssignmentService } from './active-game-assignment.service';
 import { Shop } from '../shops/entities/shop.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ActiveGameAssignment, Game, Admin, Shop]),
   ],
   controllers: [ActiveGameAssignmentController],
-  providers: [ActiveGameAssignmentService, AdminsService],
+  providers: [ActiveGameAssignmentService, AdminsService,CloudinaryService],
   exports: [ActiveGameAssignmentService],
 })
 export class ActiveGameAssignmentModule {}

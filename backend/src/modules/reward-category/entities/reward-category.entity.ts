@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Reward } from '../../reward/entities/reward.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -25,4 +27,6 @@ export class RewardCategory {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @OneToMany(() => Reward, (reward) => reward.category)
+  rewards: Reward[];
 }
