@@ -39,4 +39,7 @@ export class CreateUserDto {
   @IsNumber()
   @IsOptional()
   tel?: number;
+  @ApiProperty({ default: false })
+  @IsOptional()
+  agreeToPromotions: boolean;
 }

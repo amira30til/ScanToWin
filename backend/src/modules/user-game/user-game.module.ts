@@ -10,6 +10,8 @@ import { Game } from '../game/entities/game.entity';
 import { AdminsService } from '../admins/admins.service';
 import { Shop } from '../shops/entities/shop.entity';
 import { Admin } from '../admins/entities/admin.entity';
+import { Reward } from '../reward/entities/reward.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [
@@ -20,10 +22,11 @@ import { Admin } from '../admins/entities/admin.entity';
       Game,
       Shop,
       Admin,
+      Reward,
     ]),
   ],
   controllers: [UserGameController],
-  providers: [UserGameService, ActiveGameAssignmentService, AdminsService],
+  providers: [UserGameService, ActiveGameAssignmentService, AdminsService,CloudinaryService],
   exports: [UserGameService],
 })
 export class UserGameModule {}

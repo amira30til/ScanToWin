@@ -21,6 +21,7 @@ export class User {
   @ApiProperty()
   @Column({ nullable: true })
   firstName: string;
+  //should we keep the last name or we stick with one filed as name so the user can enter both or just one
   @ApiProperty()
   @Column({ nullable: true })
   lastName: string;
@@ -30,6 +31,10 @@ export class User {
   @ApiProperty()
   @Column({ nullable: true })
   totalPlayedGames: number;
+  @ApiProperty()
+  @Column({ nullable: true, default: false })
+  agreeToPromotions: boolean;
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
+import { Reward } from 'src/modules/reward/entities/reward.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -50,4 +51,10 @@ export class UserGame {
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   lastPlayedAt: Date;
+  @ManyToOne(() => Reward, { nullable: true })
+  @JoinColumn({ name: 'rewardId' })
+  reward: Reward;
+
+  @Column({ nullable: true })
+  rewardId: string;
 }
