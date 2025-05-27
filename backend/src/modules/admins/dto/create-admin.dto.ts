@@ -5,9 +5,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   Matches,
   MaxLength,
@@ -81,14 +79,6 @@ export class CreateAdminDto {
   adminStatus?: string;
 
   @ApiPropertyOptional({
-    description: 'Admin profile picture URL',
-    example: 'https://example.com/profile.jpg',
-  })
-  @IsString()
-  @IsOptional()
-  profilPicture?: string;
-
-  @ApiPropertyOptional({
     description: 'Admin mail status',
     example: true,
   })
@@ -96,42 +86,11 @@ export class CreateAdminDto {
   @IsOptional()
   @Type(() => Boolean)
   mailStatus?: boolean;
-
   @ApiPropertyOptional({
-    description: 'Admin SIRET number (France)',
-    example: 12345678900010,
+    description: 'Admin profile picture URL',
+    example: 'https://example.com/profile.jpg',
   })
-  @IsNumber()
-  @IsOptional()
-  @IsPositive()
-  @Type(() => Number)
-  nbSiret?: number;
-
-  @ApiPropertyOptional({
-    description: 'Game primary color (HEX code)',
-    example: '#FF5733',
-  })
-  @IsString()
-  @IsOptional()
-  gameColor1?: string;
-
-  @ApiPropertyOptional({
-    description: 'Game secondary color (HEX code)',
-    example: '#33FF57',
-  })
-  @IsString()
-  @IsOptional()
-  gameColor2?: string;
-
-  @ApiPropertyOptional({
-    description: 'Game PIN code',
-    example: 1234,
-  })
-  @IsNumber()
-  @IsOptional()
-  @IsPositive()
-  @Type(() => Number)
-  gameCodePin?: number;
   @ApiProperty({ type: 'string', format: 'binary', required: false })
-  file?: any;
+  @IsOptional()
+  profilPicture?: any;
 }

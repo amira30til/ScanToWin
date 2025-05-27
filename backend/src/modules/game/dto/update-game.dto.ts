@@ -12,4 +12,8 @@ export class UpdateGameDto extends PartialType(CreateGameDto) {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
+  @ApiProperty()
+  @IsOptional()
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  pictureUrl?: any;
 }

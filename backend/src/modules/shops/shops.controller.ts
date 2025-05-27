@@ -10,12 +10,16 @@ import {
   HttpStatus,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ShopsService } from './shops.service';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -29,6 +33,7 @@ import {
   ApiResponseInterface,
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('shops')
 @ApiBearerAuth()
@@ -38,6 +43,32 @@ export class ShopsController {
 
   @ApiBearerAuth()
   @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('logo'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Create Shop with optional logo upload',
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', example: 'ZVAAAAAAAAAAAA' },
+        address: { type: 'string', example: '123 Main Street' },
+        city: { type: 'string', example: 'New York' },
+        country: { type: 'string', example: 'USA' },
+        zipCode: { type: 'number', example: 10001 },
+        nbSiret: { type: 'number', example: 12345678900000 },
+        tel: { type: 'string', example: '+1234567890' },
+        gameColor1: { type: 'string', example: '#FF5733' },
+        gameColor2: { type: 'string', example: '#33FFBD' },
+        gameCodePin: { type: 'number', example: 1234 },
+        isGuaranteedWin: { type: 'boolean', example: false },
+        logo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['name'],
+    },
+  })
   @Post(':adminId')
   @ApiOperation({ summary: 'Create a new shop ' })
   @ApiResponse({
@@ -62,8 +93,9 @@ export class ShopsController {
   create(
     @Param('adminId') adminId: string,
     @Body() createShopDto: CreateShopDto,
+    @UploadedFile() logo: Express.Multer.File,
   ) {
-    return this.shopsService.create(adminId, createShopDto);
+    return this.shopsService.create(adminId, createShopDto, logo);
   }
 
   @ApiBearerAuth()
@@ -180,6 +212,8 @@ export class ShopsController {
 
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateShopDto })
   @Patch(':id')
   @ApiOperation({ summary: 'Update a shop by ID (Super Admin only)' })
   @ApiResponse({
@@ -200,8 +234,14 @@ export class ShopsController {
     description: 'ID of the shop to update',
     type: String,
   })
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopsService.update(id, updateShopDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('logo'))
+  update(
+    @Param('id') id: string,
+    @Body() updateShopDto: UpdateShopDto,
+    @UploadedFile() logo: Express.Multer.File,
+  ) {
+    return this.shopsService.update(id, updateShopDto, logo);
   }
 
   @ApiBearerAuth()
@@ -224,19 +264,23 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to update',
-    type: Number,
+    type: String,
   })
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
     type: String,
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('logo'))
+  @ApiBody({ type: UpdateShopDto })
   updateByAdmin(
     @Param('id') id: string,
     @Param('adminId') adminId: string,
     @Body() updateShopDto: UpdateShopDto,
+    @UploadedFile() logo: Express.Multer.File,
   ) {
-    return this.shopsService.updateByAdmin(id, adminId, updateShopDto);
+    return this.shopsService.updateByAdmin(id, adminId, updateShopDto, logo);
   }
 
   @ApiBearerAuth()
