@@ -27,11 +27,11 @@ export class ActiveGameAssignmentController {
     description:
       'Assigns a game as active for a specific shop and deactivates any previously active game for that shop.',
   })
-  @ApiParam({ name: 'shopId', description: 'ID of the shop', type: Number })
+  @ApiParam({ name: 'shopId', description: 'ID of the shop', type: String })
   @ApiParam({
     name: 'gameId',
     description: 'ID of the game to assign',
-    type: Number,
+    type: String,
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -110,7 +110,7 @@ export class ActiveGameAssignmentController {
     description:
       'Retrieves the currently active game assignment for a specific shop.',
   })
-  @ApiParam({ name: 'shopId', description: 'ID of the shop', type: Number })
+  @ApiParam({ name: 'shopId', description: 'ID of the shop', type: String })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Active game found',
