@@ -37,7 +37,7 @@ export class ActiveGameAssignmentService {
   > {
     try {
       const activeGame = await this.activeGameAssignmentRepository.find({
-        relations: ['admin', 'game'],
+        relations: ['admin', 'game','shop'],
       });
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         activeGame,
@@ -54,7 +54,7 @@ export class ActiveGameAssignmentService {
     try {
       const activeGame = await this.activeGameAssignmentRepository.findOne({
         where: { id },
-        relations: ['admin', 'game', 'userGames'],
+        relations: ['admin', 'game', 'userGames', 'shop'],
       });
 
       if (!activeGame) {
@@ -106,7 +106,7 @@ export class ActiveGameAssignmentService {
 
       const activeGame = await this.activeGameAssignmentRepository.find({
         where: { admin: { id: adminId } },
-        relations: ['game', 'userGames'],
+        relations: ['game', 'userGames', 'shop'],
       });
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
@@ -131,7 +131,7 @@ export class ActiveGameAssignmentService {
 
       const activeGames = await this.activeGameAssignmentRepository.find({
         where: { game: { id: gameId } },
-        relations: ['admin', 'userGames'],
+        relations: ['admin', 'userGames', 'shop'],
       });
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
@@ -173,7 +173,6 @@ export class ActiveGameAssignmentService {
       if (activeGame) {
         activeGame.gameId = gameId;
         activeGame.adminId = adminId;
-        activeGame.isActive = true;
 
         const updatedGame =
           await this.activeGameAssignmentRepository.save(activeGame);
@@ -187,7 +186,6 @@ export class ActiveGameAssignmentService {
           shopId,
           gameId,
           adminId,
-          isActive: true,
         });
 
         const savedGame =

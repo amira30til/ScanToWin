@@ -44,6 +44,18 @@ export class GameController {
   ) {
     return this.gameService.create(createGameDto, pictureUrl);
   }
+  @Get('by-status')
+  @ApiOperation({ summary: 'Fetch games by status' })
+  @ApiQuery({ name: 'status', enum: GameStatus, required: true })
+  @ApiResponse({
+    status: 200,
+    description: 'Games fetched successfully',
+    type: [Game],
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async getGamesByStatus(@Query('status') status: GameStatus) {
+    return this.gameService.getGamesByStatus(status);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Get all games' })
@@ -106,17 +118,5 @@ export class GameController {
   @ApiResponse({ status: 404, description: 'Game not found' })
   async deactivate(@Param('id') id: string) {
     return this.gameService.deactivateGame(id);
-  }
-  @Get('by-status')
-  @ApiOperation({ summary: 'Fetch games by status' })
-  @ApiQuery({ name: 'status', enum: GameStatus, required: true })
-  @ApiResponse({
-    status: 200,
-    description: 'Games fetched successfully',
-    type: [Game],
-  })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
-  async getGamesByStatus(@Query('status') status: GameStatus) {
-    return this.gameService.getGamesByStatus(status);
   }
 }
