@@ -15,7 +15,6 @@ export class CreateGameDto {
   @IsString()
   description?: string;
 
-  @ApiProperty()
   @IsOptional()
   @ApiProperty({ type: 'string', format: 'binary', required: false })
   pictureUrl?: any;
