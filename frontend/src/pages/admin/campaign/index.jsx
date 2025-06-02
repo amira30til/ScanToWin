@@ -1,5 +1,4 @@
 // HOOKS
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useCopy } from "@/hooks";
 import useAuthStore from "@/store";
@@ -91,10 +90,6 @@ const GIFTS = [
 
 const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
-
-  useEffect(() => {
-    console.log("shop", shop);
-  }, [shop]);
 
   return (
     <Box pos="relative" w="100%">
