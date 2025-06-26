@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -23,7 +24,23 @@ import { RewardCategory } from '../reward-category/entities/reward-category.enti
 import { Shop } from '../shops/entities/shop.entity';
 import { Reward } from './entities/reward.entity';
 import { RewardStatus } from './enums/reward-status.enums';
+import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 
+interface RewardProbability {
+  reward: Reward;
+  probability: number;
+  remainingCount: number;
+  probabilityRange: { min: number; max: number };
+}
+
+interface RewardSelectionResult {
+  selectedReward: Reward | null;
+  rewardName: string;
+  probabilityUsed: number;
+  remainingRewards: number;
+  totalPlayers: number;
+  wasWon: boolean;
+}
 @Injectable()
 export class RewardService {
   constructor(
@@ -33,6 +50,8 @@ export class RewardService {
     private readonly rewardCategoryRepository: Repository<RewardCategory>,
     @InjectRepository(Shop)
     private readonly shopRepository: Repository<Shop>,
+    @InjectRepository(ActiveGameAssignment)
+    private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
   ) {}
 
   async create(
@@ -42,38 +61,44 @@ export class RewardService {
       const shop = await this.shopRepository.findOne({
         where: { id: dto.shopId },
       });
-
-      if (!shop) {
+      if (!shop)
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
-      }
 
+      // Optional: Validate category existence
       if (dto.categoryId) {
         const category = await this.rewardCategoryRepository.findOne({
           where: { id: dto.categoryId },
         });
-
-        if (!category) {
+        if (!category)
           throw new NotFoundException(
             RewardMessages.CATEGORY_NOT_FOUND(dto.categoryId),
           );
-        }
       }
 
+      // Check for reward name duplication
       const existingReward = await this.rewardRepository.findOne({
         where: { name: dto.name, shop: { id: dto.shopId } },
       });
-
-      if (existingReward) {
+      if (existingReward)
         throw new ConflictException(
           RewardMessages.REWARD_NAME_EXISTS(dto.name),
         );
-      }
 
-      const newReward = this.rewardRepository.create({
-        ...dto,
-      });
-
+      // Create and save reward
+      const newReward = this.rewardRepository.create({ ...dto });
       const savedReward = await this.rewardRepository.save(newReward);
+
+      // Attach reward to the shop's active game assignment
+      const activeGameAssignment =
+        await this.activeGameAssignmentRepository.findOne({
+          where: { shopId: dto.shopId, isActive: true },
+          relations: ['rewards'],
+        });
+
+      if (activeGameAssignment) {
+        activeGameAssignment.rewards.push(savedReward);
+        await this.activeGameAssignmentRepository.save(activeGameAssignment);
+      }
 
       return ApiResponse.success(HttpStatusCodes.CREATED, {
         reward: savedReward,
@@ -83,6 +108,7 @@ export class RewardService {
       return handleServiceError(error);
     }
   }
+
   async findAll(
     page = 1,
     limit = 10,
@@ -293,5 +319,208 @@ export class RewardService {
     } catch (error) {
       return handleServiceError(error);
     }
+  }
+
+  //////////////////////////////////////////////////////////////////
+  async selectRandomReward(
+    shopId: string,
+    totalPlayers: number = 1000,
+  ): Promise<{
+    success: boolean;
+    statusCode: number;
+    data: {
+      reward: any | null;
+      message: string;
+    };
+  }> {
+    try {
+      const activeGameAssignment =
+        await this.activeGameAssignmentRepository.findOne({
+          where: { shopId, isActive: true },
+          relations: ['rewards', 'shop'],
+        });
+
+      if (!activeGameAssignment) {
+        return {
+          success: false,
+          statusCode: 404,
+          data: {
+            reward: null,
+            message: 'No active game found for this shop',
+          },
+        };
+      }
+
+      const rewardProbabilities = this.calculateRewardProbabilities(
+        activeGameAssignment.rewards,
+        totalPlayers,
+      );
+
+      const randomValue = Math.random();
+      const selectedRewardProb = this.selectRewardFromProbabilities(
+        rewardProbabilities,
+        randomValue,
+      );
+
+      if (!selectedRewardProb) {
+        return {
+          success: true,
+          statusCode: 200,
+          data: {
+            reward: null,
+            message: 'No reward won this time',
+          },
+        };
+      }
+
+      if (!selectedRewardProb.reward.isUnlimited) {
+        await this.updateRewardCount(selectedRewardProb.reward.id);
+      }
+
+      // Clean approach: Use spread operator with computed isActive
+      return {
+        success: true,
+        statusCode: 201,
+        data: {
+          reward: {
+            ...selectedRewardProb.reward,
+            isActive: selectedRewardProb.reward.status === RewardStatus.ACTIVE,
+          },
+          message: 'Reward randomly chosen successfully',
+        },
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        statusCode: 500,
+        data: {
+          reward: null,
+          message: 'Error selecting reward',
+        },
+      };
+    }
+  }
+
+  /**
+   * Calculates probability ranges for each reward
+   */
+  private calculateRewardProbabilities(
+    rewards: Reward[],
+    totalPlayers: number,
+  ): RewardProbability[] {
+    const rewardProbabilities: RewardProbability[] = [];
+    let cumulativeProbability = 0;
+
+    // Calculate total limited rewards
+    const limitedRewards = rewards.filter((r) => !r.isUnlimited);
+    const totalLimitedRewards = limitedRewards.reduce(
+      (sum, reward) => sum + reward.nbRewardTowin,
+      0,
+    );
+
+    console.log(`🔢 Total limited rewards available: ${totalLimitedRewards}`);
+
+    for (const reward of rewards) {
+      let probability: number;
+      let remainingCount: number;
+
+      if (reward.isUnlimited) {
+        // For unlimited rewards: (totalPlayers - totalLimitedRewards) / totalPlayers
+        remainingCount = totalPlayers - totalLimitedRewards;
+        probability = remainingCount / totalPlayers;
+        console.log(
+          `♾️  Unlimited reward "${reward.name}": calculated virtual count = ${remainingCount}`,
+        );
+      } else {
+        // For limited rewards: nbRewardTowin / totalPlayers
+        remainingCount = reward.nbRewardTowin;
+        probability = remainingCount / totalPlayers;
+        console.log(
+          `🎯 Limited reward "${reward.name}": ${remainingCount} remaining`,
+        );
+      }
+
+      const probabilityRange = {
+        min: cumulativeProbability,
+        max: cumulativeProbability + probability,
+      };
+
+      rewardProbabilities.push({
+        reward,
+        probability,
+        remainingCount,
+        probabilityRange,
+      });
+
+      cumulativeProbability += probability;
+    }
+
+    return rewardProbabilities;
+  }
+
+  /**
+   * Selects reward based on random value and probability ranges
+   */
+  private selectRewardFromProbabilities(
+    rewardProbabilities: RewardProbability[],
+    randomValue: number,
+  ): RewardProbability | null {
+    for (const rewardProb of rewardProbabilities) {
+      if (
+        randomValue >= rewardProb.probabilityRange.min &&
+        randomValue < rewardProb.probabilityRange.max
+      ) {
+        // Check if reward is still available (for limited rewards)
+        if (!rewardProb.reward.isUnlimited && rewardProb.remainingCount <= 0) {
+          console.log(`⚠️  Reward "${rewardProb.reward.name}" is out of stock`);
+          continue;
+        }
+
+        return rewardProb;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Updates the reward count after a win
+   */
+  private async updateRewardCount(rewardId: string): Promise<void> {
+    await this.rewardRepository.decrement({ id: rewardId }, 'nbRewardTowin', 1);
+
+    // Update winner count for dashboard
+    await this.rewardRepository.increment({ id: rewardId }, 'winnerCount', 1);
+  }
+
+  /**
+   * Gets current reward status for a shop
+   */
+  async getRewardStatus(shopId: string): Promise<any> {
+    const activeGameAssignment =
+      await this.activeGameAssignmentRepository.findOne({
+        where: {
+          shopId: shopId,
+          isActive: true,
+        },
+        relations: ['rewards'],
+      });
+
+    if (!activeGameAssignment) {
+      throw new NotFoundException(`No active game found for shop: ${shopId}`);
+    }
+
+    return {
+      shopId,
+      gameAssignmentId: activeGameAssignment.id,
+      rewards: activeGameAssignment.rewards.map((reward) => ({
+        id: reward.id,
+        name: reward.name,
+        isUnlimited: reward.isUnlimited,
+        remainingCount: reward.nbRewardTowin,
+        winnersCount: reward.winnerCount,
+        status: reward.status,
+      })),
+    };
   }
 }
