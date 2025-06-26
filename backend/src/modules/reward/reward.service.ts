@@ -351,6 +351,35 @@ export class RewardService {
         };
       }
 
+      const shop = activeGameAssignment.shop;
+
+      // NEW LOGIC: Check if shop has guaranteed win or percentage-based win
+      if (!shop.isGuaranteedWin) {
+        // Percentage-based win/lose logic
+        const randomValue = Math.random() * 100; // 0-100%
+        const winningChance = shop.winningPercentage || 50; // Default 50%
+
+        console.log(
+          `🎲 Random value: ${randomValue}%, Winning chance: ${winningChance}%`,
+        );
+
+        if (randomValue > winningChance) {
+          // Player loses - no reward given
+          return {
+            success: true,
+            statusCode: 200,
+            data: {
+              reward: null,
+              message: `Better luck next time! You had a ${winningChance}% chance to win.`,
+            },
+          };
+        }
+
+        // Player wins - continue with reward selection
+        console.log(`🎉 Player wins! Selecting reward...`);
+      }
+
+      // Original reward selection logic (for guaranteed wins or when player wins in percentage mode)
       const rewardProbabilities = this.calculateRewardProbabilities(
         activeGameAssignment.rewards,
         totalPlayers,
@@ -377,7 +406,6 @@ export class RewardService {
         await this.updateRewardCount(selectedRewardProb.reward.id);
       }
 
-      // Clean approach: Use spread operator with computed isActive
       return {
         success: true,
         statusCode: 201,
@@ -386,7 +414,9 @@ export class RewardService {
             ...selectedRewardProb.reward,
             isActive: selectedRewardProb.reward.status === RewardStatus.ACTIVE,
           },
-          message: 'Reward randomly chosen successfully',
+          message: shop.isGuaranteedWin
+            ? 'Reward randomly chosen successfully'
+            : `Congratulations! You won with ${shop.winningPercentage}% chance!`,
         },
       };
     } catch (error) {
@@ -503,7 +533,7 @@ export class RewardService {
           shopId: shopId,
           isActive: true,
         },
-        relations: ['rewards'],
+        relations: ['rewards', 'shop'], // Added 'shop' to get shop details
       });
 
     if (!activeGameAssignment) {
@@ -513,6 +543,8 @@ export class RewardService {
     return {
       shopId,
       gameAssignmentId: activeGameAssignment.id,
+      isGuaranteedWin: activeGameAssignment.shop.isGuaranteedWin,
+      winningPercentage: activeGameAssignment.shop.winningPercentage,
       rewards: activeGameAssignment.rewards.map((reward) => ({
         id: reward.id,
         name: reward.name,
