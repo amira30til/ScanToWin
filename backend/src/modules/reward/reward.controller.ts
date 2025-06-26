@@ -33,8 +33,8 @@ import { Reward } from './entities/reward.entity';
 @Controller('reward')
 export class RewardController {
   constructor(private readonly rewardService: RewardService) {}
-  @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+  //@ApiBearerAuth()
+  //@UseGuards(AdminGuard)
   @Post()
   @ApiOperation({
     summary: 'Create a new reward',
@@ -257,5 +257,37 @@ export class RewardController {
     @Query('limit') limit = 10,
   ) {
     return this.rewardService.findByStatus(status, page, limit);
+  }
+  @Post('shops/:shopId/simulate-rewards')
+  @ApiOperation({ summary: 'Select a random reward for a shop' })
+  @ApiParam({ name: 'shopId', description: 'Shop ID' })
+  @ApiQuery({
+    name: 'totalPlayers',
+    required: false,
+    description: 'Total number of players (default: 1000)',
+  })
+  async simulateRewards(
+    @Param('shopId') shopId: string,
+    @Query('totalPlayers') totalPlayers?: string,
+  ) {
+    const players = totalPlayers ? parseInt(totalPlayers) : 1000;
+
+    try {
+      const result = await this.rewardService.selectRandomReward(
+        shopId,
+        players,
+      );
+
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        statusCode: 500,
+        data: {
+          reward: null,
+          message: error.message,
+        },
+      };
+    }
   }
 }

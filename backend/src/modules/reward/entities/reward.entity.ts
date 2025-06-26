@@ -24,7 +24,7 @@ export class Reward {
   icon: string;
   @ApiProperty()
   @Column({ nullable: true })
-  winnerCount: number;
+  winnerCount: number; //for dashboard
   @ApiProperty()
   @Column({ nullable: true })
   isUnlimited: boolean;
@@ -59,4 +59,8 @@ export class Reward {
 
   @Column({ nullable: true })
   shopId: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  nbRewardTowin: number;
 }
