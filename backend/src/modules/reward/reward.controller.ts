@@ -258,7 +258,7 @@ export class RewardController {
   ) {
     return this.rewardService.findByStatus(status, page, limit);
   }
-  @Post('shops/:shopId/simulate-rewards')
+  @Post('shops/:shopId/random-rewards')
   @ApiOperation({ summary: 'Select a random reward for a shop' })
   @ApiParam({ name: 'shopId', description: 'Shop ID' })
   @ApiQuery({
