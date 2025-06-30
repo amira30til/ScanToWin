@@ -42,4 +42,19 @@ export class CreateUserDto {
   @ApiProperty({ default: false })
   @IsOptional()
   agreeToPromotions: boolean;
+  @ApiProperty({
+    description: 'Shop ID',
+    example: 'shop-uuid-here',
+  })
+  @IsString()
+  @IsNotEmpty()
+  shopId: string;
+
+  @ApiProperty({
+    description: 'Reward ID',
+    example: 'reward-uuid-here',
+  })
+  @IsString()
+  @IsNotEmpty()
+  rewardId: string;
 }

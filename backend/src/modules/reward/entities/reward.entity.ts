@@ -23,10 +23,10 @@ export class Reward {
   @Column({ nullable: true })
   icon: string;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 0 })
   winnerCount: number; //for dashboard
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   isUnlimited: boolean;
   @ApiProperty()
   @Column({ nullable: true, default: RewardStatus.ACTIVE })

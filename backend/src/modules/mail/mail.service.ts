@@ -52,9 +52,10 @@ export class MailService {
     giftType: string,
     shopName: string,
     receiverEmail: string,
-    validFromDate: string, 
+    validFromDate: string,
     validUntilDate: string,
     emailCode?: string,
+    rewardId?: string, // Add reward ID parameter
   ) {
     const credential2 = await defaultProvider();
     const ses = new aws3.SES({
@@ -75,84 +76,91 @@ export class MailService {
     });
 
     const emailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
-        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          
-          <h1 style="color: #2c5aa0; text-align: center; margin-bottom: 30px; font-size: 28px;">
-            🎉 Get your reward! 🎉
-          </h1>
-          
-          <h2 style="color: #333; text-align: center; margin-bottom: 20px; font-size: 24px;">
-            Congratulations ${winnerName}!
-          </h2>
-          
-          <div style="background-color: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-            <p style="font-size: 18px; color: #333; margin: 10px 0;">
-              You just won a <strong style="color: #2c5aa0;">${giftType}</strong>
-            </p>
-            <p style="font-size: 16px; color: #666; margin: 10px 0;">
-              at <strong>${shopName}</strong>
-            </p>
-          </div>
-          
-          <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 20px 0;">
-            To redeem this gift, click the button below and present the page displayed on your screen at the counter the next time you come.
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        
+        <h1 style="color: #2c5aa0; text-align: center; margin-bottom: 30px; font-size: 28px;">
+          🎉 Get your reward! 🎉
+        </h1>
+        
+        <h2 style="color: #333; text-align: center; margin-bottom: 20px; font-size: 24px;">
+          Congratulations ${winnerName}!
+        </h2>
+        
+        <div style="background-color: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <p style="font-size: 18px; color: #333; margin: 10px 0;">
+            You just won a <strong style="color: #2c5aa0;">${giftType}</strong>
           </p>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background-color: #2c5aa0; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block;">
-              🎁 Your gift here
-            </a>
-          </div>
-          
-          <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p style="color: #856404; font-size: 16px; margin: 5px 0;">
-              📅 You can pick up your gift on your next visit to us between <strong>${validFromDate}</strong> and <strong>${validUntilDate}</strong>.
-            </p>
-          </div>
-          
-          <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 15px 0;">
-            In the meantime, we'll keep an eye on it!
+          <p style="font-size: 16px; color: #666; margin: 10px 0;">
+            at <strong>${shopName}</strong>
           </p>
-          
-          <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p style="color: #721c24; font-size: 14px; margin: 5px 0;">
-              ⚠️ Be careful that after this date your gift will no longer be available.
-            </p>
-            <p style="color: #721c24; font-size: 14px; margin: 5px 0;">
-              It would be a waste to let it slip away for someone else.
-            </p>
-          </div>
-          
           ${
-            emailCode
+            rewardId
               ? `
-          <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; text-align: center;">
-            <p style="color: #333; font-size: 14px; margin: 5px 0;">Redemption Code:</p>
-            <p style="color: #2c5aa0; font-size: 18px; font-weight: bold; margin: 5px 0; letter-spacing: 2px;">${emailCode}</p>
-          </div>
+          <p style="font-size: 14px; color: #888; margin: 10px 0;">
+            Reward ID: <strong>${rewardId}</strong>
+          </p>
           `
               : ''
           }
-          
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
-            <p style="color: #666; font-size: 16px; margin: 10px 0;">
-              See you soon and don't hesitate to play again next time!
-            </p>
-            <p style="color: #666; font-size: 16px; margin: 10px 0;">
-              Who knows? You may be even luckier... 🍀
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-            <p style="color: #999; font-size: 12px; margin: 5px 0;">
-              This email was sent from ${shopName}
-            </p>
-          </div>
-          
         </div>
+        
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+          To redeem this gift, click the button below and present the page displayed on your screen at the counter the next time you come.
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="#" style="background-color: #2c5aa0; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block;">
+            🎁 Your gift here
+          </a>
+        </div>
+        
+        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="color: #856404; font-size: 16px; margin: 5px 0;">
+            📅 You can pick up your gift on your next visit to us between <strong>${validFromDate}</strong> and <strong>${validUntilDate}</strong>.
+          </p>
+        </div>
+        
+        <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 15px 0;">
+          In the meantime, we'll keep an eye on it!
+        </p>
+        
+        <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="color: #721c24; font-size: 14px; margin: 5px 0;">
+            ⚠️ Be careful that after this date your gift will no longer be available.
+          </p>
+          <p style="color: #721c24; font-size: 14px; margin: 5px 0;">
+            It would be a waste to let it slip away for someone else.
+          </p>
+        </div>
+         
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+          <p style="color: #666; font-size: 16px; margin: 10px 0;">
+            See you soon and don't hesitate to play again next time!
+          </p>
+          <p style="color: #666; font-size: 16px; margin: 10px 0;">
+            Who knows? You may be even luckier... 🍀
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 12px; margin: 5px 0;">
+            This email was sent from ${shopName}
+          </p>
+          ${
+            rewardId
+              ? `
+          <p style="color: #999; font-size: 10px; margin: 5px 0;">
+            Reference: ${rewardId}
+          </p>
+          `
+              : ''
+          }
+        </div>
+        
       </div>
-    `;
+    </div>
+  `;
 
     try {
       await transport.sendMail({
@@ -169,6 +177,7 @@ export class MailService {
         shopName,
         validFromDate,
         validUntilDate,
+        rewardId,
       });
 
       return { success: true, message: 'Gift email sent successfully' };

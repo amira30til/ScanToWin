@@ -7,6 +7,8 @@ export const UserMessages = {
   EMAIL_USER_NOT_FOUND: (email: string) => `User with Email ${email} not found`,
   PHONE_USER_NOT_FOUND: (tel: number) => `User with tel ${tel} not found`,
   CANNOT_REPORT_ADMIN: 'Forbidden: cannot report admin',
+  USER_UPDATED: 'User udated successfully.',
+  USER_DELETED: 'User deleted successfully.',
 };
 
 export const CategoryMessages = {
@@ -134,4 +136,10 @@ export const RewardMessages = {
   REWARD_NAME_EXISTS: (name: string) =>
     `Reward with name '${name}' already exists for this shop`,
   SHOP_NOT_FOUND: (id: string) => `Shop with ID '${id}' not found`,
+  GUARANTEED_WIN_REQUIRES_UNLIMITED:
+    "Pour un jeu 100% gagnant, vous devez définir un gain illimité. Sinon, décochez l'option 100% gagnant pour inclure une case 'Perdu' dans le jeu.",
+  CANNOT_REMOVE_LAST_UNLIMITED:
+    "Vous ne pouvez pas modifier ce gain en limité car c'est le seul gain illimité. Soit ajoutez un autre gain illimité, soit désactivez le mode 100% gagnant.",
+  SHOP_NEEDS_UNLIMITED_FOR_GUARANTEED:
+    "Pour activer le mode 100% gagnant, vous devez d'abord créer au moins un gain illimité.",
 };
