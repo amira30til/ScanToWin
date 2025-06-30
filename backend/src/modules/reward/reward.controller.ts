@@ -258,4 +258,36 @@ export class RewardController {
   ) {
     return this.rewardService.findByStatus(status, page, limit);
   }
+  @Post('shops/:shopId/random-rewards')
+  @ApiOperation({ summary: 'Select a random reward for a shop' })
+  @ApiParam({ name: 'shopId', description: 'Shop ID' })
+  @ApiQuery({
+    name: 'totalPlayers',
+    required: false,
+    description: 'Total number of players (default: 1000)',
+  })
+  async simulateRewards(
+    @Param('shopId') shopId: string,
+    @Query('totalPlayers') totalPlayers?: string,
+  ) {
+    const players = totalPlayers ? parseInt(totalPlayers) : 1000;
+
+    try {
+      const result = await this.rewardService.selectRandomReward(
+        shopId,
+        players,
+      );
+
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        statusCode: 500,
+        data: {
+          reward: null,
+          message: error.message,
+        },
+      };
+    }
+  }
 }

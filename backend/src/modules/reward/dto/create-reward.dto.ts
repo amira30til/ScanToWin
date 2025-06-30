@@ -28,6 +28,13 @@ export class CreateRewardDto {
   })
   @IsOptional()
   winnerCount?: number;
+  @ApiProperty({
+    description: 'Number of winners for this rewardaaaaa',
+    example: 5,
+    required: false,
+  })
+  @IsOptional()
+  nbRewardTowin?: number;
 
   @ApiProperty({
     description: 'Whether the reward has unlimited winners',

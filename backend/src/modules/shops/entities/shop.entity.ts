@@ -99,4 +99,15 @@ export class Shop {
   activeGameAssignments: ActiveGameAssignment[];
   @OneToMany(() => Reward, (reward) => reward.shop)
   rewards: Reward[];
+  @ApiProperty({
+    description: 'Winning percentage (0-100) when isGuaranteedWin is false',
+  })
+  @Column({
+    nullable: true,
+    default: 50,
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+  })
+  winningPercentage: number;
 }
