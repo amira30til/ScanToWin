@@ -33,8 +33,8 @@ import { Reward } from './entities/reward.entity';
 @Controller('reward')
 export class RewardController {
   constructor(private readonly rewardService: RewardService) {}
-  //@ApiBearerAuth()
-  //@UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Post()
   @ApiOperation({
     summary: 'Create a new reward',

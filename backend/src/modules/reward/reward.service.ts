@@ -19,7 +19,7 @@ import {
 } from 'src/common/interfaces/response.interface';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { RewardCategory } from '../reward-category/entities/reward-category.entity';
 import { Shop } from '../shops/entities/shop.entity';
 import { Reward } from './entities/reward.entity';
@@ -33,14 +33,7 @@ interface RewardProbability {
   probabilityRange: { min: number; max: number };
 }
 
-interface RewardSelectionResult {
-  selectedReward: Reward | null;
-  rewardName: string;
-  probabilityUsed: number;
-  remainingRewards: number;
-  totalPlayers: number;
-  wasWon: boolean;
-}
+
 @Injectable()
 export class RewardService {
   constructor(
@@ -53,56 +46,170 @@ export class RewardService {
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
   ) {}
-
   async create(
     dto: CreateRewardDto,
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     try {
+      // Load shop with active game assignments
       const shop = await this.shopRepository.findOne({
         where: { id: dto.shopId },
+        relations: ['activeGameAssignments'],
       });
-      if (!shop)
+
+      if (!shop) {
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
+      }
+
+      // Validate reward configuration based on shop's guaranteed win setting
+      await this.validateRewardConfiguration(shop, dto.isUnlimited ?? false);
 
       // Optional: Validate category existence
       if (dto.categoryId) {
         const category = await this.rewardCategoryRepository.findOne({
           where: { id: dto.categoryId },
         });
-        if (!category)
+        if (!category) {
           throw new NotFoundException(
             RewardMessages.CATEGORY_NOT_FOUND(dto.categoryId),
           );
+        }
       }
 
       // Check for reward name duplication
       const existingReward = await this.rewardRepository.findOne({
         where: { name: dto.name, shop: { id: dto.shopId } },
       });
-      if (existingReward)
+      if (existingReward) {
         throw new ConflictException(
           RewardMessages.REWARD_NAME_EXISTS(dto.name),
         );
+      }
 
       // Create and save reward
       const newReward = this.rewardRepository.create({ ...dto });
       const savedReward = await this.rewardRepository.save(newReward);
 
-      // Attach reward to the shop's active game assignment
-      const activeGameAssignment =
-        await this.activeGameAssignmentRepository.findOne({
-          where: { shopId: dto.shopId, isActive: true },
-          relations: ['rewards'],
-        });
+      // Attach reward to the shop's active game assignment if it exists
+      if (shop.activeGameAssignments && shop.activeGameAssignments.length > 0) {
+        // Load the active assignment with its rewards relation
+        const activeAssignment =
+          await this.activeGameAssignmentRepository.findOne({
+            where: { id: shop.activeGameAssignments[0].id },
+            relations: ['rewards'],
+          });
 
-      if (activeGameAssignment) {
-        activeGameAssignment.rewards.push(savedReward);
-        await this.activeGameAssignmentRepository.save(activeGameAssignment);
+        if (activeAssignment) {
+          // Initialize rewards array if it's undefined
+          if (!activeAssignment.rewards) {
+            activeAssignment.rewards = [];
+          }
+
+          activeAssignment.rewards.push(savedReward);
+          await this.activeGameAssignmentRepository.save(activeAssignment);
+        }
       }
 
       return ApiResponse.success(HttpStatusCodes.CREATED, {
         reward: savedReward,
         message: RewardMessages.REWARD_CREATED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  private async validateRewardConfiguration(
+    shop: Shop,
+    isUnlimited: boolean,
+  ): Promise<void> {
+    if (shop.isGuaranteedWin && !isUnlimited) {
+      // For guaranteed wins, check if there's already an unlimited reward
+      const hasUnlimitedReward = await this.rewardRepository.findOne({
+        where: {
+          shop: { id: shop.id },
+          isUnlimited: true,
+        },
+      });
+
+      if (!hasUnlimitedReward) {
+        throw new ConflictException(
+          RewardMessages.GUARANTEED_WIN_REQUIRES_UNLIMITED,
+        );
+      }
+    }
+  }
+
+  async update(
+    id: string,
+    shopId: string,
+    dto: UpdateRewardDto,
+  ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
+    try {
+      const reward = await this.rewardRepository.findOne({
+        where: { id, shop: { id: shopId } },
+        relations: ['shop', 'shop.activeGameAssignment'],
+      });
+
+      if (!reward) {
+        throw new NotFoundException(
+          `Reward with ID '${id}' not found for this shop`,
+        );
+      }
+
+      const shop = reward.shop;
+
+      if (
+        shop.isGuaranteedWin &&
+        dto.isUnlimited === false &&
+        reward.isUnlimited === true
+      ) {
+        const otherUnlimitedRewards = await this.rewardRepository.count({
+          where: {
+            shop: { id: shopId },
+            isUnlimited: true,
+            id: Not(id),
+          },
+        });
+
+        if (otherUnlimitedRewards === 0) {
+          throw new ConflictException(
+            RewardMessages.CANNOT_REMOVE_LAST_UNLIMITED,
+          );
+        }
+      }
+
+      if (dto.categoryId) {
+        const category = await this.rewardCategoryRepository.findOne({
+          where: { id: dto.categoryId },
+        });
+        if (!category) {
+          throw new NotFoundException(
+            RewardMessages.CATEGORY_NOT_FOUND(dto.categoryId),
+          );
+        }
+      }
+
+      if (dto.name && dto.name !== reward.name) {
+        const existingReward = await this.rewardRepository.findOne({
+          where: { name: dto.name, shop: { id: shopId } },
+        });
+        if (existingReward) {
+          throw new ConflictException(
+            RewardMessages.REWARD_NAME_EXISTS(dto.name),
+          );
+        }
+      }
+
+      await this.rewardRepository.update(id, dto);
+
+      const updatedReward = await this.rewardRepository.findOne({
+        where: { id },
+        relations: ['category', 'shop'],
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        reward: updatedReward,
+        message: RewardMessages.REWARD_UPDATED,
       });
     } catch (error) {
       return handleServiceError(error);
@@ -215,62 +322,6 @@ export class RewardService {
     }
   }
 
-  async update(
-    id: string,
-    shopId: string,
-    dto: UpdateRewardDto,
-  ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
-    try {
-      const reward = await this.rewardRepository.findOne({
-        where: { id, shop: { id: shopId } },
-        relations: ['shop'],
-      });
-
-      console.log('reward', reward);
-
-      if (!reward) {
-        throw new NotFoundException(
-          `Reward with ID '${id}' not found for this shop`,
-        );
-      }
-
-      if (dto.categoryId) {
-        const category = await this.rewardCategoryRepository.findOne({
-          where: { id: dto.categoryId },
-        });
-        if (!category) {
-          throw new NotFoundException(
-            RewardMessages.CATEGORY_NOT_FOUND(dto.categoryId),
-          );
-        }
-      }
-
-      if (dto.name && dto.name !== reward.name) {
-        const existingReward = await this.rewardRepository.findOne({
-          where: { name: dto.name, shop: { id: shopId } },
-        });
-        if (existingReward) {
-          throw new ConflictException(
-            RewardMessages.REWARD_NAME_EXISTS(dto.name),
-          );
-        }
-      }
-
-      await this.rewardRepository.update(id, dto);
-
-      const updatedReward = await this.rewardRepository.findOne({
-        where: { id },
-        relations: ['category', 'shop'],
-      });
-
-      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        reward: updatedReward,
-        message: RewardMessages.REWARD_UPDATED,
-      });
-    } catch (error) {
-      return handleServiceError(error);
-    }
-  }
   async remove(
     id: string,
     shopId: string,
@@ -353,18 +404,16 @@ export class RewardService {
 
       const shop = activeGameAssignment.shop;
 
-      // NEW LOGIC: Check if shop has guaranteed win or percentage-based win
+      // Check if shop has guaranteed win or percentage-based win
       if (!shop.isGuaranteedWin) {
-        // Percentage-based win/lose logic
-        const randomValue = Math.random() * 100; // 0-100%
-        const winningChance = shop.winningPercentage || 50; // Default 50%
+        const randomValue = Math.random() * 100;
+        const winningChance = shop.winningPercentage || 50; // Default 50% win or losing
 
         console.log(
           `🎲 Random value: ${randomValue}%, Winning chance: ${winningChance}%`,
         );
 
         if (randomValue > winningChance) {
-          // Player loses - no reward given
           return {
             success: true,
             statusCode: 200,
@@ -375,17 +424,29 @@ export class RewardService {
           };
         }
 
-        // Player wins - continue with reward selection
         console.log(`🎉 Player wins! Selecting reward...`);
       }
 
-      // Original reward selection logic (for guaranteed wins or when player wins in percentage mode)
+      // Get all rewards and calculate their probabilities based on initial counts
       const rewardProbabilities = this.calculateRewardProbabilities(
         activeGameAssignment.rewards,
         totalPlayers,
       );
 
+      // debg
+      console.log('📊 Initial reward probabilities:');
+      rewardProbabilities.forEach((rp) => {
+        console.log(
+          `- ${rp.reward.name}: ${(rp.probability * 100).toFixed(2)}% chance ` +
+            `(Range: ${rp.probabilityRange.min.toFixed(4)}-${rp.probabilityRange.max.toFixed(4)})`,
+        );
+      });
+
       const randomValue = Math.random();
+      console.log(
+        `🔢 Generated random value for reward selection: ${randomValue}`,
+      );
+
       const selectedRewardProb = this.selectRewardFromProbabilities(
         rewardProbabilities,
         randomValue,
@@ -402,17 +463,44 @@ export class RewardService {
         };
       }
 
-      if (!selectedRewardProb.reward.isUnlimited) {
-        await this.updateRewardCount(selectedRewardProb.reward.id);
+      // Increment winner count for ALL rewards (both limited and unlimited)
+      const updatedReward = await this.rewardRepository.findOne({
+        where: { id: selectedRewardProb.reward.id },
+      });
+
+      if (!updatedReward) {
+        throw new Error('Selected reward not found');
       }
+
+      // Initialize winnerCount
+      const currentWinnerCount = updatedReward.winnerCount || 0;
+
+      // Increment the winner count
+      await this.rewardRepository.update(
+        { id: selectedRewardProb.reward.id },
+        { winnerCount: currentWinnerCount + 1 },
+      );
+
+      // Get the updated reward with the new winner count
+      const finalReward = await this.rewardRepository.findOne({
+        where: { id: selectedRewardProb.reward.id },
+      });
+
+      if (!finalReward) {
+        throw new Error('Updated reward not found after increment');
+      }
+
+      console.log(
+        `🏆 Winner count incremented for "${finalReward.name}": ${finalReward.winnerCount}`,
+      );
 
       return {
         success: true,
         statusCode: 201,
         data: {
           reward: {
-            ...selectedRewardProb.reward,
-            isActive: selectedRewardProb.reward.status === RewardStatus.ACTIVE,
+            ...finalReward,
+            isActive: finalReward.status === RewardStatus.ACTIVE,
           },
           message: shop.isGuaranteedWin
             ? 'Reward randomly chosen successfully'
@@ -420,7 +508,7 @@ export class RewardService {
         },
       };
     } catch (error) {
-      console.error(error);
+      console.error('Error in selectRandomReward:', error);
       return {
         success: false,
         statusCode: 500,
@@ -432,9 +520,6 @@ export class RewardService {
     }
   }
 
-  /**
-   * Calculates probability ranges for each reward
-   */
   private calculateRewardProbabilities(
     rewards: Reward[],
     totalPlayers: number,
@@ -449,7 +534,9 @@ export class RewardService {
       0,
     );
 
-    console.log(`🔢 Total limited rewards available: ${totalLimitedRewards}`);
+    console.log(
+      `🔢 Total limited rewards initially available: ${totalLimitedRewards}`,
+    );
 
     for (const reward of rewards) {
       let probability: number;
@@ -460,14 +547,14 @@ export class RewardService {
         remainingCount = totalPlayers - totalLimitedRewards;
         probability = remainingCount / totalPlayers;
         console.log(
-          `♾️  Unlimited reward "${reward.name}": calculated virtual count = ${remainingCount}`,
+          `♾️  Unlimited reward "${reward.name}": calculated virtual count = ${remainingCount} (${(probability * 100).toFixed(2)}% chance)`,
         );
       } else {
-        // For limited rewards: nbRewardTowin / totalPlayers
+        // For limited rewards: nbRewardTowin / totalPlayers (using initial count)
         remainingCount = reward.nbRewardTowin;
         probability = remainingCount / totalPlayers;
         console.log(
-          `🎯 Limited reward "${reward.name}": ${remainingCount} remaining`,
+          `🎯 Limited reward "${reward.name}": ${remainingCount} initially available (${(probability * 100).toFixed(2)}% chance)`,
         );
       }
 
@@ -486,46 +573,38 @@ export class RewardService {
       cumulativeProbability += probability;
     }
 
+    // Verify total probability is 1 (100%)
+    console.log(`✅ Total probability: ${cumulativeProbability}`);
+
     return rewardProbabilities;
   }
 
-  /**
-   * Selects reward based on random value and probability ranges
-   */
   private selectRewardFromProbabilities(
     rewardProbabilities: RewardProbability[],
     randomValue: number,
   ): RewardProbability | null {
+    console.log(`🔍 Selecting reward for random value: ${randomValue}`);
+
     for (const rewardProb of rewardProbabilities) {
+      console.log(
+        `- Checking ${rewardProb.reward.name} (range: ${rewardProb.probabilityRange.min.toFixed(4)}-${rewardProb.probabilityRange.max.toFixed(4)})`,
+      );
+
       if (
         randomValue >= rewardProb.probabilityRange.min &&
         randomValue < rewardProb.probabilityRange.max
       ) {
-        // Check if reward is still available (for limited rewards)
-        if (!rewardProb.reward.isUnlimited && rewardProb.remainingCount <= 0) {
-          console.log(`⚠️  Reward "${rewardProb.reward.name}" is out of stock`);
-          continue;
-        }
-
+        console.log(`🎉 Selected reward: ${rewardProb.reward.name}`);
         return rewardProb;
       }
     }
+
+    console.log(
+      '⚠️ No reward selected - this should not happen if probabilities are correct',
+    );
     return null;
   }
 
-  /**
-   * Updates the reward count after a win
-   */
-  private async updateRewardCount(rewardId: string): Promise<void> {
-    await this.rewardRepository.decrement({ id: rewardId }, 'nbRewardTowin', 1);
-
-    // Update winner count for dashboard
-    await this.rewardRepository.increment({ id: rewardId }, 'winnerCount', 1);
-  }
-
-  /**
-   * Gets current reward status for a shop
-   */
   async getRewardStatus(shopId: string): Promise<any> {
     const activeGameAssignment =
       await this.activeGameAssignmentRepository.findOne({
@@ -533,7 +612,7 @@ export class RewardService {
           shopId: shopId,
           isActive: true,
         },
-        relations: ['rewards', 'shop'], // Added 'shop' to get shop details
+        relations: ['rewards', 'shop'],
       });
 
     if (!activeGameAssignment) {
@@ -549,7 +628,7 @@ export class RewardService {
         id: reward.id,
         name: reward.name,
         isUnlimited: reward.isUnlimited,
-        remainingCount: reward.nbRewardTowin,
+        initialCount: reward.nbRewardTowin,
         winnersCount: reward.winnerCount,
         status: reward.status,
       })),

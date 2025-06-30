@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
 import { Reward } from 'src/modules/reward/entities/reward.entity';
+import { Shop } from 'src/modules/shops/entities/shop.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -57,4 +58,10 @@ export class UserGame {
 
   @Column({ nullable: true })
   rewardId: string;
+  @Column({ nullable: true })
+  shopId: string;
+
+  @ManyToOne(() => Shop)
+  @JoinColumn({ name: 'shopId' })
+  shop: Shop;
 }
