@@ -66,13 +66,14 @@ const CustomizeGame = ({ shop }) => {
   const updateShopMutation = useMutation({
     mutationFn: async (data) =>
       await updateShop(axiosPrivate, shopId, adminId, data),
-    enabled: !!adminId,
     onSuccess: onUpdateShopSuccess,
     onError: onUpdateShopError,
   });
 
   const onSubmit = (values) => {
-    updateShopMutation.mutate(values);
+    if (!!adminId) {
+      updateShopMutation.mutate(values);
+    }
   };
 
   useEffect(() => {
