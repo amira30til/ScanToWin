@@ -67,13 +67,14 @@ const ChooseGame = ({ shop }) => {
         shop?.adminId,
         values,
       ),
-    enabled: !!shop?.id && !!shop?.adminId,
     onSuccess: onSelectGameSuccess,
     onError: onSelectGameError,
   });
 
   const onSubmit = () => {
-    selectGameMutation.mutate({ isActive: true });
+    if (!!shop?.id && !!shop?.adminId) {
+      selectGameMutation.mutate({ isActive: true });
+    }
   };
 
   useEffect(() => {

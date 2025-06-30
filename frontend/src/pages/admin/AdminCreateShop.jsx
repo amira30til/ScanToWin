@@ -55,13 +55,14 @@ const AdminCreateShop = () => {
   const createShopMutation = useMutation({
     mutationFn: async (values) =>
       await createShop(axiosPrivate, adminId, values),
-    enabled: !!adminId,
     onSuccess: onCreateShopSuccess,
     onError: onCreateShopError,
   });
 
   const onSubmit = async (values) => {
-    createShopMutation.mutate(values);
+    if (!!adminId) {
+      createShopMutation.mutate(values);
+    }
   };
 
   return (
