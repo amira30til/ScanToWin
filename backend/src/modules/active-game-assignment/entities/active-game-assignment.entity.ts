@@ -59,7 +59,7 @@ export class ActiveGameAssignment {
   @Column({ nullable: true })
   shopId: string;
   @ApiProperty()
-  @Column({ default: false })
+  @Column({ default: true })
   isActive: boolean;
   @ManyToMany(() => Reward)
   @JoinTable()

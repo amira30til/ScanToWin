@@ -1,26 +1,260 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserMessages } from 'src/common/constants/messages.constants';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
+import { ApiResponse } from 'src/common/utils/response.util';
+import { HttpStatusCodes } from 'src/common/constants/http.constants';
+import { handleServiceError } from 'src/common/utils/error-handler.util';
+import { UserGame } from '../user-game/entities/user-game.entity';
+import { Reward } from '../reward/entities/reward.entity';
+import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserGame)
+    private readonly userGameRepository: Repository<UserGame>,
+    @InjectRepository(Reward)
+    private readonly rewardRepository: Repository<Reward>,
+    @InjectRepository(ActiveGameAssignment)
+    private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
+    private readonly mailService: MailService,
+  ) {}
+
+  async create(
+    dto: CreateUserDto,
+  ): Promise<ApiResponseInterface<User> | ErrorResponseInterface> {
+    try {
+      if (dto.email) {
+        dto.email = dto.email.trim().toLowerCase();
+      }
+
+      const existingUser = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
+
+      if (!dto.shopId || !dto.rewardId) {
+        throw new BadRequestException('Shop ID and Reward ID are required');
+      }
+
+      const reward = await this.rewardRepository.findOne({
+        where: { id: dto.rewardId },
+        relations: ['shop'],
+      });
+
+      if (!reward) {
+        throw new NotFoundException('Reward not found');
+      }
+
+      const activeGameAssignment =
+        await this.activeGameAssignmentRepository.findOne({
+          where: {
+            shopId: dto.shopId,
+            isActive: true,
+          },
+          relations: ['game'],
+        });
+
+      if (!activeGameAssignment) {
+        throw new BadRequestException('No active game found for this shop');
+      }
+
+      const currentTime = new Date();
+      let userToNotify: User;
+      let isNewUser = false;
+
+      if (!existingUser) {
+        const newUser = this.userRepository.create({
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
+          tel: dto.tel,
+          agreeToPromotions: dto.agreeToPromotions,
+          totalPlayedGames: 1,
+        });
+
+        const savedUser = await this.userRepository.save(newUser);
+        userToNotify = savedUser;
+        isNewUser = true;
+
+        await this.userGameRepository.save({
+          userId: savedUser.id,
+          rewardId: dto.rewardId,
+          activeGameAssignmentId: activeGameAssignment.id,
+          gameId: activeGameAssignment.gameId,
+          shopId: dto.shopId,
+          nbPlayedTimes: 1,
+          playCount: 1,
+          lastPlayedAt: currentTime,
+        });
+      } else {
+        const lastGameAtShop = await this.userGameRepository.findOne({
+          where: {
+            userId: existingUser.id,
+            shopId: dto.shopId,
+          },
+          order: { lastPlayedAt: 'DESC' },
+        });
+
+        if (lastGameAtShop) {
+          const lastPlayedTime = new Date(lastGameAtShop.lastPlayedAt);
+          const timeDifference =
+            currentTime.getTime() - lastPlayedTime.getTime();
+          const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+          console.log(`Last played at shop: ${lastPlayedTime.toISOString()}`);
+
+          if (hoursDifference < 24) {
+            const remainingHours = (24 - hoursDifference).toFixed(1);
+
+            throw new BadRequestException(
+              `You can play again after 24 hours from your last game at this shop. Time remaining: ${remainingHours} hours`,
+            );
+          }
+        }
+
+        const existingUserGame = await this.userGameRepository.findOne({
+          where: {
+            userId: existingUser.id,
+            shopId: dto.shopId,
+            gameId: activeGameAssignment.gameId,
+          },
+        });
+
+        if (existingUserGame) {
+          existingUserGame.nbPlayedTimes += 1;
+          existingUserGame.playCount += 1;
+          existingUserGame.lastPlayedAt = currentTime;
+          existingUserGame.rewardId = dto.rewardId;
+          existingUserGame.activeGameAssignmentId = activeGameAssignment.id;
+          await this.userGameRepository.save(existingUserGame);
+          console.log(`Updated existing game record: ${existingUserGame.id}`);
+        } else {
+          await this.userGameRepository.save({
+            userId: existingUser.id,
+            rewardId: dto.rewardId,
+            activeGameAssignmentId: activeGameAssignment.id,
+            gameId: activeGameAssignment.gameId,
+            shopId: dto.shopId,
+            nbPlayedTimes: 1,
+            playCount: 1,
+            lastPlayedAt: currentTime,
+          });
+        }
+
+        existingUser.totalPlayedGames += 1;
+        userToNotify = await this.userRepository.save(existingUser);
+      }
+
+      try {
+        const validFromDate = new Date().toLocaleDateString();
+        const validUntilDate = new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toLocaleDateString();
+        const emailCode = `REWARD-${dto.rewardId}-${Date.now()
+          .toString()
+          .slice(-6)}`;
+
+        await this.mailService.sendGiftEmail(
+          `${userToNotify.firstName} ${userToNotify.lastName}`,
+          reward.name,
+          reward.shop.name,
+          userToNotify.email,
+          validFromDate,
+          validUntilDate,
+          emailCode,
+        );
+      } catch (emailError) {
+        console.error('Email sending failed');
+      }
+
+      return ApiResponse.success(
+        isNewUser ? HttpStatusCodes.CREATED : HttpStatusCodes.SUCCESS,
+        {
+          user: userToNotify,
+          message: isNewUser
+            ? 'User created successfully and reward email sent'
+            : 'User game record updated successfully and reward email sent',
+        },
+      );
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async findAll(): Promise<
+    ApiResponseInterface<User[]> | ErrorResponseInterface
+  > {
+    try {
+      const users = await this.userRepository.find();
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, { users });
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(
+    id: string,
+  ): Promise<ApiResponseInterface<User> | ErrorResponseInterface> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      }
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, { user });
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async update(
+    id: string,
+    dto: UpdateUserDto,
+  ): Promise<ApiResponseInterface<User> | ErrorResponseInterface> {
+    try {
+      const user = await this.userRepository.preload({ id, ...dto });
+      if (!user) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      }
+      const saved = await this.userRepository.save(user);
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        user: saved,
+        message: UserMessages.USER_UPDATED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(
+    id: string,
+  ): Promise<ApiResponseInterface<null> | ErrorResponseInterface> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      }
+      await this.userRepository.remove(user);
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        message: UserMessages.USER_DELETED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 }

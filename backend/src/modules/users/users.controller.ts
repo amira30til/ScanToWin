@@ -1,15 +1,69 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @ApiOperation({
+    summary:
+      'Create or update a player, register the game play, and e‑mail the reward',
+    description:
+      'Creates a new user if the e‑mail is new, or updates the existing user’s game history. ' +
+      'Enforces a 24‑hour interval between plays and links the play to the active game assignment.',
+  })
+  @ApiBody({ type: CreateUserDto })
+  @ApiCreatedResponse({
+    description: 'User created successfully and reward e‑mail sent.',
+    type: User,
+  })
+  @ApiOkResponse({
+    description: 'Existing user updated and reward e‑mail sent.',
+    type: User,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Validation error (e.g., play attempted within 24 h or no active game for shop).',
+  })
+  @ApiNotFoundResponse({
+    description: 'Reward or other related entity not found.',
+  })
+  @ApiConflictResponse({
+    description: 'Conflict (e.g., duplicate resource).',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Unexpected server error.',
+  })
+  async create(
+    @Body() dto: CreateUserDto,
+  ): Promise<ApiResponseInterface<User> | ErrorResponseInterface> {
+    return this.usersService.create(dto);
   }
 
   @Get()
@@ -19,16 +73,16 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 }
