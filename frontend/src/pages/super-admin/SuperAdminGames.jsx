@@ -67,8 +67,6 @@ const SuperAdminGames = () => {
 
     const response = await createGame(axiosPrivate, formData);
 
-    console.log(response.data.game);
-
     return response.data.game;
   };
 
@@ -93,7 +91,6 @@ const SuperAdminGames = () => {
   };
 
   const createGameMutation = useMutation({
-    // mutationFn: async (data) => await createGame(axiosPrivate, data),
     mutationFn: createGameMutationFn,
     onSuccess: onCreateGameSuccess,
     onError: onCreateGameError,
@@ -247,11 +244,8 @@ const SuperAdminGames = () => {
               </Text>
             </Flex>
           )}
-
-          <Text mt={2} fontSize="sm" color="gray.500">
-            Or enter pictureUrl URL directly:
-          </Text>
           <Input
+            hidden
             mt={1}
             placeholder="https://example.com/pictureUrl.png"
             {...register("pictureUrl")}

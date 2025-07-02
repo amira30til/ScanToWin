@@ -16,10 +16,10 @@ const secondaryColor = "#615EFC";
 
 const FortuneWheel = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [gift, setGift] = useState(null);
+  const [reward, setReward] = useState(null);
 
-  const giftHandler = (gift) => {
-    setGift(gift);
+  const giftHandler = (reward) => {
+    setReward(reward);
     onOpen();
   };
 
@@ -49,11 +49,11 @@ const FortuneWheel = () => {
           </VStack>
 
           <Wheel
-            onGift={giftHandler}
+            onReward={giftHandler}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
           />
-          <FortuneResult gift={gift} isOpen={isOpen} onClose={onClose} />
+          <FortuneResult gift={reward} isOpen={isOpen} onClose={onClose} />
         </VStack>
       </Container>
     </Box>

@@ -17,9 +17,6 @@ import {
   Heading,
   Button,
   Td,
-  FormControl,
-  FormLabel,
-  Switch,
   Link,
   // useToken,
 } from "@chakra-ui/react";
@@ -28,7 +25,6 @@ import {
 import {
   AddIcon,
   DeleteIcon,
-  EditIcon,
   Menu,
   MenuButton,
   MenuList,
@@ -45,6 +41,7 @@ import {
   FaQrcode,
 } from "react-icons/fa";
 import { FaFloppyDisk } from "react-icons/fa6";
+import Rewards from "./rewards";
 
 const ACTIONS = [
   {
@@ -67,27 +64,6 @@ const ACTIONS = [
   },
 ];
 
-const GIFTS = [
-  {
-    icon: AddIcon,
-    name: "Drink",
-    winnerCount: 2,
-    isUnlimited: true,
-  },
-  {
-    icon: AddIcon,
-    name: "Pizza",
-    winnerCount: 0,
-    isUnlimited: false,
-  },
-  {
-    icon: AddIcon,
-    name: "Drink",
-    winnerCount: 2,
-    isUnlimited: true,
-  },
-];
-
 const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
 
@@ -102,7 +78,7 @@ const AdminCampaign = () => {
 
         <CustomizeGame shop={shop} />
 
-        <Gifts />
+        <Rewards />
       </Flex>
     </Box>
   );
@@ -245,91 +221,6 @@ const Actions = () => {
           rows={rows}
           headers={headers}
           data={ACTIONS}
-          bg="surface.navigation"
-        />
-      </Flex>
-    </AdminSection>
-  );
-};
-
-const Gifts = () => {
-  const headers = ["name", "winner count", "is unlimited", "actions"];
-
-  const rows = (gift) => (
-    <>
-      <Td>
-        <Flex align="center" gap={2}>
-          <AddIcon color="primary.500" />
-          <Flex fontWeight="bold">{gift.name}</Flex>
-        </Flex>
-      </Td>
-
-      <Td>{gift.winnerCount}</Td>
-
-      <Td>
-        <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="is-unlimited" mb="0" fontSize="xs">
-            unlimited
-          </FormLabel>
-          <Switch
-            id="is-unlimited"
-            colorScheme="primary"
-            size="sm"
-            // defaultValue={gift.isUnlimited}
-            defaultChecked={gift.isUnlimited}
-            // {...register("isUnlimited")}
-          />
-        </FormControl>
-      </Td>
-      <Td>
-        <Flex>
-          <Flex>
-            <IconButton
-              label="Delete gift"
-              icon={<DeleteIcon />}
-              size="sm"
-              variant="ghost"
-              colorScheme="red"
-              // onClick={() => deleteGiftHandler(gift?.id)}
-            />
-          </Flex>
-          <Flex>
-            <IconButton
-              label="Edit gift"
-              icon={<EditIcon />}
-              size="sm"
-              variant="ghost"
-              colorScheme="orange"
-              // onClick={() => editGiftHandler(gift?.id)}
-            />
-          </Flex>
-        </Flex>
-      </Td>
-    </>
-  );
-
-  return (
-    <AdminSection
-      title="Choose gifts"
-      description="Choose the rewards your customers can win by playing. Customize your prizes to offer a unique and engaging experience."
-    >
-      <Flex direction="column" gap={4}>
-        <Flex>
-          <Button
-            leftIcon={<AddIcon />}
-            variant="solid"
-            colorScheme="secondary"
-            size="sm"
-            // onClick={addGiftHandler}
-          >
-            Add a gift
-          </Button>
-        </Flex>
-
-        <DataTable
-          rows={rows}
-          headers={headers}
-          data={GIFTS}
           bg="surface.navigation"
         />
       </Flex>

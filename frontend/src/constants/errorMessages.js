@@ -8,10 +8,17 @@ export const ERROR_MESSAGES = {
   ADMIN_CREATE_FAILED: "Failed to create admin",
   GAME_CREATE_FAILED: "Failed to create game",
   GAME_ALREADY_EXISTS: "Game with this name already exists",
+  REWARD_CREATE_FAILED: "Failed to create reward",
   NO_SERVER_RESPONSE: "No server response",
 };
 
 export const SUCCESS_MESSAGES = {
   ADMIN_CREATE_SUCCESS: "Admin created successfully",
+  ADMIN_DELETE_SUCCESS: "Admin deleted successfully",
   GAME_CREATE_SUCCESS: "Game created successfully",
+  GAME_UPDATE_SUCCESS: "Game updated successfully",
+  GAME_DELETE_SUCCESS: "Game deleted successfully",
+  REWARD_CREATE_SUCCESS: "Reward created successfully",
+  REWARD_UPDATE_SUCCESS: "Reward updated successfully",
+  REWARD_DELETE_SUCCESS: "Reward deleted successfully",
 };
