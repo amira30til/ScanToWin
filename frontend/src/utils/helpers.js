@@ -15,3 +15,10 @@ export const validateEmail = (email) => {
 export const debounceFieldValue = debounce((name, value, setValue) => {
   setValue(name, value);
 }, 200);
+
+export const pascalToKebab = (str) => {
+  return str
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2") // handle inner caps
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2") // handle acronym-style (e.g. IDCard → ID-Card)
+    .toLowerCase();
+};

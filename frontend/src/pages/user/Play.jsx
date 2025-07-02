@@ -14,7 +14,6 @@ const Play = () => {
   const { data: activeGame } = useQuery({
     queryKey: ["shop-game-assignment", shopId],
     queryFn: async () => {
-      if (!shopId) return null;
       const response = await getShopGameAssignement(shopId);
       return response.data.data.data;
     },

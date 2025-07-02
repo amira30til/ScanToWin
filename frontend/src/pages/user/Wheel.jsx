@@ -1,25 +1,26 @@
 import { VStack } from "@chakra-ui/react";
 import WheelComponent from "./WheelComponent";
 
-const GIFTS = ["Drink", "Pizza", "Dessert", "Sandwich", "Icecream", "Coupon"];
+const REWARDS = ["Drink", "Pizza", "Dessert", "Sandwich", "Icecream", "Coupon"];
 
-const Wheel = ({ onGift, primaryColor, secondaryColor }) => {
-  const COLORS = GIFTS.map((_, index) => {
+const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
+  // TODO: fetch real rewards
+  const COLORS = REWARDS.map((_, index) => {
     const baseColor = index % 2 === 0 ? primaryColor : secondaryColor;
     return lightenHexColor(baseColor, 100);
   });
 
-  const onFinished = (gift) => {
-    onGift(gift);
+  const onFinished = (reward) => {
+    onReward(reward);
   };
 
   return (
     <VStack spacing={8}>
       <div>
         <WheelComponent
-          segments={GIFTS}
+          segments={REWARDS}
           segColors={COLORS}
-          onFinished={(gift) => onFinished(gift)}
+          onFinished={(reward) => onFinished(reward)}
           contrastColor="#000"
           borderColor={primaryColor}
           needleColor={lightenHexColor(secondaryColor, 60)}
