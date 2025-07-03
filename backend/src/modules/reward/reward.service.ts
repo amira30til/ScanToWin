@@ -219,7 +219,7 @@ export class RewardService {
       const skip = (page - 1) * limit;
 
       const queryOptions: any = {
-        relations: [, /*'category'*/ 'shop'],
+        relations: [ /*'category'*/ 'shop'],
         order: { createdAt: 'DESC' },
         skip,
         take: limit,
