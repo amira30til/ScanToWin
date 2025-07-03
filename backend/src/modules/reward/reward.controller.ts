@@ -89,7 +89,7 @@ export class RewardController {
     description: 'Shop or category not found',
   })
   async create(@Body() createRewardDto: CreateRewardDto) {
-    return this.rewardService.create(createRewardDto);
+    return this.rewardService.upsert(createRewardDto);
   }
   @UseGuards(AdminGuard)
   @ApiBearerAuth()

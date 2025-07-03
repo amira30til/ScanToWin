@@ -47,6 +47,8 @@ export class UpdateRewardDto {
   })
   @IsOptional()
   status?: RewardStatus;
+  @IsOptional()
+  id?: string;
 
   // @ApiProperty({
   //   description: 'Category ID for the reward',
