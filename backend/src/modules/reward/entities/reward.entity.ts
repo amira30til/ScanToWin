@@ -42,16 +42,16 @@ export class Reward {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  @ManyToOne(() => RewardCategory, (category) => category.rewards, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'categoryId' })
-  category: RewardCategory;
+  // @ManyToOne(() => RewardCategory, (category) => category.rewards, {
+  //   onDelete: 'SET NULL',
+  //   nullable: true,
+  // })
+  // @JoinColumn({ name: 'categoryId' })
+  // category: RewardCategory;
 
-  @ApiProperty()
-  @Column({ nullable: true })
-  categoryId: string;
+  // @ApiProperty()
+  // @Column({ nullable: true })
+  // categoryId: string;
 
   @ManyToOne(() => Shop, (shop) => shop.rewards)
   @JoinColumn({ name: 'shopId' })
@@ -63,4 +63,7 @@ export class Reward {
   @ApiProperty()
   @Column({ nullable: true })
   nbRewardTowin: number;
+  @ApiProperty()
+  @Column({ nullable: true })
+  percentage: number;
 }
