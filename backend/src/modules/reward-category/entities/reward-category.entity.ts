@@ -27,6 +27,6 @@ export class RewardCategory {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  @OneToMany(() => Reward, (reward) => reward.category)
-  rewards: Reward[];
+  // @OneToMany(() => Reward, (reward) => reward.category)
+  // rewards: Reward[];
 }

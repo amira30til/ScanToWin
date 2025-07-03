@@ -149,9 +149,9 @@ export class RewardCategoryService {
         throw new NotFoundException(RewardMessages.CATEGORY_NOT_FOUND(id));
       }
       //Bon here i handle it in the entity in case they want to delete the category and if it has rewards it will only add null to the categoryId filed but will throw this msg for better use
-      if (category.rewards && category.rewards.length > 0) {
-        throw new ConflictException(RewardMessages.CATEGORY_HAS_REWARDS);
-      }
+      // if (category.rewards && category.rewards.length > 0) {
+      //   throw new ConflictException(RewardMessages.CATEGORY_HAS_REWARDS);
+      // }
 
       await this.rewardCategoryRepository.delete(id);
 
