@@ -33,8 +33,8 @@ import { Reward } from './entities/reward.entity';
 @Controller('reward')
 export class RewardController {
   constructor(private readonly rewardService: RewardService) {}
-  @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+  //@ApiBearerAuth()
+  //@UseGuards(AdminGuard)
   @Post()
   @ApiOperation({
     summary: 'Create a new reward',
@@ -104,9 +104,9 @@ export class RewardController {
     return this.rewardService.findAll(page, limit);
   }
 
-  @UseGuards(AdminGuard)
+  //@UseGuards(AdminGuard)
   @Get('by-shop/:shopId')
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @ApiOperation({
     summary: 'Get rewards by shop',
     description:
@@ -261,23 +261,9 @@ export class RewardController {
   @Post('shops/:shopId/random-rewards')
   @ApiOperation({ summary: 'Select a random reward for a shop' })
   @ApiParam({ name: 'shopId', description: 'Shop ID' })
-  @ApiQuery({
-    name: 'totalPlayers',
-    required: false,
-    description: 'Total number of players (default: 1000)',
-  })
-  async simulateRewards(
-    @Param('shopId') shopId: string,
-    @Query('totalPlayers') totalPlayers?: string,
-  ) {
-    const players = totalPlayers ? parseInt(totalPlayers) : 1000;
-
+  async simulateRewards(@Param('shopId') shopId: string) {
     try {
-      const result = await this.rewardService.selectRandomReward(
-        shopId,
-        players,
-      );
-
+      const result = await this.rewardService.selectRandomReward(shopId);
       return result;
     } catch (error) {
       return {
