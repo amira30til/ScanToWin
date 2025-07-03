@@ -74,4 +74,6 @@ export class CreateRewardDto {
   })
   @IsOptional()
   percentage: number;
+  @IsOptional()
+  id?: string;
 }
