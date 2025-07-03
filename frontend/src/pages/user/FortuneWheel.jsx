@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Wheel from "./Wheel";
-import FortuneResult from "./FortuneResult";
+import FortuneResultModal from "./FortuneResultModal";
 import {
   Box,
   Container,
@@ -16,10 +16,10 @@ const secondaryColor = "#615EFC";
 
 const FortuneWheel = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [reward, setReward] = useState(null);
+  const [rewardId, setRewardId] = useState(null);
 
-  const giftHandler = (reward) => {
-    setReward(reward);
+  const rewardHandler = (rewardId) => {
+    setRewardId(rewardId);
     onOpen();
   };
 
@@ -49,11 +49,15 @@ const FortuneWheel = () => {
           </VStack>
 
           <Wheel
-            onReward={giftHandler}
+            onReward={rewardHandler}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
           />
-          <FortuneResult gift={reward} isOpen={isOpen} onClose={onClose} />
+          <FortuneResultModal
+            rewardId={rewardId}
+            isOpen={isOpen}
+            onClose={onClose}
+          />
         </VStack>
       </Container>
     </Box>

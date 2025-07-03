@@ -10,8 +10,8 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
     return lightenHexColor(baseColor, 100);
   });
 
-  const onFinished = (reward) => {
-    onReward(reward);
+  const onFinished = (rewardId) => {
+    onReward(rewardId);
   };
 
   return (

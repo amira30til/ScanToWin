@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast, useAxiosPrivate } from "@/hooks";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 
 import { createReward, getRewardsByShop } from "@/services/rewardService";
 
@@ -31,21 +31,25 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Editable,
+  EditablePreview,
+  EditableInput,
   useToken,
 } from "@chakra-ui/react";
 import IconButton from "@/components/common/IconButton";
 
-import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/constants";
 // eslint-disable-next-line import/no-unresolved
 import { DynamicIcon } from "lucide-react/dynamic";
+import { useEffect } from "react";
 
 const REWARDS = [
   {
     icon: "cup-soda",
     name: "Drink",
-    winnerCount: 2,
     nbRewardTowin: 20,
+    percentage: 10,
     isUnlimited: true,
   },
 ];
@@ -53,8 +57,8 @@ const REWARDS = [
 const HEADERS = [
   "icon",
   "name",
-  "winner count",
   "number of rewards",
+  "percentage %",
   "is unlimited",
   "actions",
 ];
@@ -65,6 +69,17 @@ const Rewards = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [primary500] = useToken("colors", ["primary.500"]);
 
+  const { register, handleSubmit, control, watch } = useForm({
+    defaultValues: {
+      rewards: REWARDS,
+    },
+  });
+
+  const { fields } = useFieldArray({
+    control,
+    name: "rewards",
+  });
+
   const { data: rewards } = useQuery({
     queryKey: ["rewards-by-shop"],
     queryFn: async () => {
@@ -74,63 +89,76 @@ const Rewards = () => {
     enabled: !!shopId,
   });
 
-  const rows = (reward) => (
+  const onSubmit = (values) => {
+    console.log(values);
+  };
+
+  useEffect(() => {
+    console.log(rewards);
+  }, [rewards]);
+
+  const rows = (reward, index) => (
     <>
       <Td>
         <DynamicIcon name={reward.icon} color={primary500} size={24} />
       </Td>
       <Td>{reward.name}</Td>
 
-      <Td>{reward.winnerCount}</Td>
-      <Td>{reward.nbRewardTowin}</Td>
+      <Td>
+        <Editable defaultValue={reward.nbRewardTowin}>
+          <EditablePreview w="100%" />
+          <EditableInput
+            {...register(`rewards.${index}.nbRewardTowin`, {
+              valueAsNumber: true,
+            })}
+          />
+        </Editable>
+      </Td>
 
       <Td>
-        <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="is-unlimited" mb="0" fontSize="xs">
-            unlimited
-          </FormLabel>
-          <Switch
-            id="is-unlimited"
-            colorScheme="primary"
-            size="sm"
-            // defaultValue={reward.isUnlimited}
-            defaultChecked={reward.isUnlimited}
-            // {...register("isUnlimited")}
+        <Editable defaultValue={reward.percentage}>
+          <EditablePreview w="100%" />
+          <EditableInput
+            {...register(`rewards.${index}.percentage`, {
+              valueAsNumber: true,
+            })}
           />
-        </FormControl>
+        </Editable>
       </Td>
+
       <Td>
-        <Flex>
-          <Flex>
-            <IconButton
-              label="Delete reward"
-              icon={<DeleteIcon />}
-              size="sm"
-              variant="ghost"
-              colorScheme="red"
-              // onClick={() => deleteRewardHandler(reward?.id)}
-            />
-          </Flex>
-          <Flex>
-            <IconButton
-              label="Edit reward"
-              icon={<EditIcon />}
-              size="sm"
-              variant="ghost"
-              colorScheme="orange"
-              // onClick={() => editRewardHandler(reward?.id)}
-            />
-          </Flex>
-        </Flex>
+        <Switch
+          colorScheme="primary"
+          size="sm"
+          {...register(`rewards.${index}.isUnlimited`)}
+          isChecked={watch(`rewards.${index}.isUnlimited`)}
+        />
+      </Td>
+
+      <Td>
+        <IconButton
+          label="Delete reward"
+          icon={<DeleteIcon />}
+          size="sm"
+          variant="ghost"
+          colorScheme="red"
+          // onClick={() => deleteRewardHandler(reward.id)}
+        />
       </Td>
     </>
   );
 
+  useEffect(() => {
+    console.log(fields);
+  }, [fields]);
+
   return (
     <>
       <AdminSection
+        as="form"
         title="Choose rewards"
         description="Choose the rewards your customers can win by playing. Customize your prizes to offer a unique and engaging experience."
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Flex direction="column" gap={4}>
           <Flex>
@@ -145,12 +173,23 @@ const Rewards = () => {
             </Button>
           </Flex>
 
-          <DataTable
-            rows={rows}
-            headers={HEADERS}
-            data={REWARDS}
-            bg="surface.navigation"
-          />
+          {fields && (
+            <DataTable
+              rows={rows}
+              headers={HEADERS}
+              data={fields}
+              bg="surface.navigation"
+            />
+          )}
+          <Flex w="full" justify="end">
+            <Button
+              type="submit"
+              colorScheme="primary"
+              // isLoading={updateShopMutation.isPending}
+            >
+              Save
+            </Button>
+          </Flex>
         </Flex>
       </AdminSection>
 
@@ -170,9 +209,9 @@ const AddRewardModal = ({ onClose, isOpen }) => {
       defaultValues: {
         icon: "CupSoda",
         name: "",
-        isUnlimited: true,
-        winnerCount: 0,
         nbRewardTowin: 0,
+        percentage: 0,
+        isUnlimited: true,
       },
     });
 
@@ -205,7 +244,7 @@ const AddRewardModal = ({ onClose, isOpen }) => {
         ...values,
         shopId,
         nbRewardTowin: +values.nbRewardTowin,
-        winnerCount: +values.winnerCount,
+        percentage: +values.winnerCount,
       });
     }
   };
@@ -238,46 +277,6 @@ const AddRewardModal = ({ onClose, isOpen }) => {
                 {formState.errors.name?.message}
               </FormHelperText>
             </FormControl>
-            <FormControl alignItems="center">
-              <FormLabel htmlFor="is-unlimited" mb="0" fontSize="sm">
-                Is unlimited
-              </FormLabel>
-              <Switch
-                id="is-unlimited"
-                colorScheme="primary"
-                size="sm"
-                defaultChecked={true}
-                {...register("isUnlimited")}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel fontSize="sm">Max winner count</FormLabel>
-
-              <Controller
-                name="winnerCount"
-                control={control}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Winner count is required",
-                  },
-                }}
-                render={({ field: { ref, ...restField } }) => (
-                  <NumberInput
-                    {...restField}
-                    min={0}
-                    focusBorderColor="primary.500"
-                    size="sm"
-                  >
-                    <NumberInputField ref={ref} name={restField.name} />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
-              ></Controller>
-            </FormControl>
             <FormControl isRequired>
               <FormLabel fontSize="sm">Number of rewards to win</FormLabel>
               <Controller
@@ -304,6 +303,18 @@ const AddRewardModal = ({ onClose, isOpen }) => {
                   </NumberInput>
                 )}
               ></Controller>
+            </FormControl>
+            <FormControl alignItems="center">
+              <FormLabel htmlFor="is-unlimited" mb="0" fontSize="sm">
+                Is unlimited
+              </FormLabel>
+              <Switch
+                id="is-unlimited"
+                colorScheme="primary"
+                size="sm"
+                defaultChecked={true}
+                {...register("isUnlimited")}
+              />
             </FormControl>
           </Flex>
         </ModalBody>
