@@ -1,10 +1,14 @@
 import * as yup from "yup";
 
 export const submitUserDataValidator = yup.object().shape({
-  name: yup
+  firstName: yup
     .string()
-    .min(2, "name must be at least 2 characters")
-    .required("name is required"),
+    .min(2, "first name must be at least 2 characters")
+    .required("last name is required"),
+  lastName: yup
+    .string()
+    .min(2, "last name must be at least 2 characters")
+    .required("last name is required"),
   email: yup
     .string()
     .matches(
@@ -19,4 +23,5 @@ export const submitUserDataValidator = yup.object().shape({
       /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/,
       "Please enter a valid phone number",
     ),
+  agreeToPromotions: yup.boolean().default(false),
 });

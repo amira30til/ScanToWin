@@ -68,7 +68,7 @@ const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
 
   return (
-    <Box pos="relative" w="100%">
+    <Box pos="relative">
       <Header />
 
       <Flex direction="column" gap={10} h="3400px" px={8} py={10}>
