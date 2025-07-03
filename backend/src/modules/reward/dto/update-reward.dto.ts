@@ -26,7 +26,7 @@ export class UpdateRewardDto {
 
   @ApiProperty({
     description: 'Number of winners for this reward',
-    example: 5,
+    example: 0,
     required: false,
   })
   @IsOptional()
@@ -48,12 +48,12 @@ export class UpdateRewardDto {
   @IsOptional()
   status?: RewardStatus;
 
-  @ApiProperty({
-    description: 'Category ID for the reward',
-    example: 'uuid-string',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  categoryId?: string;
+  // @ApiProperty({
+  //   description: 'Category ID for the reward',
+  //   example: 'uuid-string',
+  //   required: false,
+  // })
+  // @IsString()
+  // @IsOptional()
+  // categoryId?: string;
 }
