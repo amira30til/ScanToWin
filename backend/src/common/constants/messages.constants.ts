@@ -142,4 +142,5 @@ export const RewardMessages = {
     "Vous ne pouvez pas modifier ce gain en limité car c'est le seul gain illimité. Soit ajoutez un autre gain illimité, soit désactivez le mode 100% gagnant.",
   SHOP_NEEDS_UNLIMITED_FOR_GUARANTEED:
     "Pour activer le mode 100% gagnant, vous devez d'abord créer au moins un gain illimité.",
+  REWARDS_UPSERT_DONE: 'Rewards successfully processed.',
 };
