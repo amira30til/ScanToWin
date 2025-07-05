@@ -38,95 +38,63 @@ export class RewardService {
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
   ) {}
-  async upsert(
-    dto: CreateRewardDto,
-  ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
-    try {
-      const shop = await this.shopRepository.findOne({
-        where: { id: dto.shopId },
-        relations: ['rewards'],
-      });
+  async upsertMany(shopId: string, dtoArr: CreateRewardDto[]) {
+    const shop = await this.shopRepository.findOne({
+      where: { id: shopId },
+      relations: ['rewards'],
+    });
+    if (!shop) throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
 
-      if (!shop) {
-        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
-      }
+    const dbRewards = shop.rewards ?? [];
+    const incomingIds = new Set(dtoArr.filter((d) => d.id).map((d) => d.id!));
 
-      await this.validateRewardConfiguration(shop, dto.isUnlimited ?? false);
+    const toDelete = dbRewards
+      .filter((r) => !incomingIds.has(r.id))
+      .map((r) => r.id);
+    const toCreate = dtoArr.filter((d) => !d.id);
+    const toUpdate = dtoArr.filter((d) => d.id);
 
-      let reward: Reward;
-      let isUpdate = false;
+    // CREATE
+    const created = await Promise.all(
+      toCreate.map(async (d) => {
+        await this.validateRewardConfiguration(shop, d.isUnlimited ?? false);
+        return this.rewardRepository.save(
+          this.rewardRepository.create({ ...d, shop }),
+        );
+      }),
+    );
 
-      if (dto.id) {
-        const existingReward = await this.rewardRepository.findOne({
-          where: { id: dto.id, shop: { id: dto.shopId } },
-        });
-
-        if (!existingReward) {
-          throw new NotFoundException(RewardMessages.REWARD_NOT_FOUND(dto.id));
+    // UPDATE
+    const updated = await Promise.all(
+      toUpdate.map(async (d) => {
+        const r = await this.rewardRepository.findOneBy({ id: d.id });
+        if (!r) {
+          throw new NotFoundException(`Reward not found: ${d.id}`);
         }
-
-        const duplicate = await this.rewardRepository.findOne({
-          where: {
-            name: dto.name,
-            shop: { id: dto.shopId },
-            id: Not(dto.id),
-          },
+        Object.assign(r, {
+          name: d.name,
+          icon: d.icon,
+          isUnlimited: d.isUnlimited,
+          status: d.status,
+          nbRewardTowin: d.nbRewardTowin,
+          percentage: d.percentage,
         });
 
-        if (duplicate) {
-          throw new ConflictException(
-            RewardMessages.REWARD_NAME_EXISTS(dto.name),
-          );
-        }
+        return this.rewardRepository.save(r);
+      }),
+    );
 
-        Object.assign(existingReward, {
-          name: dto.name,
-          icon: dto.icon,
-          isUnlimited: dto.isUnlimited,
-          status: dto.status,
-          nbRewardTowin: dto.nbRewardTowin,
-          percentage: dto.percentage,
-        });
+    // DELETE
+    if (toDelete.length) await this.rewardRepository.delete(toDelete);
 
-        reward = existingReward;
-        isUpdate = true;
-      } else {
-        const duplicate = await this.rewardRepository.findOne({
-          where: { name: dto.name, shop: { id: dto.shopId } },
-        });
-
-        if (duplicate) {
-          throw new ConflictException(
-            RewardMessages.REWARD_NAME_EXISTS(dto.name),
-          );
-        }
-
-        reward = this.rewardRepository.create({
-          ...dto,
-          shop,
-        });
-      }
-
-      const savedReward = await this.rewardRepository.save(reward);
-
-      if (!isUpdate) {
-        if (!shop.rewards) shop.rewards = [];
-        shop.rewards.push(savedReward);
-      }
-
-      return ApiResponse.success(
-        isUpdate ? HttpStatusCodes.SUCCESS : HttpStatusCodes.CREATED,
-        {
-          reward: savedReward,
-          message: isUpdate
-            ? RewardMessages.REWARD_UPDATED
-            : RewardMessages.REWARD_CREATED,
-        },
-      );
-    } catch (err) {
-      return handleServiceError(err);
-    }
+    return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+      created,
+      updated,
+      deleted: toDelete,
+      message: RewardMessages.REWARDS_UPSERT_DONE,
+    });
   }
+
   private async validateRewardConfiguration(
     shop: Shop,
     isUnlimited: boolean,
