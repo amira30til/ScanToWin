@@ -11,7 +11,6 @@ const iconList = Object.keys(LucideIcons).filter(
 export const LucideIconPicker = ({ onSelect }) => {
   const [search, setSearch] = useState("");
   const [filteredIcons, setFilteredIcons] = useState([]);
-  const [selectedIcon, setSelectedIcon] = useState("");
 
   useEffect(() => {
     const allIcons = iconList.filter((icon) =>
@@ -46,14 +45,12 @@ export const LucideIconPicker = ({ onSelect }) => {
                 label={pascalToKebab(name)}
                 icon={<LucideIcon size={24} />}
                 onClick={() => {
-                  onSelect(name);
-                  setSelectedIcon(name);
+                  onSelect(pascalToKebab(name));
                 }}
                 key={name}
                 boxSize={10}
                 variant="outline"
                 size="xs"
-                borderColor={name === selectedIcon ? "primary.500" : "inherit"}
               />
             );
           })}

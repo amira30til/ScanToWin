@@ -1,19 +1,21 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast, useAxiosPrivate } from "@/hooks";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 
-import { createReward, getRewardsByShop } from "@/services/rewardService";
+import { upsertRewards, getRewardsByShop } from "@/services/rewardService";
+import { upsertRewardsSchema } from "@/validators/upsertRewardsValidator";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import AdminSection from "@/components/common/AdminSection";
-import DataTable from "@/components/DataTable";
 import LucideIconPicker from "./LucideIconPicker";
 
 import {
   Flex,
+  Box,
   Button,
   Td,
-  FormLabel,
   Switch,
   useDisclosure,
   Modal,
@@ -22,37 +24,29 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
-  Input,
-  FormControl,
-  FormHelperText,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Editable,
   EditablePreview,
   EditableInput,
   useToken,
+  Spinner,
+  Portal,
+  IconButton as ChakraIconButton,
+  TableContainer,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Table,
+  FormErrorMessage,
+  FormControl,
+  Text,
 } from "@chakra-ui/react";
 import IconButton from "@/components/common/IconButton";
 
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/constants";
 // eslint-disable-next-line import/no-unresolved
 import { DynamicIcon } from "lucide-react/dynamic";
-import { useEffect } from "react";
-
-const REWARDS = [
-  {
-    icon: "cup-soda",
-    name: "Drink",
-    nbRewardTowin: 20,
-    percentage: 10,
-    isUnlimited: true,
-  },
-];
+import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/constants";
 
 const HEADERS = [
   "icon",
@@ -66,21 +60,13 @@ const HEADERS = [
 const Rewards = () => {
   const { shopId } = useParams();
   const axiosPrivate = useAxiosPrivate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [primary500] = useToken("colors", ["primary.500"]);
+  const [currentReward, setCurrentReward] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+  const queryClient = useQueryClient();
 
-  const { register, handleSubmit, control, watch } = useForm({
-    defaultValues: {
-      rewards: REWARDS,
-    },
-  });
-
-  const { fields } = useFieldArray({
-    control,
-    name: "rewards",
-  });
-
-  const { data: rewards } = useQuery({
+  const { data: rewards, isLoading: isLoadingRewards } = useQuery({
     queryKey: ["rewards-by-shop"],
     queryFn: async () => {
       const response = await getRewardsByShop(axiosPrivate, shopId);
@@ -89,68 +75,98 @@ const Rewards = () => {
     enabled: !!shopId,
   });
 
+  const onUpsertRewardsSuccess = () => {
+    queryClient.invalidateQueries("rewards-by-shop");
+    toast(SUCCESS_MESSAGES.REWARD_UPDATE_SUCCESS, "success");
+  };
+
+  const onUpsertRewardsError = () => {
+    toast(ERROR_MESSAGES.REWARD_UPDATE_FAILED, "error");
+  };
+
+  const upsertRewardsMutation = useMutation({
+    mutationFn: async (data) => await upsertRewards(axiosPrivate, data),
+    onSuccess: onUpsertRewardsSuccess,
+    onError: onUpsertRewardsError,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(upsertRewardsSchema),
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "rewards",
+    keyName: "hook_form_id",
+  });
+  const watchedRewards = watch("rewards");
+  const controlledRewards = fields.map((field, index) => {
+    return {
+      ...field,
+      ...watchedRewards[index],
+    };
+  });
+
   const onSubmit = (values) => {
-    console.log(values);
+    const { rewards } = values;
+
+    if (rewards.length === 1 && rewards[0].isUnlimited === false) {
+      toast(ERROR_MESSAGES.REWARD_AT_LEAST_UNLIMITED, "warning");
+      return;
+    }
+
+    const formattedRewards = [];
+    let totalPercentage = 0;
+
+    for (const reward of rewards) {
+      const isUnlimited = reward.isUnlimited === true;
+
+      const percentage = +reward.percentage || 0;
+      totalPercentage += percentage;
+
+      formattedRewards.push({
+        ...reward,
+        shopId,
+        nbRewardTowin: isUnlimited ? 0 : +reward.nbRewardTowin || 0,
+        percentage,
+      });
+    }
+
+    if (totalPercentage !== 100) {
+      toast(ERROR_MESSAGES.REWARD_TOTAL_PERCENTAGE, "warning");
+      return;
+    }
+
+    if (!!shopId) {
+      // upsertRewardsMutation.mutate(formattedRewards);
+      console.log("submitted rewards", formattedRewards);
+    }
+  };
+
+  const onIconOpen = (index) => {
+    setCurrentReward(index);
+    onOpen();
+  };
+
+  const onSelectIcon = (icon) => {
+    setValue(`rewards.${currentReward}.icon`, icon);
+    onClose();
   };
 
   useEffect(() => {
-    console.log(rewards);
-  }, [rewards]);
+    if (rewards?.length) {
+      reset({ rewards });
+    }
+  }, [rewards, reset]);
 
-  const rows = (reward, index) => (
-    <>
-      <Td>
-        <DynamicIcon name={reward.icon} color={primary500} size={24} />
-      </Td>
-      <Td>{reward.name}</Td>
-
-      <Td>
-        <Editable defaultValue={reward.nbRewardTowin}>
-          <EditablePreview w="100%" />
-          <EditableInput
-            {...register(`rewards.${index}.nbRewardTowin`, {
-              valueAsNumber: true,
-            })}
-          />
-        </Editable>
-      </Td>
-
-      <Td>
-        <Editable defaultValue={reward.percentage}>
-          <EditablePreview w="100%" />
-          <EditableInput
-            {...register(`rewards.${index}.percentage`, {
-              valueAsNumber: true,
-            })}
-          />
-        </Editable>
-      </Td>
-
-      <Td>
-        <Switch
-          colorScheme="primary"
-          size="sm"
-          {...register(`rewards.${index}.isUnlimited`)}
-          isChecked={watch(`rewards.${index}.isUnlimited`)}
-        />
-      </Td>
-
-      <Td>
-        <IconButton
-          label="Delete reward"
-          icon={<DeleteIcon />}
-          size="sm"
-          variant="ghost"
-          colorScheme="red"
-          // onClick={() => deleteRewardHandler(reward.id)}
-        />
-      </Td>
-    </>
-  );
-
-  useEffect(() => {
-    console.log(fields);
-  }, [fields]);
+  if (isLoadingRewards) return <Spinner />;
 
   return (
     <>
@@ -167,25 +183,166 @@ const Rewards = () => {
               variant="solid"
               colorScheme="secondary"
               size="sm"
-              onClick={onOpen}
+              onClick={() => {
+                append({
+                  name: "",
+                  icon: "cup-soda",
+                  nbRewardTowin: 0,
+                  percentage: 0,
+                  isUnlimited: false,
+                  isActive: true,
+                });
+              }}
             >
               Add a reward
             </Button>
           </Flex>
 
-          {fields && (
-            <DataTable
-              rows={rows}
-              headers={HEADERS}
-              data={fields}
-              bg="surface.navigation"
-            />
+          <TableContainer
+            border="1px"
+            borderColor="gray.300"
+            minHeight="350px"
+            bg="surface.navigation"
+            fontSize="xs"
+          >
+            <Table variant="simple">
+              <Thead bg="primary.100">
+                <Tr>
+                  {HEADERS?.map((header, index) => (
+                    <Th key={index}>{header}</Th>
+                  ))}
+                </Tr>
+              </Thead>
+              <Tbody>
+                {controlledRewards.map((field, index) => {
+                  return (
+                    <Tr key={field.hook_form_id} fontSize="xs">
+                      <>
+                        <Td>
+                          <ChakraIconButton
+                            icon={
+                              <DynamicIcon
+                                name={field.icon}
+                                color={primary500}
+                                size={24}
+                              />
+                            }
+                            onClick={() => onIconOpen(index)}
+                          ></ChakraIconButton>
+                        </Td>
+                        <Td>
+                          <FormControl
+                            isInvalid={!!errors.rewards?.[index]?.name}
+                          >
+                            <Editable defaultValue={field.name}>
+                              <EditablePreview
+                                border="1px"
+                                borderColor="gray.300"
+                                px={2}
+                                h="30px"
+                                w="150px"
+                              />
+                              <EditableInput
+                                placeholder="name of the reward"
+                                {...register(`rewards.${index}.name`)}
+                                w="150px"
+                              />
+                            </Editable>
+                            <FormErrorMessage>
+                              {errors.rewards?.[index]?.name?.message}
+                            </FormErrorMessage>
+                          </FormControl>
+                        </Td>
+
+                        <Td>
+                          {field.isUnlimited === true ? (
+                            <Box
+                              border="1px"
+                              borderColor="gray.300"
+                              px={2}
+                              h="30px"
+                              w="80px"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                            >
+                              -
+                            </Box>
+                          ) : (
+                            <Editable
+                              defaultValue={
+                                field.nbRewardTowin?.toString() || "0"
+                              }
+                            >
+                              <EditablePreview
+                                border="1px"
+                                borderColor="gray.300"
+                                px={2}
+                                h="30px"
+                                w="80px"
+                              />
+                              <EditableInput
+                                {...register(`rewards.${index}.nbRewardTowin`, {
+                                  valueAsNumber: true,
+                                })}
+                                w="80px"
+                              />
+                            </Editable>
+                          )}
+                        </Td>
+
+                        <Td>
+                          <Editable defaultValue={field.percentage.toString()}>
+                            <EditablePreview
+                              w="80px"
+                              border="1px"
+                              borderColor="gray.300"
+                              px={2}
+                              h="30px"
+                            />
+                            <EditableInput
+                              {...register(`rewards.${index}.percentage`, {
+                                valueAsNumber: true,
+                              })}
+                              maxW="80px"
+                            />
+                          </Editable>
+                        </Td>
+
+                        <Td>
+                          <Switch
+                            colorScheme="primary"
+                            size="sm"
+                            {...register(`rewards.${index}.isUnlimited`)}
+                            isChecked={field.isUnlimited}
+                          />
+                        </Td>
+
+                        <Td>
+                          <IconButton
+                            label="Delete reward"
+                            icon={<DeleteIcon />}
+                            size="sm"
+                            variant="ghost"
+                            colorScheme="red"
+                            onClick={() => remove(index)}
+                          />
+                        </Td>
+                      </>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </TableContainer>
+          {errors.rewards?.root?.message && (
+            <Text color="red">{errors.rewards?.root?.message}</Text>
           )}
           <Flex w="full" justify="end">
             <Button
               type="submit"
               colorScheme="primary"
-              // isLoading={updateShopMutation.isPending}
+              // isLoading={upsertRewardsMutation.isPending}
             >
               Save
             </Button>
@@ -193,143 +350,31 @@ const Rewards = () => {
         </Flex>
       </AdminSection>
 
-      <AddRewardModal onClose={onClose} isOpen={isOpen} />
+      <UpdateIcon
+        onClose={onClose}
+        isOpen={isOpen}
+        onSelectIcon={onSelectIcon}
+      />
     </>
   );
 };
 
-const AddRewardModal = ({ onClose, isOpen }) => {
-  const { shopId } = useParams();
-  const axiosPrivate = useAxiosPrivate();
-  const toast = useToast();
-  const queryClient = useQueryClient();
-
-  const { register, handleSubmit, formState, control, setValue, reset } =
-    useForm({
-      defaultValues: {
-        icon: "CupSoda",
-        name: "",
-        nbRewardTowin: 0,
-        percentage: 0,
-        isUnlimited: true,
-      },
-    });
-
-  const onCreateAdminSuccess = () => {
-    queryClient.invalidateQueries("rewards");
-    reset();
-    onClose();
-    toast(SUCCESS_MESSAGES.REWARD_CREATE_SUCCESS, "success");
-  };
-
-  const onCreateAdminError = () => {
-    toast(ERROR_MESSAGES.REWARD_CREATE_FAILED, "error");
-  };
-
-  const createAdminMutation = useMutation({
-    mutationFn: async (data) => await createReward(axiosPrivate, data),
-    onSuccess: onCreateAdminSuccess,
-    onError: onCreateAdminError,
-  });
-
-  const onSubmitAddReward = (values) => {
-    if (!!shopId) {
-      // createAdminMutation.mutate({
-      //   ...values,
-      //   shopId,
-      //   nbRewardTowin: +values.nbRewardTowin,
-      //   winnerCount: +values.winnerCount,
-      // })
-      console.log("submitted add reward", {
-        ...values,
-        shopId,
-        nbRewardTowin: +values.nbRewardTowin,
-        percentage: +values.winnerCount,
-      });
-    }
-  };
-
+const UpdateIcon = ({ onClose, isOpen, onSelectIcon }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent as="form" onSubmit={handleSubmit(onSubmitAddReward)}>
-        <ModalHeader>Add a reward</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Flex direction="column" gap={4}>
-            <LucideIconPicker
-              onSelect={(icon) => {
-                setValue("icon", icon);
-              }}
-            />
-            <FormControl isRequired>
-              <FormLabel fontSize="sm">Name</FormLabel>
-              <Input
-                focusBorderColor="primary.500"
-                type="text"
-                placeholder="reward name"
-                autoFocus
-                size="sm"
-                {...register("name")}
-              />
-
-              <FormHelperText color="red.500">
-                {formState.errors.name?.message}
-              </FormHelperText>
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel fontSize="sm">Number of rewards to win</FormLabel>
-              <Controller
-                name="nbRewardTowin"
-                control={control}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Number reward to win is required",
-                  },
-                }}
-                render={({ field: { ref, ...restField } }) => (
-                  <NumberInput
-                    {...restField}
-                    min={0}
-                    focusBorderColor="primary.500"
-                    size="sm"
-                  >
-                    <NumberInputField ref={ref} name={restField.name} />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
-              ></Controller>
-            </FormControl>
-            <FormControl alignItems="center">
-              <FormLabel htmlFor="is-unlimited" mb="0" fontSize="sm">
-                Is unlimited
-              </FormLabel>
-              <Switch
-                id="is-unlimited"
-                colorScheme="primary"
-                size="sm"
-                defaultChecked={true}
-                {...register("isUnlimited")}
-              />
-            </FormControl>
-          </Flex>
-        </ModalBody>
-        <ModalFooter>
-          <Flex gap={4}>
-            <Button type="button" onClick={onClose}>
-              Close
-            </Button>
-            <Button type="submit" colorScheme="primary">
-              Confirm
-            </Button>
-          </Flex>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <Portal>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Pick an Icon</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex direction="column" gap={4}>
+              <LucideIconPicker onSelect={onSelectIcon} />
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </Portal>
   );
 };
 
