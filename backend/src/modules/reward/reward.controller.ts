@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { RewardService } from './reward.service';
-import { CreateRewardDto } from './dto/create-reward.dto';
+import { CreateRewardDto, UpsertRewardsDto } from './dto/create-reward.dto';
 import { UpdateRewardDto } from './dto/update-reward.dto';
 import {
   ApiBearerAuth,
@@ -33,63 +33,29 @@ import { Reward } from './entities/reward.entity';
 @Controller('reward')
 export class RewardController {
   constructor(private readonly rewardService: RewardService) {}
-  //@ApiBearerAuth()
-  //@UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Post()
   @ApiOperation({
-    summary: 'Create a new reward',
+    summary: 'Create / update / delete rewards in bulk',
     description:
-      'Creates a new reward for a shop. Each reward can be associated with a category.',
+      'Receives an array of rewards and performs upsert logic: create if no id, update if id exists, delete if disappeared.',
   })
-  @ApiBody({
-    type: CreateRewardDto,
-    description: 'Reward creation data',
-  })
+  @ApiBody({ type: UpsertRewardsDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Reward created successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean', example: true },
-        statusCode: { type: 'number', example: 201 },
-        data: {
-          type: 'object',
-          properties: {
-            reward: {
-              type: 'object',
-              properties: {
-                id: { type: 'string', example: 'uuid-string' },
-                name: { type: 'string', example: 'iPhone 15 Pro' },
-                icon: {
-                  type: 'string',
-                  example: 'https://example.com/icons/iphone.png',
-                },
-                winnerCount: { type: 'number', example: 5 },
-                isUnlimited: { type: 'boolean', example: false },
-                isActive: { type: 'boolean', example: true },
-                categoryId: { type: 'string', example: 'category-uuid' },
-                shopId: { type: 'string', example: 'shop-uuid' },
-                createdAt: { type: 'string', example: '2024-01-15T10:30:00Z' },
-                updatedAt: { type: 'string', example: '2024-01-15T10:30:00Z' },
-              },
-            },
-            message: { type: 'string', example: 'Reward created successfully' },
-          },
-        },
-      },
-    },
+    description: 'Rewards processed successfully',
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Reward with this name already exists for this shop',
+    description: 'Duplicate reward name for this shop',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Shop or category not found',
+    description: 'Shop not found',
   })
-  async create(@Body() createRewardDto: CreateRewardDto) {
-    return this.rewardService.create(createRewardDto);
+  async upsertRewards(@Body() dto: UpsertRewardsDto) {
+    return this.rewardService.upsertMany(dto.shopId, dto.rewards);
   }
   @UseGuards(AdminGuard)
   @ApiBearerAuth()
@@ -104,9 +70,9 @@ export class RewardController {
     return this.rewardService.findAll(page, limit);
   }
 
-  //@UseGuards(AdminGuard)
+  @UseGuards(AdminGuard)
   @Get('by-shop/:shopId')
-  //@ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get rewards by shop',
     description:

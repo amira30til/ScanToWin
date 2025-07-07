@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, ValidateNested, IsArray } from 'class-validator';
 import { RewardStatus } from '../enums/reward-status.enums';
+import { Type } from 'class-transformer';
 
 export class CreateRewardDto {
   @ApiProperty({
@@ -74,4 +75,16 @@ export class CreateRewardDto {
   })
   @IsOptional()
   percentage: number;
+  @IsOptional()
+  id?: string;
+}
+export class UpsertRewardsDto {
+  @ApiProperty({ example: 'shop-uuid' })
+  shopId: string;
+
+  @ApiProperty({ type: [CreateRewardDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRewardDto)
+  rewards: CreateRewardDto[];
 }
