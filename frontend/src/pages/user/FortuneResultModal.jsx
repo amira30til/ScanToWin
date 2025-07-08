@@ -25,6 +25,8 @@ import { keyframes } from "@emotion/react";
 import { submitUserDataValidator } from "@/validators/submitUserDataValidator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useToast } from "@/hooks";
 
 const celebrate = keyframes`
   0%   { transform: scale(0.95); opacity: 0; }
@@ -38,8 +40,9 @@ const float = keyframes`
   50% { transform: translateY(-10px); }
 `;
 
-const FortuneResultModal = ({ rewardId, onClose, isOpen }) => {
+const FortuneResultModal = ({ reward, onClose, isOpen }) => {
   const { shopId } = useParams();
+  const toast = useToast();
 
   const {
     register,
@@ -50,14 +53,32 @@ const FortuneResultModal = ({ rewardId, onClose, isOpen }) => {
     resolver: yupResolver(submitUserDataValidator),
   });
 
-  const createUserMutation = useMutation({
-    mutationFn: async (values) => await createUser(values),
-    onError: (error) => console.error(error),
-    onSuccess: () => console.log("success"),
-  });
+  const onCreateUserError = (error) => {
+    // TODO
+    const timestamp = error.response?.data?.timestamp;
+    if (error.response?.data?.code === "USER_COOLDOWN") {
+      toast(
+        `You can play again after 24 hours from your last game at this shop. Time remaining: ${timestamp}`,
+      );
+    }
+  };
+
+  const onCreateUserSuccess = (data) => {
+    // TODO: save the userId to the localstorage
+    console.log(data);
+    return;
+  };
+
+  const { mutate: mutateCreateUser, isPending: isPendingCreateUser } =
+    useMutation({
+      mutationFn: async (values) => await createUser(values),
+      onError: onCreateUserError,
+      onSuccess: onCreateUserSuccess,
+    });
 
   const onSubmit = (values) => {
-    console.log({ ...values, shopId, rewardId });
+    mutateCreateUser({ ...values, shopId, rewardId: reward?.id });
+    console.log({ ...values, shopId, rewardId: reward?.id });
     reset();
     onClose();
   };
@@ -100,7 +121,7 @@ const FortuneResultModal = ({ rewardId, onClose, isOpen }) => {
           ))}
         </HStack>
         <ModalHeader align="center" pb="0">
-          You Won a {rewardId}!
+          You Won a {reward?.name}!
         </ModalHeader>
         <ModalBody>
           <Text pb={2} fontSize="sm" align="center" color="gray.500">
@@ -184,7 +205,11 @@ const FortuneResultModal = ({ rewardId, onClose, isOpen }) => {
 
         <ModalFooter>
           <Flex justify="center" w="100%">
-            <Button type="submit" colorScheme="primary">
+            <Button
+              type="submit"
+              colorScheme="primary"
+              isLoading={isPendingCreateUser}
+            >
               Confirm
             </Button>
           </Flex>

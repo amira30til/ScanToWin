@@ -5,11 +5,11 @@ import { useToast, useAxiosPrivate } from "@/hooks";
 import { useForm, useFieldArray } from "react-hook-form";
 
 import { upsertRewards, getRewardsByShop } from "@/services/rewardService";
-import { upsertRewardsSchema } from "@/validators/upsertRewardsValidator";
+import { upsertRewardsValidator } from "@/validators/upsertRewardsValidator";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import AdminSection from "@/components/common/AdminSection";
-import LucideIconPicker from "./LucideIconPicker";
+import UpdateIconModal from "./UpdateIconModal";
 
 import {
   Flex,
@@ -18,18 +18,11 @@ import {
   Td,
   Switch,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
   Editable,
   EditablePreview,
   EditableInput,
   useToken,
   Spinner,
-  Portal,
   IconButton as ChakraIconButton,
   TableContainer,
   Thead,
@@ -69,7 +62,7 @@ const Rewards = () => {
   const { data: rewards, isLoading: isLoadingRewards } = useQuery({
     queryKey: ["rewards-by-shop"],
     queryFn: async () => {
-      const response = await getRewardsByShop(axiosPrivate, shopId);
+      const response = await getRewardsByShop(shopId);
       return response.data.data.rewards;
     },
     enabled: !!shopId,
@@ -85,7 +78,7 @@ const Rewards = () => {
   };
 
   const upsertRewardsMutation = useMutation({
-    mutationFn: async (data) => await upsertRewards(axiosPrivate, data),
+    mutationFn: async (values) => await upsertRewards(axiosPrivate, values),
     onSuccess: onUpsertRewardsSuccess,
     onError: onUpsertRewardsError,
   });
@@ -99,7 +92,7 @@ const Rewards = () => {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(upsertRewardsSchema),
+    resolver: yupResolver(upsertRewardsValidator),
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -145,8 +138,10 @@ const Rewards = () => {
     }
 
     if (!!shopId) {
-      // upsertRewardsMutation.mutate(formattedRewards);
-      console.log("submitted rewards", formattedRewards);
+      upsertRewardsMutation.mutate({
+        shopId,
+        rewards: formattedRewards,
+      });
     }
   };
 
@@ -342,7 +337,7 @@ const Rewards = () => {
             <Button
               type="submit"
               colorScheme="primary"
-              // isLoading={upsertRewardsMutation.isPending}
+              isLoading={upsertRewardsMutation.isPending}
             >
               Save
             </Button>
@@ -350,31 +345,12 @@ const Rewards = () => {
         </Flex>
       </AdminSection>
 
-      <UpdateIcon
+      <UpdateIconModal
         onClose={onClose}
         isOpen={isOpen}
         onSelectIcon={onSelectIcon}
       />
     </>
-  );
-};
-
-const UpdateIcon = ({ onClose, isOpen, onSelectIcon }) => {
-  return (
-    <Portal>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Pick an Icon</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Flex direction="column" gap={4}>
-              <LucideIconPicker onSelect={onSelectIcon} />
-            </Flex>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Portal>
   );
 };
 
