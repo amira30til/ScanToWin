@@ -16,10 +16,10 @@ const secondaryColor = "#615EFC";
 
 const FortuneWheel = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [rewardId, setRewardId] = useState(null);
+  const [reward, setReward] = useState(null);
 
-  const rewardHandler = (rewardId) => {
-    setRewardId(rewardId);
+  const rewardHandler = (reward) => {
+    setReward(reward);
     onOpen();
   };
 
@@ -54,7 +54,7 @@ const FortuneWheel = () => {
             secondaryColor={secondaryColor}
           />
           <FortuneResultModal
-            rewardId={rewardId}
+            reward={reward}
             isOpen={isOpen}
             onClose={onClose}
           />

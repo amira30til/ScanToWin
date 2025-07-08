@@ -30,10 +30,6 @@ const ChooseGame = ({ shop }) => {
       const response = await getActiveGames();
       return response.data.data.data;
     },
-    onError: (error) => {
-      console.log(error);
-      toast("Failed to fetch games", "error");
-    },
   });
 
   const { data: activeGame } = useQuery({

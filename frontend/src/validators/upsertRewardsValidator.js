@@ -7,7 +7,7 @@ const rewardSchema = Yup.object().shape({
   percentage: Yup.number().required().min(0).max(100),
 });
 
-export const upsertRewardsSchema = Yup.object().shape({
+export const upsertRewardsValidator = Yup.object().shape({
   rewards: Yup.array()
     .of(rewardSchema)
     .min(1, "At least one reward is required")

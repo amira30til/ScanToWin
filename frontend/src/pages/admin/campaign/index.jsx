@@ -1,30 +1,13 @@
-// HOOKS
 import { useParams } from "react-router-dom";
 import { useCopy } from "@/hooks";
 import useAuthStore from "@/store";
 
-// COMPONENTS
-import IconButton from "@/components/common/IconButton";
-import DataTable from "@/components/DataTable";
-import AdminSection from "@/components/common/AdminSection";
 import CustomizeGame from "./CustomizeGame";
 import ChooseGame from "./ChooseGame";
 
-// STYLE
-import {
-  Box,
-  Flex,
-  Heading,
-  Button,
-  Td,
-  Link,
-  // useToken,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Button } from "@chakra-ui/react";
 
-// ASSETS
 import {
-  AddIcon,
-  DeleteIcon,
   Menu,
   MenuButton,
   MenuList,
@@ -33,36 +16,10 @@ import {
   DownloadIcon,
   CopyIcon,
 } from "@chakra-ui/icons";
-import {
-  FaFacebook,
-  FaTiktok,
-  FaGoogle,
-  FaLock,
-  FaQrcode,
-} from "react-icons/fa";
+import { FaLock, FaQrcode } from "react-icons/fa";
 import { FaFloppyDisk } from "react-icons/fa6";
 import Rewards from "./rewards";
-
-const ACTIONS = [
-  {
-    position: 1,
-    name: "Google",
-    icon: "google",
-    targetLink: "https://www.google.com/maps",
-  },
-  {
-    position: 2,
-    name: "Google",
-    icon: "facebook",
-    targetLink: "https://www.google.com/maps",
-  },
-  {
-    position: 3,
-    name: "Google",
-    icon: "tiktok",
-    targetLink: "https://www.google.com/maps",
-  },
-];
+import Actions from "./Actions";
 
 const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
@@ -158,73 +115,6 @@ const Header = () => {
         </Flex>
       </Flex>
     </Box>
-  );
-};
-
-const Actions = () => {
-  const headers = ["Order", "Action", "link", "actions"];
-
-  const iconMap = {
-    facebook: FaFacebook,
-    tiktok: FaTiktok,
-    google: FaGoogle,
-  };
-
-  // const [primary500] = useToken("colors", ["primary.500"]);
-
-  const rows = (action) => {
-    const IconComponent = iconMap[action.icon] || AddIcon;
-
-    return (
-      <>
-        <Td>{action.position}</Td>
-
-        <Td>
-          <Flex align="center" gap={2}>
-            <IconComponent
-            //  color={primary500}
-            />
-
-            <Flex fontWeight="bold">{action.name}</Flex>
-          </Flex>
-        </Td>
-
-        <Td>
-          <Link size="sm">{action.targetLink}</Link>
-        </Td>
-
-        <Td>
-          <Flex>
-            <Flex>
-              <IconButton
-                label="Delete gift"
-                icon={<DeleteIcon />}
-                size="sm"
-                variant="ghost"
-                colorScheme="red"
-                // onClick={() => deleteGiftHandler(gift?.id)}
-              />
-            </Flex>
-          </Flex>
-        </Td>
-      </>
-    );
-  };
-
-  return (
-    <AdminSection
-      title="Choose actions"
-      description="Define the order and actions your customers need to take to maximize engagement."
-    >
-      <Flex direction="column" gap={4}>
-        <DataTable
-          rows={rows}
-          headers={headers}
-          data={ACTIONS}
-          bg="surface.navigation"
-        />
-      </Flex>
-    </AdminSection>
   );
 };
 
