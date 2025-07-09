@@ -27,7 +27,7 @@ export class User {
   lastName: string;
   @ApiProperty()
   @Column({ nullable: true })
-  tel: number;
+  tel: string;
   @ApiProperty()
   @Column({ nullable: true })
   totalPlayedGames: number;
