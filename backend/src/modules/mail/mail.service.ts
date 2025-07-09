@@ -1,16 +1,18 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
-const aws3 = require('@aws-sdk/client-ses');
-import { fromEnv } from '@aws-sdk/credential-providers';
-const { defaultProvider } = require('@aws-sdk/credential-provider-node');
-
-//const isDev = process.env.NODE_ENV === 'dev';
-const credentials = defaultProvider();
-console.log('credentials here ', credentials);
+import * as sendgrid from '@sendgrid/mail';
 
 @Injectable()
 export class MailService {
   private logger = new Logger('MailService');
+
+  constructor() {
+    if (!process.env.SENDGRID_API_KEY) {
+      throw new Error(
+        'SENDGRID_API_KEY is not defined in environment variables',
+      );
+    }
+    sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+  }
 
   generateEmailCode(): string {
     return Math.floor(1000 + Math.random() * 9000).toString();
@@ -25,18 +27,9 @@ export class MailService {
     const { receiverEmail, subject, from, code } = options;
 
     try {
-      const transport = nodemailer.createTransport({
-        port: 465,
-        host: 'email-smtp.eu-west-1.amazonaws.com',
-        secure: true,
-        auth: {
-          user: 'AKIAYS2NSEDVKIPENQ5V',
-          pass: 'BPK4RX5mbK/Sjns+4UeipfG0l2dmKDJHkVo9P8nNNGjp',
-        },
-      });
-      await transport.sendMail({
-        from,
+      await sendgrid.send({
         to: receiverEmail,
+        from,
         subject,
         text: `Code to reset your password: ${code}`,
       });
@@ -44,6 +37,7 @@ export class MailService {
       this.logger.debug('Email sent successfully to:', receiverEmail);
     } catch (error) {
       this.logger.error('Error sending email:', error);
+      throw new BadRequestException(`Failed to send email: ${error.message}`);
     }
   }
 
@@ -55,25 +49,11 @@ export class MailService {
     validFromDate: string,
     validUntilDate: string,
     emailCode?: string,
-    rewardId?: string, // Add reward ID parameter
+    rewardId?: string,
   ) {
-    const credential2 = await defaultProvider();
-    const ses = new aws3.SES({
-      endpoint: 'https://email-smtp.eu-west-1.amazonaws.com',
-      apiVersion: '2010-12-01',
-      region: 'eu-west-1',
-      credentials: credential2,
-    });
-
-    const transport = nodemailer.createTransport({
-      port: 465,
-      host: 'email-smtp.eu-west-1.amazonaws.com',
-      secure: true,
-      auth: {
-        user: 'AKIAYS2NSEDVKIPENQ5V',
-        pass: 'BPK4RX5mbK/Sjns+4UeipfG0l2dmKDJHkVo9P8nNNGjp',
-      },
-    });
+    if (!process.env.MAIL_FROM) {
+      throw new Error('MAIL_FROM is not defined in environment variables');
+    }
 
     const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
@@ -163,26 +143,17 @@ export class MailService {
   `;
 
     try {
-      await transport.sendMail({
+      await sendgrid.send({
         to: receiverEmail,
         from: process.env.MAIL_FROM,
         subject: `🎉 Congratulations ${winnerName}! Your ${giftType} is waiting for you at ${shopName}`,
         html: emailHtml,
       });
 
-      console.log('Gift email sent successfully to:', receiverEmail);
-      console.log('Gift details:', {
-        winnerName,
-        giftType,
-        shopName,
-        validFromDate,
-        validUntilDate,
-        rewardId,
-      });
-
+      this.logger.debug('Gift email sent successfully to:', receiverEmail);
       return { success: true, message: 'Gift email sent successfully' };
     } catch (error) {
-      console.error('Error sending gift email:', error);
+      this.logger.error('Error sending gift email:', error);
       throw new BadRequestException(
         `Failed to send gift email: ${error.message}`,
       );
