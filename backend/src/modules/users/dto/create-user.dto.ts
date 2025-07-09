@@ -36,9 +36,7 @@ export class CreateUserDto {
     description: 'User phone number',
     example: 123456789,
   })
-  @IsNumber()
-  @IsOptional()
-  tel?: number;
+  tel: string;
   @ApiProperty({ default: false })
   @IsOptional()
   agreeToPromotions: boolean;
