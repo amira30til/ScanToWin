@@ -4,16 +4,17 @@ import { useForm, Controller } from "react-hook-form";
 import { useAxiosPrivate, useToast } from "@/hooks";
 
 // FUNCTIONS
-import { getGames, selectGame } from "@/services/adminService";
+import {
+  getActiveGames,
+  selectGame,
+  getShopGameAssignement,
+} from "@/services/adminService";
 
 // COMPONENTS
 import AdminSection from "@/components/common/AdminSection";
 
 // STYLE
-import { Flex, Text, Image, Button } from "@chakra-ui/react";
-
-// ASSETS
-import gameImg from "@/assets/game.jpeg";
+import { Flex, Text, Image, Button, Box } from "@chakra-ui/react";
 import { useEffect } from "react";
 
 const ChooseGame = ({ shop }) => {
@@ -21,28 +22,30 @@ const ChooseGame = ({ shop }) => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
+  const { control, watch, reset } = useForm();
+
   const { data: games = [] } = useQuery({
     queryKey: ["games"],
     queryFn: async () => {
-      const response = await getGames(axiosPrivate);
-      return response.data.data.games;
-    },
-    onError: (error) => {
-      console.log(error);
-      toast("Failed to fetch games", "error");
+      const response = await getActiveGames();
+      return response.data.data.data;
     },
   });
 
-  const { control, watch } = useForm({
-    defaultValues: {
-      selectedGameId: null,
+  const { data: activeGame } = useQuery({
+    queryKey: ["shop-game-assignment", shop?.id],
+    queryFn: async () => {
+      const response = await getShopGameAssignement(shop.id);
+      return response.data.data.data.gameId;
     },
+    enabled: !!shop?.id,
   });
 
   const selectedGameId = watch("selectedGameId");
 
   const onSelectGameSuccess = async () => {
     await queryClient.refetchQueries(["adminGames"]);
+    toast("Game selected successfully!", "success");
   };
 
   const onSelectGameError = (error) => {
@@ -59,18 +62,21 @@ const ChooseGame = ({ shop }) => {
         shop?.adminId,
         values,
       ),
-    enabled: !!shop?.id && !!shop?.adminId,
     onSuccess: onSelectGameSuccess,
     onError: onSelectGameError,
   });
 
   const onSubmit = () => {
-    selectGameMutation.mutate({ isActive: true });
+    if (!!shop?.id && !!shop?.adminId) {
+      selectGameMutation.mutate({ isActive: true });
+    }
   };
 
   useEffect(() => {
-    console.log(selectedGameId);
-  }, [selectedGameId]);
+    if (activeGame !== undefined && activeGame !== "") {
+      reset({ selectedGameId: activeGame });
+    }
+  }, [activeGame]);
 
   return (
     <AdminSection
@@ -78,8 +84,8 @@ const ChooseGame = ({ shop }) => {
       description="Choose from 3 interactive games to engage your users and create a unique experience."
     >
       <Flex
-        direction={{ base: "column", md: "row" }}
-        justify="space-between"
+        direction={{ base: "column", lg: "row" }}
+        justify="space-around"
         gap={8}
       >
         {games?.map((game) => (
@@ -98,7 +104,11 @@ const ChooseGame = ({ shop }) => {
         ))}
       </Flex>
       <Flex justify="flex-end">
-        <Button colorScheme="primary" onClick={onSubmit}>
+        <Button
+          colorScheme="primary"
+          isLoading={selectGameMutation.isPending}
+          onClick={onSubmit}
+        >
           Save
         </Button>
       </Flex>
@@ -135,11 +145,22 @@ const SelectableGameCard = ({ game, isSelected, onSelect }) => {
     >
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
-        <Text fontSize="sm" color="gray">
-          hard coded description hard coded description hard
+        <Text fontSize="sm" color="gray" maxW="300px" textAlign="center">
+          {game.description || "No description available."}
         </Text>
       </Flex>
-      <Image borderRadius="full" src={gameImg} />
+      <Box display="flex" justifyContent="center" alignItems="center" mt={4}>
+        <Image
+          src={game.pictureUrl}
+          alt={game.name}
+          boxSize="280px"
+          objectFit="cover"
+          borderRadius="full"
+          boxShadow="lg"
+          border="2px solid"
+          borderColor="gray.200"
+        />
+      </Box>
     </Flex>
   );
 };

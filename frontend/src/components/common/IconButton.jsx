@@ -1,6 +1,6 @@
 import { IconButton as ChakraIconButton, Tooltip } from "@chakra-ui/react";
 
-const IconButton = ({ onClick, label, icon, ...rest }) => {
+const IconButton = ({ onClick, label, icon, children, ...rest }) => {
   return (
     <Tooltip label={label} hasArrow placement="top" openDelay={100}>
       <ChakraIconButton
@@ -8,7 +8,9 @@ const IconButton = ({ onClick, label, icon, ...rest }) => {
         icon={icon}
         onClick={onClick}
         {...rest}
-      />
+      >
+        {children}
+      </ChakraIconButton>
     </Tooltip>
   );
 };
