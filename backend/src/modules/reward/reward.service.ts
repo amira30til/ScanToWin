@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
@@ -19,12 +20,13 @@ import {
 } from 'src/common/interfaces/response.interface';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Not, Repository } from 'typeorm';
+import { In, MoreThan, Not, Repository } from 'typeorm';
 import { RewardCategory } from '../reward-category/entities/reward-category.entity';
 import { Shop } from '../shops/entities/shop.entity';
 import { Reward } from './entities/reward.entity';
 import { RewardStatus } from './enums/reward-status.enums';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
+import { log } from 'console';
 
 @Injectable()
 export class RewardService {
@@ -39,77 +41,215 @@ export class RewardService {
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
   ) {}
   async upsertMany(shopId: string, dtoArr: CreateRewardDto[]) {
-    const shop = await this.shopRepository.findOne({
-      where: { id: shopId },
-      relations: ['rewards'],
-    });
-    if (!shop) throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
+    try {
+      /* -----------------------------------------------------------
+       * 0.  Load shop + current rewards
+       * --------------------------------------------------------- */
+      const shop = await this.shopRepository.findOne({
+        where: { id: shopId },
+        relations: ['rewards'],
+      });
+      console.log('sssssssssssssss', shop);
 
-    const dbRewards = shop.rewards ?? [];
-    const incomingIds = new Set(dtoArr.filter((d) => d.id).map((d) => d.id!));
+      if (!shop) {
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
+      }
 
-    const toDelete = dbRewards
-      .filter((r) => !incomingIds.has(r.id))
-      .map((r) => r.id);
-    const toCreate = dtoArr.filter((d) => !d.id);
-    const toUpdate = dtoArr.filter((d) => d.id);
-
-    // CREATE
-    const created = await Promise.all(
-      toCreate.map(async (d) => {
-        await this.validateRewardConfiguration(shop, d.isUnlimited ?? false);
-        return this.rewardRepository.save(
-          this.rewardRepository.create({ ...d, shop }),
-        );
-      }),
-    );
-
-    // UPDATE
-    const updated = await Promise.all(
-      toUpdate.map(async (d) => {
-        const r = await this.rewardRepository.findOneBy({ id: d.id });
-        if (!r) {
-          throw new NotFoundException(`Reward not found: ${d.id}`);
+      /* -----------------------------------------------------------
+       * 1.  Duplicate‑name check (case‑insensitive)
+       * --------------------------------------------------------- */
+      const nameSet = new Set<string>();
+      for (const dto of dtoArr) {
+        const lower = dto.name.trim().toLowerCase();
+        if (nameSet.has(lower)) {
+          throw new BadRequestException(`Duplicate reward name: "${dto.name}"`);
         }
-        Object.assign(r, {
-          name: d.name,
-          icon: d.icon,
-          isUnlimited: d.isUnlimited,
-          status: d.status,
-          nbRewardTowin: d.nbRewardTowin,
-          percentage: d.percentage,
-        });
+        nameSet.add(lower);
+      }
 
-        return this.rewardRepository.save(r);
-      }),
-    );
+      /* -----------------------------------------------------------
+       * 2.  Per‑item validation (percentage, nbRewardTowin, …)
+       * --------------------------------------------------------- */
+      for (const dto of dtoArr) {
+        /** percentage 1 – 100 */
+        if (!dto.percentage || dto.percentage <= 0 || dto.percentage > 100) {
+          throw new BadRequestException(
+            `Invalid percentage for "${dto.name}": must be between 1 and 100`,
+          );
+        }
 
-    // DELETE
-    if (toDelete.length) await this.rewardRepository.delete(toDelete);
+        /** unlimited ↔ nbRewardTowin */
+        if (dto.isUnlimited && dto.nbRewardTowin != null) {
+          throw new BadRequestException(
+            `Unlimited reward "${dto.name}" cannot have nbRewardTowin set`,
+          );
+        }
+        if (
+          !dto.isUnlimited &&
+          (dto.nbRewardTowin == null || dto.nbRewardTowin < 1)
+        ) {
+          throw new BadRequestException(
+            `Reward "${dto.name}" must have a valid nbRewardTowin when not unlimited`,
+          );
+        }
+      }
 
-    return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-      created,
-      updated,
-      deleted: toDelete,
-      message: RewardMessages.REWARDS_UPSERT_DONE,
-    });
+      /* -----------------------------------------------------------
+       * 3.  Work out what will be created / updated / deleted
+       *     (nothing in this block changed from your original code)
+       * --------------------------------------------------------- */
+      const dbRewards = shop.rewards ?? [];
+      const incomingIds = new Set(dtoArr.filter((d) => d.id).map((d) => d.id!));
+
+      const toDeleteIds = dbRewards
+        .filter((r) => !incomingIds.has(r.id))
+        .map((r) => r.id);
+      const toCreateDtos = dtoArr.filter((d) => !d.id);
+      const toUpdateDtos = dtoArr.filter((d) => d.id);
+
+      /* -----------------------------------------------------------
+       * 4.  ✨ NEW GLOBAL VALIDATIONS  ✨
+       * --------------------------------------------------------- */
+
+      /* 4.a – What will ACTIVE rewards look like _after_ the upsert? */
+      const outgoingActiveDtos = dtoArr.filter(
+        (d) => d.status === RewardStatus.ACTIVE,
+      );
+      const totalPct = outgoingActiveDtos.reduce(
+        (sum, d) => sum + (d.percentage || 0),
+        0,
+      );
+
+      if (outgoingActiveDtos.length > 0 && totalPct !== 100) {
+        throw new BadRequestException(
+          `Total percentage of ACTIVE rewards must equal 100 %. Current sum: ${totalPct} %`,
+        );
+      }
+
+      /* 4.b – Guaranteed‑Win ⇒ at least one unlimited ACTIVE reward */
+      const hasUnlimited = outgoingActiveDtos.some((d) => d.isUnlimited);
+      if (shop.isGuaranteedWin && !hasUnlimited) {
+        throw new ConflictException(
+          `Pour un jeu 100 % gagnant, vous devez définir au moins un gain illimité ` +
+            `(isUnlimited = true). Sinon, désactivez l’option 100 % gagnant.`,
+        );
+      }
+
+      /* -----------------------------------------------------------
+       * 5.  CREATE
+       * --------------------------------------------------------- */
+      const created = await Promise.all(
+        toCreateDtos.map(async (d) => {
+          const reward = this.rewardRepository.create({
+            ...d,
+            shopId,
+            nbRewardTowin: d.isUnlimited ? null : d.nbRewardTowin,
+            shop,
+          });
+          return this.rewardRepository.save(reward);
+        }),
+      );
+
+      /* -----------------------------------------------------------
+       * 6.  UPDATE
+       * --------------------------------------------------------- */
+      const updated = await Promise.all(
+        toUpdateDtos.map(async (d) => {
+          const reward = await this.rewardRepository.findOneBy({ id: d.id });
+          if (!reward) throw new NotFoundException(`Reward not found: ${d.id}`);
+
+          Object.assign(reward, {
+            name: d.name,
+            icon: d.icon,
+            isUnlimited: d.isUnlimited,
+            status: d.status,
+            percentage: d.percentage,
+            nbRewardTowin: d.isUnlimited ? null : d.nbRewardTowin,
+            shop,
+          });
+          return this.rewardRepository.save(reward);
+        }),
+      );
+
+      /* -----------------------------------------------------------
+       * 7.  DELETE
+       * --------------------------------------------------------- */
+      if (toDeleteIds.length) {
+        /** If the user is about to delete every ACTIVE reward,
+         *  there will be no percentage left to check – that is OK
+         *  because we already validated outgoingActiveDtos above. */
+        await this.rewardRepository.delete(toDeleteIds);
+      }
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        created,
+        updated,
+        deleted: toDeleteIds,
+        message: RewardMessages.REWARDS_UPSERT_DONE,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 
-  private async validateRewardConfiguration(
-    shop: Shop,
-    isUnlimited: boolean,
-  ): Promise<void> {
-    if (shop.isGuaranteedWin && !isUnlimited) {
-      const hasUnlimitedReward = await this.rewardRepository.findOne({
-        where: {
-          shop: { id: shop.id },
-          isUnlimited: true,
-        },
-      });
+  private async validateRewardConfiguration(shop: Shop, isUnlimited: boolean) {
+    // Get all active rewards (including those not being modified)
+    const activeRewards = await this.rewardRepository.find({
+      where: {
+        shopId: shop.id,
+        status: RewardStatus.ACTIVE,
+      },
+    });
 
-      if (!hasUnlimitedReward) {
-        throw new ConflictException(
-          RewardMessages.GUARANTEED_WIN_REQUIRES_UNLIMITED,
+    // If any active reward is limited, then new limited rewards are allowed
+    const hasLimitedRewards = activeRewards.some((r) => !r.isUnlimited);
+
+    if (!hasLimitedRewards && !isUnlimited) {
+      throw new ConflictException(
+        'Pour un jeu 100% gagnant, vous devez définir un gain illimité. ' +
+          "Sinon, décochez l'option 100% gagnant pour inclure une case 'Perdu' dans le jeu.",
+      );
+    }
+  }
+
+  // 4. ADD this helper method for the validatePercentageSum used in individual upsert/update
+  private async validatePercentageSum(
+    shopId: string,
+    newPercentage: number,
+    newStatus: RewardStatus,
+    excludeRewardId?: string,
+  ): Promise<void> {
+    // Get all active rewards for this shop (excluding the one being updated if applicable)
+    const queryBuilder = this.rewardRepository
+      .createQueryBuilder('reward')
+      .where('reward.shopId = :shopId', { shopId })
+      .andWhere('reward.status = :status', { status: RewardStatus.ACTIVE });
+
+    if (excludeRewardId) {
+      queryBuilder.andWhere('reward.id != :excludeRewardId', {
+        excludeRewardId,
+      });
+    }
+
+    const activeRewards = await queryBuilder.getMany();
+
+    // Calculate current sum of percentages
+    const currentSum = activeRewards.reduce(
+      (sum, reward) => sum + (reward.percentage || 0),
+      0,
+    );
+
+    // If the new/updated reward will be ACTIVE, include its percentage in the sum
+    const newSum =
+      newStatus === RewardStatus.ACTIVE
+        ? currentSum + newPercentage
+        : currentSum;
+
+    // The sum must be exactly 100% for shops with active rewards
+    if (newStatus === RewardStatus.ACTIVE || activeRewards.length > 0) {
+      if (newSum !== 100) {
+        throw new BadRequestException(
+          `Total percentage of active rewards must equal 100%. Current sum would be ${newSum}%`,
         );
       }
     }
@@ -227,7 +367,7 @@ export class RewardService {
 
       const queryOptions: any = {
         relations: [/*'category'*/ 'shop'],
-        order: { createdAt: 'DESC' },
+        order: { createdAt: 'ASC' },
         skip,
         take: limit,
       };
@@ -359,13 +499,11 @@ export class RewardService {
     };
   }> {
     try {
-      // ------------------------------------------------------------
-      // 1. Still make sure a game is active for this shop
-      // ------------------------------------------------------------
+      // 1. Make sure a game is active for this shop
       const activeGameAssignment =
         await this.activeGameAssignmentRepository.findOne({
           where: { shopId, isActive: true },
-          relations: ['shop'], // ← ‘rewards’ no longer needed here
+          relations: ['shop'],
         });
 
       if (!activeGameAssignment) {
@@ -378,12 +516,10 @@ export class RewardService {
 
       const shop = activeGameAssignment.shop;
 
-      // ------------------------------------------------------------
-      // 2. Handle guaranteed/percentage‑based win exactly as before
-      // ------------------------------------------------------------
+      // 2. Handle guaranteed/percentage‑based win
       if (!shop.isGuaranteedWin) {
         const randomValue = Math.random() * 100;
-        const winningChance = shop.winningPercentage ?? 50; // default 50 %
+        const winningChance = shop.winningPercentage ?? 50;
 
         if (randomValue > winningChance) {
           return {
@@ -397,9 +533,7 @@ export class RewardService {
         }
       }
 
-      // ------------------------------------------------------------
-      // 3. ↓ NEW – fetch only rewards that belong to this shop
-      // ------------------------------------------------------------
+      // 3. Fetch only rewards that belong to this shop and are available
       const shopRewards = await this.rewardRepository.find({
         where: [
           { shopId, isUnlimited: true, status: RewardStatus.ACTIVE },
@@ -418,22 +552,13 @@ export class RewardService {
         };
       }
 
-      // Optional: if you prefer the old in‑memory filter instead of SQL, do
-      // const shopRewards = (await this.rewardRepository.find({ where: { shopId, status: RewardStatus.ACTIVE } }))
-      //   .filter(r => r.isUnlimited || r.nbRewardTowin > 0);
-
-      // ------------------------------------------------------------
-      // 4. Pick a reward by normalised percentage
-      // ------------------------------------------------------------
-      const totalPercent =
-        shopRewards.reduce((sum, r) => sum + (r.percentage ?? 0), 0) || 100;
+      // 4. Pick a reward by percentage (NO normalization needed since we enforce 100%)
       const roll = Math.random() * 100;
-
       let cumulative = 0;
       let selectedReward: Reward | null = null;
 
       for (const r of shopRewards) {
-        cumulative += ((r.percentage ?? 0) / totalPercent) * 100;
+        cumulative += r.percentage || 0;
         if (roll <= cumulative) {
           selectedReward = r;
           break;
@@ -441,7 +566,6 @@ export class RewardService {
       }
 
       if (!selectedReward) {
-        // Safety fallback
         return {
           success: true,
           statusCode: 200,
@@ -449,14 +573,12 @@ export class RewardService {
         };
       }
 
-      // ------------------------------------------------------------
-      // 5. Update winner count / stock just like before
-      // ------------------------------------------------------------
+      // 5. Update winner count / stock
       const update: Partial<Reward> = {
         winnerCount: (selectedReward.winnerCount ?? 0) + 1,
       };
       if (!selectedReward.isUnlimited) {
-        update.nbRewardTowin = selectedReward.nbRewardTowin - 1;
+        update.nbRewardTowin = selectedReward.nbRewardTowin ?? 0 - 1;
       }
 
       await this.rewardRepository.update({ id: selectedReward.id }, update);
@@ -486,7 +608,6 @@ export class RewardService {
       };
     }
   }
-
   async getRewardStatus(shopId: string): Promise<any> {
     const activeGameAssignment =
       await this.activeGameAssignmentRepository.findOne({
