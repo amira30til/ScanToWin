@@ -530,4 +530,38 @@ export class UserGameService {
   //     return handleServiceError(error);
   //   }
   // }
+
+  //////////////////////////////////////////////////
+  async verifyUserCooldown(
+    userId: string,
+    shopId: string,
+  ): Promise<{ userId: string; code?: string; timestamp?: number }> {
+    const lastGameAtShop = await this.userGameRepository.findOne({
+      where: {
+        userId,
+        shopId,
+      },
+      order: { lastPlayedAt: 'DESC' },
+    });
+
+    if (!lastGameAtShop) {
+      return { userId };
+    }
+
+    const currentTime = new Date();
+    const lastPlayedTime = new Date(lastGameAtShop.lastPlayedAt);
+    const timeDifference = currentTime.getTime() - lastPlayedTime.getTime();
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    if (hoursDifference < 24) {
+      const remainingTimeMs = 24 * 60 * 60 * 1000 - timeDifference;
+      return {
+        userId,
+        code: 'COOLDOWN',
+        timestamp: remainingTimeMs,
+      };
+    }
+
+    return { userId };
+  }
 }
