@@ -11,7 +11,7 @@ import SideBar from "@/components/Sidebar";
 import { Outlet } from "react-router-dom";
 import Spinner from "@/components/Spinner";
 import Error from "@/components/Error";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 
 const LayoutAdmin = () => {
   const setFullShop = useAuthStore((state) => state.setShop);
@@ -32,9 +32,9 @@ const LayoutAdmin = () => {
   return (
     <Flex w="100%">
       <SideBar shops={shops}>
-        <div>
+        <Box w={{ sm: "100%", md: "calc(100vw - 259px)" }}>
           <Outlet />
-        </div>
+        </Box>
       </SideBar>
     </Flex>
   );

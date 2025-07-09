@@ -1,35 +1,13 @@
-// HOOKS
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useCopy } from "@/hooks";
 import useAuthStore from "@/store";
 
-// COMPONENTS
-import IconButton from "@/components/common/IconButton";
-import DataTable from "@/components/DataTable";
-import AdminSection from "@/components/common/AdminSection";
 import CustomizeGame from "./CustomizeGame";
 import ChooseGame from "./ChooseGame";
 
-// STYLE
-import {
-  Box,
-  Flex,
-  Heading,
-  Button,
-  Td,
-  FormControl,
-  FormLabel,
-  Switch,
-  Link,
-  // useToken,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Button } from "@chakra-ui/react";
 
-// ASSETS
 import {
-  AddIcon,
-  DeleteIcon,
-  EditIcon,
   Menu,
   MenuButton,
   MenuList,
@@ -38,66 +16,16 @@ import {
   DownloadIcon,
   CopyIcon,
 } from "@chakra-ui/icons";
-import {
-  FaFacebook,
-  FaTiktok,
-  FaGoogle,
-  FaLock,
-  FaQrcode,
-} from "react-icons/fa";
+import { FaLock, FaQrcode } from "react-icons/fa";
 import { FaFloppyDisk } from "react-icons/fa6";
-
-const ACTIONS = [
-  {
-    position: 1,
-    name: "Google",
-    icon: "google",
-    targetLink: "https://www.google.com/maps",
-  },
-  {
-    position: 2,
-    name: "Google",
-    icon: "facebook",
-    targetLink: "https://www.google.com/maps",
-  },
-  {
-    position: 3,
-    name: "Google",
-    icon: "tiktok",
-    targetLink: "https://www.google.com/maps",
-  },
-];
-
-const GIFTS = [
-  {
-    icon: AddIcon,
-    name: "Drink",
-    winnerCount: 2,
-    isUnlimited: true,
-  },
-  {
-    icon: AddIcon,
-    name: "Pizza",
-    winnerCount: 0,
-    isUnlimited: false,
-  },
-  {
-    icon: AddIcon,
-    name: "Drink",
-    winnerCount: 2,
-    isUnlimited: true,
-  },
-];
+import Rewards from "./rewards";
+import Actions from "./Actions";
 
 const AdminCampaign = () => {
   const shop = useAuthStore((state) => state.shop);
 
-  useEffect(() => {
-    console.log("shop", shop);
-  }, [shop]);
-
   return (
-    <Box pos="relative" w="100%">
+    <Box pos="relative">
       <Header />
 
       <Flex direction="column" gap={10} h="3400px" px={8} py={10}>
@@ -107,7 +35,7 @@ const AdminCampaign = () => {
 
         <CustomizeGame shop={shop} />
 
-        <Gifts />
+        <Rewards />
       </Flex>
     </Box>
   );
@@ -187,158 +115,6 @@ const Header = () => {
         </Flex>
       </Flex>
     </Box>
-  );
-};
-
-const Actions = () => {
-  const headers = ["Order", "Action", "link", "actions"];
-
-  const iconMap = {
-    facebook: FaFacebook,
-    tiktok: FaTiktok,
-    google: FaGoogle,
-  };
-
-  // const [primary500] = useToken("colors", ["primary.500"]);
-
-  const rows = (action) => {
-    const IconComponent = iconMap[action.icon] || AddIcon;
-
-    return (
-      <>
-        <Td>{action.position}</Td>
-
-        <Td>
-          <Flex align="center" gap={2}>
-            <IconComponent
-            //  color={primary500}
-            />
-
-            <Flex fontWeight="bold">{action.name}</Flex>
-          </Flex>
-        </Td>
-
-        <Td>
-          <Link size="sm">{action.targetLink}</Link>
-        </Td>
-
-        <Td>
-          <Flex>
-            <Flex>
-              <IconButton
-                label="Delete gift"
-                icon={<DeleteIcon />}
-                size="sm"
-                variant="ghost"
-                colorScheme="red"
-                // onClick={() => deleteGiftHandler(gift?.id)}
-              />
-            </Flex>
-          </Flex>
-        </Td>
-      </>
-    );
-  };
-
-  return (
-    <AdminSection
-      title="Choose actions"
-      description="Define the order and actions your customers need to take to maximize engagement."
-    >
-      <Flex direction="column" gap={4}>
-        <DataTable
-          rows={rows}
-          headers={headers}
-          data={ACTIONS}
-          bg="surface.navigation"
-        />
-      </Flex>
-    </AdminSection>
-  );
-};
-
-const Gifts = () => {
-  const headers = ["name", "winner count", "is unlimited", "actions"];
-
-  const rows = (gift) => (
-    <>
-      <Td>
-        <Flex align="center" gap={2}>
-          <AddIcon color="primary.500" />
-          <Flex fontWeight="bold">{gift.name}</Flex>
-        </Flex>
-      </Td>
-
-      <Td>{gift.winnerCount}</Td>
-
-      <Td>
-        <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="is-unlimited" mb="0" fontSize="xs">
-            unlimited
-          </FormLabel>
-          <Switch
-            id="is-unlimited"
-            colorScheme="primary"
-            size="sm"
-            // defaultValue={gift.isUnlimited}
-            defaultChecked={gift.isUnlimited}
-            // {...register("isUnlimited")}
-          />
-        </FormControl>
-      </Td>
-      <Td>
-        <Flex>
-          <Flex>
-            <IconButton
-              label="Delete gift"
-              icon={<DeleteIcon />}
-              size="sm"
-              variant="ghost"
-              colorScheme="red"
-              // onClick={() => deleteGiftHandler(gift?.id)}
-            />
-          </Flex>
-          <Flex>
-            <IconButton
-              label="Edit gift"
-              icon={<EditIcon />}
-              size="sm"
-              variant="ghost"
-              colorScheme="orange"
-              // onClick={() => editGiftHandler(gift?.id)}
-            />
-          </Flex>
-        </Flex>
-      </Td>
-    </>
-  );
-
-  return (
-    <AdminSection
-      title="Choose gifts"
-      description="Choose the rewards your customers can win by playing. Customize your prizes to offer a unique and engaging experience."
-    >
-      <Flex direction="column" gap={4}>
-        <Flex>
-          <Button
-            leftIcon={<AddIcon />}
-            variant="solid"
-            colorScheme="secondary"
-            size="sm"
-            // onClick={addGiftHandler}
-          >
-            Add a gift
-          </Button>
-        </Flex>
-
-        <DataTable
-          rows={rows}
-          headers={headers}
-          data={GIFTS}
-          bg="surface.navigation"
-        />
-      </Flex>
-    </AdminSection>
   );
 };
 

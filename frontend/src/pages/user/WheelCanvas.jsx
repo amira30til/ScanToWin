@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 
-const WheelComponent = ({
+const WheelCanvas = ({
   segments,
   segColors,
   winningSegment,
@@ -92,7 +92,7 @@ const WheelComponent = ({
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2);
     } else {
       if (winningSegment) {
-        if (currentSegment === winningSegment && frames > segments.length) {
+        if (currentSegment.id === winningSegment && frames > segments.length) {
           progress = duration / upTime;
           angleDelta =
             maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
@@ -153,7 +153,7 @@ const WheelComponent = ({
     ctx.rotate((lastAngle + angle) / 2);
     ctx.fillStyle = contrastColor;
     ctx.font = `bold ${fontSize} ${fontFamily}`;
-    ctx.fillText(value.substring(0, 21), size / 2 + 20, 0);
+    ctx.fillText(value.name.substring(0, 21), size / 2 + 20, 0);
     ctx.restore();
   };
 
@@ -226,7 +226,7 @@ const WheelComponent = ({
     ctx.font = "bold 1.5em " + fontFamily;
     currentSegment = segments[i];
     isStarted &&
-      ctx.fillText(currentSegment, centerX + 10, centerY + size + 50);
+      ctx.fillText(currentSegment.name, centerX + 10, centerY + size + 50);
   };
 
   const clear = () => {
@@ -250,4 +250,4 @@ const WheelComponent = ({
     </div>
   );
 };
-export default WheelComponent;
+export default WheelCanvas;

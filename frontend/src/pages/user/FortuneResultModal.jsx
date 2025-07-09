@@ -1,4 +1,8 @@
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+
+import { createUser } from "@/services/userService";
+
 import {
   ModalFooter,
   Button,
@@ -14,11 +18,15 @@ import {
   FormHelperText,
   HStack,
   Text,
+  Checkbox,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
 import { submitUserDataValidator } from "@/validators/submitUserDataValidator";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useToast } from "@/hooks";
 
 const celebrate = keyframes`
   0%   { transform: scale(0.95); opacity: 0; }
@@ -32,7 +40,10 @@ const float = keyframes`
   50% { transform: translateY(-10px); }
 `;
 
-const FortuneResult = ({ gift, onClose, isOpen }) => {
+const FortuneResultModal = ({ reward, onClose, isOpen }) => {
+  const { shopId } = useParams();
+  const toast = useToast();
+
   const {
     register,
     handleSubmit,
@@ -42,8 +53,32 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
     resolver: yupResolver(submitUserDataValidator),
   });
 
+  const onCreateUserError = (error) => {
+    // TODO
+    const timestamp = error.response?.data?.timestamp;
+    if (error.response?.data?.code === "USER_COOLDOWN") {
+      toast(
+        `You can play again after 24 hours from your last game at this shop. Time remaining: ${timestamp}`,
+      );
+    }
+  };
+
+  const onCreateUserSuccess = (data) => {
+    // TODO: save the userId to the localstorage
+    console.log(data);
+    return;
+  };
+
+  const { mutate: mutateCreateUser, isPending: isPendingCreateUser } =
+    useMutation({
+      mutationFn: async (values) => await createUser(values),
+      onError: onCreateUserError,
+      onSuccess: onCreateUserSuccess,
+    });
+
   const onSubmit = (values) => {
-    console.log(values);
+    mutateCreateUser({ ...values, shopId, rewardId: reward?.id });
+    console.log({ ...values, shopId, rewardId: reward?.id });
     reset();
     onClose();
   };
@@ -51,7 +86,7 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
   return (
     <Modal
       isOpen={isOpen}
-      size="xs"
+      size="md"
       onClose={onClose}
       isCentered
       p={6}
@@ -86,28 +121,44 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
           ))}
         </HStack>
         <ModalHeader align="center" pb="0">
-          You Won a {gift}!
+          You Won a {reward?.name}!
         </ModalHeader>
         <ModalBody>
           <Text pb={2} fontSize="sm" align="center" color="gray.500">
-            Please enter your email so you can have the gift!
+            Please enter your email so you can have the reward!
           </Text>
 
           <Flex direction="column" gap={2}>
             <FormControl>
               <FormLabel fontSize="sm" color="gray.600">
-                Name
+                First Name
               </FormLabel>
               <Input
                 focusBorderColor="primary.500"
-                placeholder="your name"
+                placeholder="your first name"
                 autoFocus
                 size="sm"
-                {...register("name")}
+                {...register("firstName")}
               />
 
               <FormHelperText color="red.500">
-                {errors.name?.message}
+                {errors.firstName?.message}
+              </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.600">
+                Last Name
+              </FormLabel>
+              <Input
+                focusBorderColor="primary.500"
+                placeholder="your last name"
+                autoFocus
+                size="sm"
+                {...register("lastName")}
+              />
+
+              <FormHelperText color="red.500">
+                {errors.lastName?.message}
               </FormHelperText>
             </FormControl>
             <FormControl>
@@ -142,12 +193,23 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
                 {errors.tel?.message}
               </FormHelperText>
             </FormControl>
+
+            <Checkbox {...register("agreeToPromotions")} colorScheme="primary">
+              <Text fontSize="xs">
+                I agree to receive personalised communications about promotions
+                and new products and from the store.
+              </Text>
+            </Checkbox>
           </Flex>
         </ModalBody>
 
         <ModalFooter>
           <Flex justify="center" w="100%">
-            <Button type="submit" colorScheme="primary">
+            <Button
+              type="submit"
+              colorScheme="primary"
+              isLoading={isPendingCreateUser}
+            >
               Confirm
             </Button>
           </Flex>
@@ -157,4 +219,4 @@ const FortuneResult = ({ gift, onClose, isOpen }) => {
   );
 };
 
-export default FortuneResult;
+export default FortuneResultModal;
