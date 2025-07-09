@@ -70,9 +70,7 @@ export class RewardController {
     return this.rewardService.findAll(page, limit);
   }
 
-  @UseGuards(AdminGuard)
   @Get('by-shop/:shopId')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get rewards by shop',
     description:

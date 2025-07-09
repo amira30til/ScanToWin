@@ -61,8 +61,8 @@ export class Reward {
   shopId: string;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  nbRewardTowin: number;
+  @Column({ type: 'int', nullable: true })
+  nbRewardTowin!: number | null;
   @ApiProperty()
   @Column({ nullable: true })
   percentage: number;
