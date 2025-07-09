@@ -52,7 +52,10 @@ export class UserGame {
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   lastPlayedAt: Date;
-  @ManyToOne(() => Reward, { nullable: true })
+  @ManyToOne(() => Reward, {
+    nullable: true,
+    onDelete: 'SET NULL', 
+  })
   @JoinColumn({ name: 'rewardId' })
   reward: Reward;
 
