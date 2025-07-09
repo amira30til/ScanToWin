@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,7 +7,6 @@ import { CreateRewardDto } from './dto/create-reward.dto';
 import { UpdateRewardDto } from './dto/update-reward.dto';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import {
-  GameMessages,
   RewardMessages,
   ShopMessages,
 } from 'src/common/constants/messages.constants';
