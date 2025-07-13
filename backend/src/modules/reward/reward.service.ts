@@ -77,7 +77,7 @@ export class RewardService {
         }
 
         /** unlimited ↔ nbRewardTowin */
-        if (dto.isUnlimited && dto.nbRewardTowin != null) {
+        if (dto.isUnlimited && dto.nbRewardTowin != 0) {
           throw new BadRequestException(
             `Unlimited reward "${dto.name}" cannot have nbRewardTowin set`,
           );
