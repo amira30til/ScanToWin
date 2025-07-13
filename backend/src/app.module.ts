@@ -16,6 +16,9 @@ import { ActiveGameAssignmentModule } from './modules/active-game-assignment/act
 import { RewardModule } from './modules/reward/reward.module';
 import { RewardCategoryModule } from './modules/reward-category/reward-category.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { ActionsModule } from './modules/actions/actions.module';
+import { ChosenAction } from './modules/chosen-action/entities/chosen-action.entity';
+import { ChosenActionModule } from './modules/chosen-action/chosen-action.module';
 
 @Module({
   imports: [
@@ -50,6 +53,8 @@ import { MulterModule } from '@nestjs/platform-express';
     ShopsModule,
     RewardModule,
     RewardCategoryModule,
+    ActionsModule,
+    ChosenActionModule,
     MulterModule.register({}),
   ],
   controllers: [AppController],
