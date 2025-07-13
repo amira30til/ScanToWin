@@ -113,6 +113,8 @@ export const ShopMessages = {
   QR_CODE_GENERATED: 'QR code identifier generated successfully',
   SHOP_QR_NOT_FOUND: 'Shop with this QR code not found',
   SHOP_FETCHED_BY_QR: 'Shop and active game fetched by QR code successfully',
+   GAME_CODE_MATCHED: 'Game code pin is correct.',
+  GAME_CODE_MISMATCH: 'Game code pin does not match.',
 };
 export const RewardMessages = {
   CATEGORY_CREATED: 'Reward category created successfully',
@@ -143,4 +145,24 @@ export const RewardMessages = {
   SHOP_NEEDS_UNLIMITED_FOR_GUARANTEED:
     "Pour activer le mode 100% gagnant, vous devez d'abord créer au moins un gain illimité.",
   REWARDS_UPSERT_DONE: 'Rewards successfully processed.',
+};
+export const ActionMessages = {
+  ACTION_CREATED: 'Action created successfully',
+  ACTION_UPDATED: 'Action updated successfully',
+  ACTION_DELETED: 'Action deleted successfully',
+  ACTION_RETRIEVED: 'Action retrieved successfully',
+  ACTIONS_RETRIEVED: 'Actions retrieved successfully',
+  ACTION_NOT_FOUND: (id: string) => `Action with ID '${id}' not found`,
+  ACTION_NAME_EXISTS: (name: string) =>
+    `Action with name '${name}' already exists`,
+};
+export const ChosenActionMessages = {
+  CREATED: 'Chosen action created successfully',
+  UPDATED: 'Chosen action updated successfully',
+  DELETED: 'Chosen action deleted successfully',
+  RETRIEVED: 'Chosen action retrieved successfully',
+  ALL_RETRIEVED: 'All chosen actions retrieved successfully',
+  BY_SHOP_RETRIEVED: (shopId: string) =>
+    `Chosen actions retrieved for shop ID '${shopId}'`,
+  NOT_FOUND: (id: string) => `Chosen action with ID '${id}' not found`,
 };
