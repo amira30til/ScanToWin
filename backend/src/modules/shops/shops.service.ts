@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { ShopStatus } from './enums/shop-status.enum';
 import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
 
 @Injectable()
 export class ShopsService {
@@ -482,6 +484,33 @@ export class ShopsService {
         total,
         page,
         limit,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  
+  async verifyGameCodePin(
+    dto: VerifyGameCodeDto,
+  ): Promise<
+    ApiResponseInterface<{ isValid: boolean }> | ErrorResponseInterface
+  > {
+    try {
+      const shop = await this.shopsRepository.findOne({
+        where: { id: dto.shopId },
+      });
+
+      if (!shop) {
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
+      }
+
+      const isValid = shop.gameCodePin === dto.gameCodePin;
+
+      return ApiResponse.success(HttpStatus.OK, {
+        isValid,
+        message: isValid
+          ? ShopMessages.GAME_CODE_MATCHED
+          : ShopMessages.GAME_CODE_MISMATCH,
       });
     } catch (error) {
       return handleServiceError(error);
