@@ -25,7 +25,7 @@ const ChooseGame = ({ shop }) => {
   const { control, watch, reset } = useForm();
 
   const { data: games = [] } = useQuery({
-    queryKey: ["games"],
+    queryKey: ["active-games"],
     queryFn: async () => {
       const response = await getActiveGames();
       return response.data.data.data;

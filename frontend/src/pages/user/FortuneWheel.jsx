@@ -7,21 +7,34 @@ import {
   Heading,
   Text,
   VStack,
+  Image,
   useDisclosure,
 } from "@chakra-ui/react";
-import Logo from "@/components/Logo";
-
-const primaryColor = "#FF6B6B";
-const secondaryColor = "#615EFC";
+import { useParams } from "react-router-dom";
+import { getShop } from "@/services/shopService";
+import { useQuery } from "@tanstack/react-query";
+import tinycolor from "tinycolor2";
 
 const FortuneWheel = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [reward, setReward] = useState(null);
+  const { shopId } = useParams();
+
+  const { data: shop, isLoading } = useQuery({
+    queryKey: ["shop-by-id", shopId],
+    queryFn: async () => {
+      const response = await getShop(shopId);
+      return response.data.data.shop;
+    },
+    enabled: !!shopId,
+  });
 
   const rewardHandler = (reward) => {
     setReward(reward);
     onOpen();
   };
+
+  if (isLoading) return <div>loading...</div>;
 
   return (
     <Box
@@ -35,11 +48,23 @@ const FortuneWheel = () => {
       <Container maxW="md">
         <VStack textAlign="center" spacing={10}>
           <VStack spacing={6}>
-            <Logo w="60px" />
+            <Image
+              objectFit="cover"
+              src={shop?.logo ?? ""}
+              alt="logo"
+              h="auto"
+              w="180px"
+            />
             <Heading as="h1" fontSize="3xl" letterSpacing="tight">
               Welcome!
             </Heading>
-            <Heading as="h2" fontSize="3xl" color="secondary.500" mb={4}>
+
+            <Heading
+              as="h2"
+              fontSize="3xl"
+              color={getAdjustedColor(shop?.gameColor1)}
+              mb={4}
+            >
               Fortune Wheel
             </Heading>
             <Text fontSize="sm" color="gray.600" maxW="md">
@@ -47,12 +72,13 @@ const FortuneWheel = () => {
               et attendez que la roue s'arrête.
             </Text>
           </VStack>
-
-          <Wheel
-            onReward={rewardHandler}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-          />
+          {!isLoading && (
+            <Wheel
+              onReward={rewardHandler}
+              primaryColor={shop?.gameColor1}
+              secondaryColor={shop?.gameColor2}
+            />
+          )}
           <FortuneResultModal
             reward={reward}
             isOpen={isOpen}
@@ -62,6 +88,16 @@ const FortuneWheel = () => {
       </Container>
     </Box>
   );
+};
+
+const getAdjustedColor = (color) => {
+  const tc = tinycolor(color);
+
+  if (tc.isValid() && tc.isLight()) {
+    return tc.darken(30).toString(); // darken by 30%
+  }
+
+  return color;
 };
 
 export default FortuneWheel;

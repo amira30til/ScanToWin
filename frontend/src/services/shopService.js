@@ -15,4 +15,8 @@ export const getShop = async (shopId) =>
   await axios.get(`${SHOP_URL}/${shopId}`);
 
 export const updateShop = async (axios, shopId, adminId, body) =>
-  await axios.patch(`${SHOP_URL}/${shopId}/admin/${adminId}`, body);
+  await axios.patch(`${SHOP_URL}/${shopId}/admin/${adminId}`, body, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
