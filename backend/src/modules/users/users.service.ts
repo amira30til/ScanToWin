@@ -136,6 +136,7 @@ export class UsersService {
                   'You can play again after 24 hours from your last game at this shop',
                 timestamp: nextPlayTime.getTime(),
                 remainingTime: remainingMs,
+                userId: existingUser.id,
               },
             };
           }

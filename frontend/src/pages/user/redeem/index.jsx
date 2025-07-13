@@ -29,7 +29,7 @@ const Redeem = () => {
   });
 
   const { data: shop } = useQuery({
-    queryKey: ["games"],
+    queryKey: ["shop-by-id", shopId],
     queryFn: async () => {
       const response = await getShop(shopId);
       return response.data.data.shop;

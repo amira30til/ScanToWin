@@ -3,12 +3,19 @@ import { useToast as useChakraToast } from "@chakra-ui/react";
 const useToast = () => {
   const toast = useChakraToast();
 
-  return (title, status) => {
+  return (
+    title,
+    status,
+    description = "",
+    duration = 3000,
+    isClosable = true,
+  ) => {
     toast({
       title,
       status,
-      duration: 3000,
-      isClosable: true,
+      description,
+      duration,
+      isClosable,
     });
   };
 };
