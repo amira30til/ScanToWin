@@ -113,7 +113,7 @@ export const ShopMessages = {
   QR_CODE_GENERATED: 'QR code identifier generated successfully',
   SHOP_QR_NOT_FOUND: 'Shop with this QR code not found',
   SHOP_FETCHED_BY_QR: 'Shop and active game fetched by QR code successfully',
-   GAME_CODE_MATCHED: 'Game code pin is correct.',
+  GAME_CODE_MATCHED: 'Game code pin is correct.',
   GAME_CODE_MISMATCH: 'Game code pin does not match.',
 };
 export const RewardMessages = {
@@ -155,6 +155,7 @@ export const ActionMessages = {
   ACTION_NOT_FOUND: (id: string) => `Action with ID '${id}' not found`,
   ACTION_NAME_EXISTS: (name: string) =>
     `Action with name '${name}' already exists`,
+  ACTION_SOFT_DELETED: 'Action soft deleted successfully.',
 };
 export const ChosenActionMessages = {
   CREATED: 'Chosen action created successfully',
