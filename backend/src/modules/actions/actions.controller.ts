@@ -15,6 +15,7 @@ import { UpdateActionDto } from './dto/update-action.dto';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ActionMessages } from 'src/common/constants/messages.constants';
 import { Action } from './entities/action.entity';
+import { ErrorResponseInterface } from 'src/common/interfaces/response.interface';
 
 @Controller('actions')
 export class ActionsController {
@@ -32,8 +33,8 @@ export class ActionsController {
     description: 'Action with this name already exists',
   })
   async create(@Body() createActionDto: CreateActionDto) {
-    console.log("yyyy", createActionDto);
-    
+    console.log('yyyy', createActionDto);
+
     return this.actionsService.create(createActionDto);
   }
 
@@ -97,5 +98,59 @@ export class ActionsController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {
     return this.actionsService.remove(id);
+  }
+  @Delete('soft-delete/:actionId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Soft delete an action',
+    description:
+      'Marks an action as inactive (isActive = false) instead of permanently deleting it.',
+  })
+  @ApiParam({
+    name: 'actionId',
+    type: String,
+    required: true,
+    description: 'UUID of the action to be soft deleted',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Action soft deleted successfully',
+    schema: {
+      example: {
+        success: true,
+        statusCode: 200,
+        data: {
+          id: 'uuid',
+          message: 'Action soft deleted successfully.',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Action not found',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Action already inactive',
+  })
+  async softDeleteAction(
+    @Param('actionId') actionId: string,
+  ): Promise<any | ErrorResponseInterface> {
+    return this.actionsService.softDeleteAction(actionId);
+  }
+
+  @Get('active')
+  @ApiOperation({
+    summary: 'Get all active actions',
+    description:
+      'Returns all actions that are currently active (isActive = true).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of active actions',
+  })
+  async getActiveActions(): Promise<any> {
+    return this.actionsService.findByStatus(true);
   }
 }

@@ -11,12 +11,15 @@ import {
 import { ApiResponse } from 'src/common/utils/response.util';
 import { ChosenActionMessages } from 'src/common/constants/messages.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
+import { Action } from '../actions/entities/action.entity';
 
 @Injectable()
 export class ChosenActionService {
   constructor(
     @InjectRepository(ChosenAction)
     private readonly chosenActionRepository: Repository<ChosenAction>,
+    @InjectRepository(Action)
+    private readonly actionRepository: Repository<Action>,
   ) {}
   async syncChosenActions(
     shopId: string,
@@ -46,13 +49,22 @@ export class ChosenActionService {
       const results: ChosenAction[] = [];
 
       for (const actionDto of receivedActions) {
+        const action = await this.actionRepository.findOne({
+          where: { id: actionDto.actionId, isActive: true },
+        });
+
+        if (!action) {
+          throw new NotFoundException(
+            `Action with ID ${actionDto.actionId} is not active or does not exist`,
+          );
+        }
+
         if (!actionDto.id) {
           const newChosen = this.chosenActionRepository.create({
             ...actionDto,
             shopId,
           });
           const saved = await this.chosenActionRepository.save(newChosen);
-          console.log('➕ Created:', saved);
           results.push(saved);
         } else {
           const existing = await this.chosenActionRepository.findOne({
@@ -73,10 +85,8 @@ export class ChosenActionService {
               actionDto,
             );
             const saved = await this.chosenActionRepository.save(updated);
-            console.log('✏️ Updated:', saved);
             results.push(saved);
           } else {
-            console.log('✅ No changes for:', existing.id);
             results.push(existing);
           }
         }
