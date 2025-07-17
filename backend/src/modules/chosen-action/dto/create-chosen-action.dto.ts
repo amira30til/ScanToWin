@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 export class CreateOrUpdateChosenActionItemDto {
   @ApiProperty({
@@ -32,11 +39,11 @@ export class CreateOrUpdateChosenActionItemDto {
   @ApiProperty({
     description: 'Target link for the chosen action',
     example: 'https://example.com/special-offer',
-    required: true,
+    required: false,
   })
   @IsString()
-  @IsNotEmpty()
-  targetLink: string;
+  @IsOptional()
+  targetLink?: string;
 
   @ApiProperty({
     description: 'Action ID reference',
