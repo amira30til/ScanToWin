@@ -8,11 +8,6 @@ export class CreateActionDto {
   name: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  icon: string;
-
-  @ApiProperty()
   @IsBoolean()
   isActive: boolean;
 }
