@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocalStorage } from "@/hooks";
 
 import { getActionsByShop } from "@/services/actionService";
@@ -84,10 +84,6 @@ const FortuneWheel = () => {
     setShowAction(false);
     onActionOpen();
   };
-
-  useEffect(() => {
-    console.log(actionsByShop);
-  }, [actionsByShop]);
 
   if (isLoading) return <div>loading...</div>;
 

@@ -21,7 +21,10 @@ const UserCooldownModal = ({ title, description }) => {
   const { shopId } = useParams();
 
   const { isOpen, onOpen } = useDisclosure();
-  const [userId] = useLocalStorage("s2w_user_id");
+  const [storedUserId] = useLocalStorage("s2w_user_id");
+  const { userId: paramUserId } = useParams();
+
+  const userId = storedUserId || paramUserId || null;
 
   const { data: userVerify, isLoading } = useQuery({
     queryKey: ["verify-user-cooldown", shopId, userId],
