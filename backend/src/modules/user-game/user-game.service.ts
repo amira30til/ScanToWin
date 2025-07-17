@@ -552,12 +552,11 @@ export class UserGameService {
     const lastPlayedTime = new Date(lastGameAtShop.lastPlayedAt);
     const timeDifference = currentTime.getTime() - lastPlayedTime.getTime();
     const hoursDifference = timeDifference / (1000 * 60 * 60);
+    const nextPlayTime = new Date(
+      lastPlayedTime.getTime() + 24 * 60 * 60 * 1000,
+    );
 
     if (hoursDifference < 24) {
-      const nextPlayTime = new Date(
-        lastPlayedTime.getTime() + 24 * 60 * 60 * 1000,
-      );
-
       return {
         userId,
         code: 'COOLDOWN',
