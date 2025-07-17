@@ -193,6 +193,8 @@ export class UsersService {
           validUntilDate,
           emailCode,
           reward.id,
+          dto.shopId,
+          userToNotify.id,
         );
       } catch (emailError) {
         console.error('Email sending failed');
