@@ -88,7 +88,6 @@ const FortuneResultModal = ({ reward, onClose, isOpen }) => {
 
   const onSubmit = (values) => {
     mutateCreateUser({ ...values, shopId, rewardId: reward?.id });
-    console.log({ ...values, shopId, rewardId: reward?.id });
     reset();
     onClose();
   };

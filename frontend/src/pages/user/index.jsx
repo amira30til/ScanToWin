@@ -16,6 +16,10 @@ const Play = () => {
     queryKey: ["shop-game-assignment", shopId],
     queryFn: async () => {
       const response = await getShopGameAssignement(shopId);
+      const result = response.data.data.data;
+      if (Array.isArray(result) && result.length === 0) {
+        return null;
+      }
       return response.data.data.data;
     },
     enabled: !!shopId,

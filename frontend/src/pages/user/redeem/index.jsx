@@ -1,3 +1,14 @@
+import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useParams, useNavigate } from "react-router-dom";
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import { redeemCodeValidator } from "@/validators/redeemCodeValidator";
+import { getShop, verifyShopCodePin } from "@/services/shopService";
+
+import UserCooldownModal from "../components/UserCooldownModal";
+
 import {
   Flex,
   Box,
@@ -10,19 +21,11 @@ import {
   Button,
   Image,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-
-import UserCooldownModal from "../components/UserCooldownModal";
-
-import { yupResolver } from "@hookform/resolvers/yup";
-import { redeemCodeValidator } from "@/validators/redeemCodeValidator";
-import { useParams } from "react-router-dom";
-import { getShop, verifyShopCodePin } from "@/services/shopService";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks";
 
 const Redeem = () => {
   const { shopId } = useParams();
+  const navigate = useNavigate();
+
   const toast = useToast();
   const {
     register,
@@ -49,29 +52,18 @@ const Redeem = () => {
         toast("Invalid code pin!", "error");
       } else {
         toast("You won congrats!", "success");
+        navigate(`/play/${shopId}`);
       }
     },
     onError: () => {},
   });
 
   const onSubmit = (values) => {
-    // TODO: call the verifyRedeemCode endpoint
-    // give to backend:
-    // 1. "userId" (for security and side effect)
-    // 2. "shopId" and "pin Code" for checking
-
     const fullCode = `${values.digitOne}${values.digitTwo}${values.digitThree}${values.digitFour}`;
-
     if (!!shopId) {
       verifyShopCodePinMutation.mutate({ gameCodePin: +fullCode, shopId });
     }
   };
-
-  // useEffect(() => {
-  // get shopId infos + reward Info's
-  // call getReward by providing userId + shopId
-  // how to get acess to "last won reward"
-  // }, []);
 
   return (
     <>
@@ -93,7 +85,7 @@ const Redeem = () => {
             />
           </Box>
           <Heading as="h1" fontSize="xl" letterSpacing="tight">
-            You reward is waiting for you! <br /> "Your Reward"
+            You reward is waiting for you!
           </Heading>
           <Text fontSize="sm" color="gray.600">
             Show this page to the staff and enter the code given to you.
