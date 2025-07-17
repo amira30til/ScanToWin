@@ -20,3 +20,6 @@ export const updateShop = async (axios, shopId, adminId, body) =>
       "Content-Type": "multipart/form-data",
     },
   });
+
+export const verifyShopCodePin = async (body) =>
+  await axios.post(`${SHOP_URL}/verify-game-code`, body);
