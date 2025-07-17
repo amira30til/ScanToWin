@@ -71,7 +71,10 @@ const FortuneResultModal = ({ reward, onClose, isOpen }) => {
     if (timestamp && data?.data?.error?.code === "USER_COOLDOWN") {
       setTimestamp(timestamp);
       setUserId(data?.data?.error?.userId);
+      toast("You have already played!", "error");
       return;
+    } else {
+      toast("We have sent you the gift by email!", "success");
     }
     if (user?.id) setUserId(user.id);
   };

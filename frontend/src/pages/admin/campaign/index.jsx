@@ -3,7 +3,7 @@ import CustomizeGame from "./CustomizeGame";
 import ChooseGame from "./ChooseGame";
 import { Flex, Box } from "@chakra-ui/react";
 import Rewards from "./rewards";
-import Actions from "./Actions";
+import Actions from "./actions";
 import HeaderAdmin from "@/components/HeaderAdmin";
 
 const AdminCampaign = () => {
@@ -12,7 +12,7 @@ const AdminCampaign = () => {
   return (
     <Box pos="relative">
       <HeaderAdmin title="My Campaign" />
-      <Flex direction="column" gap={10} h="3400px" px={8} py={10}>
+      <Flex direction="column" gap={10} px={8} py={10} overflow-x="hidden">
         <Actions />
         <ChooseGame shop={shop} />
         <CustomizeGame shop={shop} />

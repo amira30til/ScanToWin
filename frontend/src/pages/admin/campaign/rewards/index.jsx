@@ -128,6 +128,7 @@ const Rewards = () => {
         ...reward,
         shopId,
         nbRewardTowin: isUnlimited ? 0 : +reward.nbRewardTowin || 0,
+        status: "Active",
         percentage,
       });
     }

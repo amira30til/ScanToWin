@@ -6,6 +6,8 @@ export const ERROR_MESSAGES = {
   AUTH_RESET_FAILED: "Reset Password Failed",
   ADMIN_ALREADY_EXISTS: "Admin with this email already exists",
   ADMIN_CREATE_FAILED: "Failed to create admin",
+  ACTION_ALREADY_EXISTS: "Action with this name already exists",
+  ACTION_CREATE_FAILED: "Failed to create action",
   ACTION_UPDATE_FAILED: "Failed to update actions",
   GAME_CREATE_FAILED: "Failed to create game",
   GAME_ALREADY_EXISTS: "Game with this name already exists",
@@ -19,6 +21,8 @@ export const ERROR_MESSAGES = {
 export const SUCCESS_MESSAGES = {
   ADMIN_CREATE_SUCCESS: "Admin created successfully",
   ADMIN_DELETE_SUCCESS: "Admin deleted successfully",
+  ACTION_CREATE_SUCCESS: "Action created successfully",
+  ACTION_DELETE_SUCCESS: "Action deleted successfully",
   ACTION_UPDATE_SUCCESS: "Actions updated successfully",
   GAME_CREATE_SUCCESS: "Game created successfully",
   GAME_UPDATE_SUCCESS: "Game updated successfully",

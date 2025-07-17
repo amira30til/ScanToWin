@@ -14,7 +14,7 @@ import {
 import AdminSection from "@/components/common/AdminSection";
 
 // STYLE
-import { Flex, Text, Image, Button, Box } from "@chakra-ui/react";
+import { Flex, Text, Image, Button, Box, SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
 
 const ChooseGame = ({ shop }) => {
@@ -83,11 +83,7 @@ const ChooseGame = ({ shop }) => {
       title="Game selection"
       description="Choose from 3 interactive games to engage your users and create a unique experience."
     >
-      <Flex
-        direction={{ base: "column", lg: "row" }}
-        justify="space-around"
-        gap={8}
-      >
+      <SimpleGrid columns={{ md: 1, lg: 3 }} gap={6}>
         {games?.map((game) => (
           <Controller
             key={game.id}
@@ -102,7 +98,7 @@ const ChooseGame = ({ shop }) => {
             )}
           />
         ))}
-      </Flex>
+      </SimpleGrid>
       <Flex justify="flex-end">
         <Button
           colorScheme="primary"
