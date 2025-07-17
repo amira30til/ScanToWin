@@ -50,18 +50,19 @@ export class MailService {
     validUntilDate: string,
     emailCode?: string,
     rewardId?: string,
+    shopId?: string,
+    userId?: string,
   ) {
     if (!process.env.MAIL_FROM) {
       throw new Error('MAIL_FROM is not defined in environment variables');
     }
+  
+    const redeemUrl = `${process.env.FRONTEND_URL}/play/${shopId}/redeem/${userId}`;
 
     const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
       <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        
-        <h1 style="color: #2c5aa0; text-align: center; margin-bottom: 30px; font-size: 28px;">
-          🎉 Get your reward! 🎉
-        </h1>
+
         
         <h2 style="color: #333; text-align: center; margin-bottom: 20px; font-size: 24px;">
           Congratulations ${winnerName}!
@@ -90,10 +91,10 @@ export class MailService {
         </p>
         
         <div style="text-align: center; margin: 30px 0;">
-          <a href="#" style="background-color: #2c5aa0; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block;">
-            🎁 Your gift here
-          </a>
-        </div>
+  <a href="${redeemUrl}" target="_blank" style="background-color: #2c5aa0; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block;">
+    🎁 Your gift here
+  </a>
+</div>
         
         <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <p style="color: #856404; font-size: 16px; margin: 5px 0;">
