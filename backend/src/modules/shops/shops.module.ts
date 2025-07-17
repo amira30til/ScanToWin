@@ -14,7 +14,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
     TypeOrmModule.forFeature([Shop, Admin, ActiveGameAssignment, Game]),
   ],
   controllers: [ShopsController],
-  providers: [ShopsService, JwtService,CloudinaryService],
+  providers: [ShopsService, JwtService, CloudinaryService],
   exports: [ShopsService],
 })
 export class ShopsModule {}
