@@ -88,13 +88,14 @@ const ChooseGame = ({ shop }) => {
       description="Choose from 3 interactive games to engage your users and create a unique experience."
     >
       <SimpleGrid columns={{ md: 1, lg: 3 }} gap={6}>
-        {games?.map((game) => (
+        {games?.map((game, index) => (
           <Controller
             key={game.id}
             control={control}
             name="selectedGameId"
             render={({ field: { onChange, value } }) => (
               <SelectableGameCard
+                index={index}
                 game={game}
                 isSelected={value === game.id}
                 onSelect={() => onChange(game.id)}
@@ -116,12 +117,13 @@ const ChooseGame = ({ shop }) => {
   );
 };
 
-const SelectableGameCard = ({ game, isSelected, onSelect }) => {
+const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
   const borderColor = isSelected ? "primary.500" : "gray.300";
   const border = isSelected ? "2px" : "1px";
 
   return (
     <Flex
+      position="relative"
       direction="column"
       border={border}
       borderColor={borderColor}
@@ -142,6 +144,8 @@ const SelectableGameCard = ({ game, isSelected, onSelect }) => {
       }}
       onClick={onSelect}
       bg={isSelected ? "white" : "inherit"}
+      pointerEvents={index > 0 ? "none" : "auto"}
+      cursor={index > 0 ? "not-allowed" : "pointer"}
     >
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
@@ -161,6 +165,28 @@ const SelectableGameCard = ({ game, isSelected, onSelect }) => {
           borderColor="gray.200"
         />
       </Box>
+      {index > 0 && (
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="rgba(0, 0, 0, 0.6)"
+          backdropFilter="blur(2px)"
+          borderRadius="inherit"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          color="white"
+          fontWeight="bold"
+          fontSize="lg"
+          zIndex={2}
+          pointerEvents="none"
+        >
+          Coming Soon
+        </Box>
+      )}
     </Flex>
   );
 };

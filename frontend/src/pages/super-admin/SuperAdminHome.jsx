@@ -119,7 +119,7 @@ const SuperAdminHome = () => {
         bg="surface.navigation"
         shadow="md"
       >
-        <Logo h="60px" w="unset" objectFit="unset" />
+        <Logo h="100px" w="unset" objectFit="unset" />
 
         <Button
           colorScheme="primary"
