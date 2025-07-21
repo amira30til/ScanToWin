@@ -35,12 +35,9 @@ export class AuthController {
   @ApiCookieAuth()
   @UseGuards(RefreshAuthGuard)
   @ApiOperation({ summary: 'Refresh token using cookie' })
-  refreshToken(
-    @Req() request: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  refreshToken(@Req() request: Request) {
     const refreshToken = request.cookies.refresh_token as string;
-    return this.authService.refreshToken(refreshToken, res);
+    return this.authService.refreshToken(refreshToken);
   }
 
   /*------------------------------- LOGOUT ---------------------------------*/
