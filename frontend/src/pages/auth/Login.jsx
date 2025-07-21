@@ -131,7 +131,7 @@ const Login = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <Flex cursor="pointer" onClick={() => navigate("/")}>
-            <Logo w="120px" />
+            <Logo w="200px" />
           </Flex>
 
           <Flex

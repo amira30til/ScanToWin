@@ -5,7 +5,7 @@ import {
   getRewardsByShop,
   getShopRandomReward,
 } from "@/services/rewardService";
-import { VStack, Spinner } from "@chakra-ui/react";
+import { VStack, Spinner, Box } from "@chakra-ui/react";
 import WheelCanvas from "./WheelCanvas";
 
 const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
@@ -40,7 +40,7 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
 
   return (
     <VStack spacing={8}>
-      <div>
+      <Box>
         <WheelCanvas
           segments={rewards}
           segColors={colors}
@@ -50,12 +50,12 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
           needleColor={lightenHexColor(secondaryColor, 60)}
           buttonText="Spin"
           buttonTextColor="#252525"
-          isOnlyOnce={false}
+          isOnlyOnce={true}
           size={140}
           fontSize="0.75em"
           fontFamily="Arial"
         />
-      </div>
+      </Box>
     </VStack>
   );
 };

@@ -557,7 +557,6 @@ export class UserGameService {
     );
 
     if (hoursDifference < 24) {
-      // const remainingTimeMs = 24 * 60 * 60 * 1000 - timeDifference;
       return {
         userId,
         code: 'COOLDOWN',

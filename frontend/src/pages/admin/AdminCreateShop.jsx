@@ -75,7 +75,7 @@ const AdminCreateShop = () => {
         justify="space-between"
       >
         <Flex align="center">
-          <Logo w="70px" />
+          <Logo w="150px" />
         </Flex>
       </Flex>
       <Container maxW="container.lg">

@@ -1,6 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+import { dataURLtoFile } from "@/utils/helpers";
+
 import * as yup from "yup";
 import { useToast, useAxiosPrivate } from "@/hooks";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -56,13 +59,16 @@ const SuperAdminGames = () => {
 
   const createGameMutationFn = async (values) => {
     const formData = new FormData();
+    const onError = () => {
+      toast("Invalid image format", "error");
+    };
 
     formData.append("name", values.name);
     formData.append("description", values.description);
     formData.append("status", values.isActive);
     formData.append(
       "pictureUrl",
-      dataURLtoFile(values.pictureUrl, "picture.png"),
+      dataURLtoFile(values.pictureUrl, "picture.png", onError),
     );
 
     const response = await createGame(axiosPrivate, formData);
@@ -121,37 +127,9 @@ const SuperAdminGames = () => {
     fileInputRef.current?.click();
   };
 
-  const dataURLtoFile = (dataUrl, filename) => {
-    if (!dataUrl.startsWith("data:image/")) {
-      throw new Error("Only image files are allowed");
-    }
-
-    const [meta, base64] = dataUrl.split(",");
-    const mimeMatch = meta.match(/data:(image\/(png|jpeg|jpg));base64/);
-
-    if (!mimeMatch) {
-      toast("Invalid image format", "error");
-      throw new Error("Invalid image MIME type");
-    }
-
-    const mime = mimeMatch[1];
-    const bstr = atob(base64);
-    const u8arr = new Uint8Array(bstr.length);
-
-    for (let i = 0; i < bstr.length; i++) {
-      u8arr[i] = bstr.charCodeAt(i);
-    }
-
-    return new File([u8arr], filename, { type: mime });
-  };
-
   const onSubmit = async (values) => {
     createGameMutation.mutate(values);
   };
-
-  useEffect(() => {
-    console.log(games);
-  }, [games]);
 
   return (
     <Box w="25%">
@@ -195,7 +173,7 @@ const SuperAdminGames = () => {
         </FormControl>
 
         <FormControl>
-          <FormLabel>Shop Picture</FormLabel>
+          <FormLabel>Game Picture</FormLabel>
           <input
             type="file"
             ref={fileInputRef}
@@ -244,20 +222,6 @@ const SuperAdminGames = () => {
               </Text>
             </Flex>
           )}
-          <Input
-            hidden
-            mt={1}
-            placeholder="https://example.com/pictureUrl.png"
-            {...register("pictureUrl")}
-            onChange={(e) => {
-              if (e.target.value) {
-                setPreviewImage(e.target.value);
-              } else {
-                setPreviewImage(null);
-              }
-            }}
-            focusBorderColor="primary.500"
-          />
         </FormControl>
         <Button
           type="submit"

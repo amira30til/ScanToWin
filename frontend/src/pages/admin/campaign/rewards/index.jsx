@@ -60,7 +60,7 @@ const Rewards = () => {
   const queryClient = useQueryClient();
 
   const { data: rewards, isLoading: isLoadingRewards } = useQuery({
-    queryKey: ["rewards-by-shop"],
+    queryKey: ["rewards-by-shop", shopId],
     queryFn: async () => {
       const response = await getRewardsByShop(shopId);
       return response.data.data.rewards;
@@ -128,6 +128,7 @@ const Rewards = () => {
         ...reward,
         shopId,
         nbRewardTowin: isUnlimited ? 0 : +reward.nbRewardTowin || 0,
+        status: "Active",
         percentage,
       });
     }

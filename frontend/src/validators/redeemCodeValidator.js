@@ -2,17 +2,19 @@ import * as yup from "yup";
 
 export const redeemCodeValidator = yup
   .object({
-    digitOne: yup.string().required("Email is required"),
-    digitTwo: yup.string().required("Email is required"),
-    digitThree: yup.string().required("Email is required"),
-    digitFour: yup.string().required("Email is required"),
+    digitOne: yup.string().required("Digit is required"),
+    digitTwo: yup.string().required("Digit is required"),
+    digitThree: yup.string().required("Digit is required"),
+    digitFour: yup.string().required("Digit is required"),
   })
-  .test("all-digits", "The provided code is invalid", (values) => {
-    // If any digit is missing, fail with the general message
+  .test("all-digits", "The provided code is invalid", function (values) {
+    if (!values) return false;
+
+    const { digitOne, digitTwo, digitThree, digitFour } = values;
     return (
-      values.digitOne &&
-      values.digitTwo &&
-      values.digitThree &&
-      values.digitFour
+      !!digitOne?.trim() &&
+      !!digitTwo?.trim() &&
+      !!digitThree?.trim() &&
+      !!digitFour?.trim()
     );
   });
