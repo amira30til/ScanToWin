@@ -24,6 +24,13 @@ import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Response } from 'express';
 
+export interface JwtPayload {
+  sub: string;
+  email: string;
+  iat?: number;
+  exp?: number;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -79,15 +86,21 @@ export class AuthService {
   /*------------------------------ REFRESH TOKEN ------------------------------*/
   async refreshToken(
     refreshToken: string,
-    res: Response,
   ): Promise<ApiResponseInterface<any> | ErrorResponseInterface> {
     try {
       if (!refreshToken) {
         throw new NotFoundException(UserMessages.USER_REFRESH_TOKEN_NOT_FOUND);
       }
 
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(
+        refreshToken,
+        {
+          secret: process.env.REFRESH_JWT_SECRET,
+        },
+      );
+
       const user = await this.adminsRepository.findOne({
-        where: { refreshToken },
+        where: { id: payload.sub },
         select: ['id', 'email', 'role', 'refreshToken'],
       });
 
@@ -112,16 +125,7 @@ export class AuthService {
         expiresIn: `${process.env.JWT_EXPIRED}`,
       });
 
-      const newRefreshToken = await this.jwtService.signAsync(newPayload, {
-        secret: `${process.env.REFRESH_JWT_SECRET}`,
-        expiresIn: `${process.env.REFRESH_JWT_EXPIRED}`,
-      });
-
-      user.refreshToken = newRefreshToken;
       await this.adminsRepository.save(user);
-
-      // Set the new refresh token in a cookie
-      this.setRefreshTokenCookie(res, newRefreshToken);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         role: user.role,

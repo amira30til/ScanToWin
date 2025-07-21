@@ -47,9 +47,8 @@ export class RewardService {
         where: { id: shopId },
         relations: ['rewards'],
       });
-      console.log('sssssssssssssss', shop);
 
-      if (!shop) {
+      if (!shop || !shopId) {
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
       }
 
