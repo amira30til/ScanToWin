@@ -12,6 +12,7 @@ import CreateAdminModal from "@/components/modals/CreateAdminModal";
 import DataTable from "@/components/DataTable";
 import Logo from "@/components/Logo";
 import SuperAdminGames from "./SuperAdminGames";
+import Actions from "./Actions";
 
 // STYLES
 import {
@@ -27,6 +28,17 @@ import IconButton from "@/components/common/IconButton";
 
 // ASSETS
 import { DeleteIcon } from "@chakra-ui/icons";
+
+const HEADERS = [
+  "Name",
+  "Email",
+  "Role",
+  "Status",
+  "Phone",
+  "Created at",
+  "Updated at",
+  "Actions",
+];
 
 const SuperAdminHome = () => {
   const navigate = useNavigate();
@@ -61,17 +73,6 @@ const SuperAdminHome = () => {
     await logout();
     navigate("/login");
   };
-
-  const headers = [
-    "Name",
-    "Email",
-    "Role",
-    "Status",
-    "Phone",
-    "Created at",
-    "Updated at",
-    "Actions",
-  ];
 
   const rows = (admin) => (
     <>
@@ -118,7 +119,7 @@ const SuperAdminHome = () => {
         bg="surface.navigation"
         shadow="md"
       >
-        <Logo h="60px" w="unset" objectFit="unset" />
+        <Logo h="100px" w="unset" objectFit="unset" />
 
         <Button
           colorScheme="primary"
@@ -134,21 +135,25 @@ const SuperAdminHome = () => {
       <Box p={4} py={8}>
         <Heading size="lg">Super Admin Home</Heading>
 
-        <Flex direction="column" py={8}>
+        <Flex direction="column" gap={8} py={8}>
           <Heading size="md">Admins List</Heading>
 
-          <Box py={8}>
-            <AdminsTable headers={headers} data={admins} rows={rows} />
+          <AdminsTable headers={HEADERS} data={admins} rows={rows} />
 
-            {isLoading && (
-              <Spinner
-                thickness="4px"
-                emptyColor="gray.200"
-                color="primary.500"
-                size="xl"
-              />
-            )}
-          </Box>
+          {isLoading && (
+            <Spinner
+              thickness="4px"
+              emptyColor="gray.200"
+              color="primary.500"
+              size="xl"
+            />
+          )}
+
+          <Heading size="md">Actions List</Heading>
+
+          <Actions />
+
+          <SuperAdminGames />
         </Flex>
       </Box>
     </Box>
@@ -161,6 +166,7 @@ const AdminsTable = ({ data, headers, rows }) => {
   const createAdminHandler = () => {
     onOpen();
   };
+
   return (
     <>
       <Flex direction="column" gap={4}>
@@ -175,8 +181,6 @@ const AdminsTable = ({ data, headers, rows }) => {
         </Flex>
 
         <DataTable data={data} headers={headers} rows={rows} />
-
-        <SuperAdminGames />
       </Flex>
 
       <CreateAdminModal isOpen={isOpen} onClose={onClose} />

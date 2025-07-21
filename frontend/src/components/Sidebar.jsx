@@ -149,8 +149,8 @@ const SidebarContent = ({ shops, ...rest }) => {
       w="60"
       {...rest}
     >
-      <Flex px="4" py="5" align="center">
-        <Logo w="70px" />
+      <Flex px="4" py="5" align="center" justify="center">
+        <Logo w="100px" />
       </Flex>
       <VStack align="stretch" spacing={3} w="100%" px={4}>
         <Button
@@ -162,27 +162,21 @@ const SidebarContent = ({ shops, ...rest }) => {
           Add Shop
         </Button>
         {shops && (
-          <Box>
-            {/* <Text fontSize="sm" fontWeight="semibold" mb={1} color="gray.600">
-              Current Shop
-            </Text> */}
-            <Select
-              value={currentShopId}
-              onChange={handleShopChange}
-              bg="white"
-              borderRadius="md"
-              // size="lg"
-              fontWeight="bold"
-              focusBorderColor="primary.500"
-              cursor="pointer"
-            >
-              {shops.map((shop) => (
-                <option key={shop.id} value={shop.id}>
-                  {shop.name}
-                </option>
-              ))}
-            </Select>
-          </Box>
+          <Select
+            value={currentShopId}
+            onChange={handleShopChange}
+            bg="white"
+            borderRadius="md"
+            fontWeight="bold"
+            focusBorderColor="primary.500"
+            cursor="pointer"
+          >
+            {shops.map((shop) => (
+              <option key={shop.id} value={shop.id}>
+                {shop.name}
+              </option>
+            ))}
+          </Select>
         )}
       </VStack>
 
@@ -227,13 +221,13 @@ const SidebarContent = ({ shops, ...rest }) => {
             py="2"
             href={`${shopId}/instagram`}
           >
-            Instagram Followers
+            Instagram
           </NavItem>
           <NavItem icon={FaTiktok} pl="10" py="2" href={`${shopId}/tiktok`}>
-            TikTok Followers
+            TikTok
           </NavItem>
           <NavItem icon={FaFacebook} pl="10" py="2" href={`${shopId}/facebook`}>
-            Facebook Followers
+            Facebook
           </NavItem>
           <NavItem icon={FaUsers} pl="10" py="2" href={`${shopId}/usersdata`}>
             Users Data

@@ -1,5 +1,5 @@
 // HOOKS
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAxiosPrivate, useToast } from "@/hooks";
 import { FormProvider, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import useAuthStore from "@/store";
 // FUNCTIONS
 import { updateShopColorValidator } from "@/validators/updateShopColorValidator";
 import { updateShop } from "@/services/shopService";
+import { dataURLtoFile } from "@/utils/helpers";
 
 // COMPONENTS
 import TwoColorPicker from "@/components/TwoColorPicker";
@@ -23,13 +24,12 @@ import {
   Button,
   Text,
   Image,
-  // useToken,
+  IconButton,
+  useToken,
 } from "@chakra-ui/react";
 
-// ASSETS
-import gameImg from "@/assets/game.jpeg";
 import { yupResolver } from "@hookform/resolvers/yup";
-const HAS_LOGO = true;
+import { LuUpload, LuX } from "react-icons/lu";
 
 const CustomizeGame = ({ shop }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -37,6 +37,10 @@ const CustomizeGame = ({ shop }) => {
   const auth = useAuthStore((state) => state.auth);
   const toast = useToast();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [imageValue, setImageValue] = useState();
+  const [primary500] = useToken("colors", ["primary.500"]);
 
   const defaultValues = {
     gameColor1: "#0000ff",
@@ -55,17 +59,18 @@ const CustomizeGame = ({ shop }) => {
 
   const onUpdateShopSuccess = async () => {
     await queryClient.invalidateQueries(["adminShops"]);
-    toast("Game color updated!", "success");
+    toast("Shop updated successfully!", "success");
   };
 
   const onUpdateShopError = (error) => {
     console.log(error);
-    toast("Failed to update game color!", "error");
+    toast("Failed to update shop!", "error");
   };
 
   const updateShopMutation = useMutation({
-    mutationFn: async (data) =>
-      await updateShop(axiosPrivate, shopId, adminId, data),
+    mutationFn: async (data) => {
+      await updateShop(axiosPrivate, shopId, adminId, data);
+    },
     onSuccess: onUpdateShopSuccess,
     onError: onUpdateShopError,
   });
@@ -76,12 +81,49 @@ const CustomizeGame = ({ shop }) => {
     }
   };
 
+  const onSaveImage = () => {
+    if (!!imageValue && !!adminId) {
+      const onError = () => {
+        toast("Invalid image format", "error");
+      };
+      const formData = new FormData();
+      formData.append("logo", dataURLtoFile(imageValue, "logo.png", onError));
+      updateShopMutation.mutate(formData);
+    }
+  };
+
+  const handlePictureChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        setPreviewImage(result);
+        setImageValue(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearPicture = () => {
+    setPreviewImage(null);
+    setImageValue("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const triggerPictureUpload = () => {
+    fileInputRef.current?.click();
+  };
+
   useEffect(() => {
     if (shop) {
       methods.reset({
         gameColor1: shop.gameColor1 || "#0000ff",
         gameColor2: shop.gameColor2 || "#ff0000",
       });
+      setPreviewImage(shop.logo);
     }
   }, [shop]);
 
@@ -109,19 +151,68 @@ const CustomizeGame = ({ shop }) => {
           h="100%"
         >
           <Heading size="sm">Your Logo</Heading>
-          <Box boxSize="180px">
-            <Image src={gameImg} alt="Logo" borderRadius="md" />
-          </Box>
 
-          {HAS_LOGO ? (
-            <Button size="md" colorScheme="primary" variant="outline">
-              Delete Logo
+          <Box>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handlePictureChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
+
+            {previewImage ? (
+              <Box position="relative" width="fit-content">
+                <Image
+                  src={previewImage}
+                  alt="Picture Preview"
+                  maxHeight="400px"
+                  borderRadius="md"
+                />
+                <IconButton
+                  aria-label="Remove pictureUrl"
+                  icon={<LuX size={16} />}
+                  size="sm"
+                  position="absolute"
+                  top="-8px"
+                  right="-8px"
+                  colorScheme="red"
+                  rounded="full"
+                  onClick={clearPicture}
+                />
+              </Box>
+            ) : (
+              <Flex
+                direction="column"
+                align="center"
+                justify="center"
+                border="2px dashed"
+                borderColor="gray.300"
+                borderRadius="md"
+                p={5}
+                cursor="pointer"
+                onClick={triggerPictureUpload}
+                _hover={{ borderColor: "primary.500" }}
+                transition="all 0.2s"
+                boxSize={{ base: 150, md: 250 }}
+              >
+                <LuUpload size={24} color={primary500} />
+                <Text mt={2} fontSize="sm">
+                  Upload a logo
+                </Text>
+              </Flex>
+            )}
+          </Box>
+          <Flex w="full" justify="end">
+            <Button
+              colorScheme="primary"
+              isLoading={updateShopMutation.isPending}
+              onClick={onSaveImage}
+              isDisabled={!imageValue}
+            >
+              Save
             </Button>
-          ) : (
-            <Button size="md" colorScheme="secondary">
-              Add a Logo
-            </Button>
-          )}
+          </Flex>
         </Flex>
         <FormProvider {...methods}>
           <Flex

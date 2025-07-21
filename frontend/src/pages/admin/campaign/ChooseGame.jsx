@@ -14,7 +14,7 @@ import {
 import AdminSection from "@/components/common/AdminSection";
 
 // STYLE
-import { Flex, Text, Image, Button, Box } from "@chakra-ui/react";
+import { Flex, Text, Image, Button, Box, SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
 
 const ChooseGame = ({ shop }) => {
@@ -25,7 +25,7 @@ const ChooseGame = ({ shop }) => {
   const { control, watch, reset } = useForm();
 
   const { data: games = [] } = useQuery({
-    queryKey: ["games"],
+    queryKey: ["active-games"],
     queryFn: async () => {
       const response = await getActiveGames();
       return response.data.data.data;
@@ -36,6 +36,10 @@ const ChooseGame = ({ shop }) => {
     queryKey: ["shop-game-assignment", shop?.id],
     queryFn: async () => {
       const response = await getShopGameAssignement(shop.id);
+      const result = response.data.data.data;
+      if (Array.isArray(result) && result.length === 0) {
+        return null;
+      }
       return response.data.data.data.gameId;
     },
     enabled: !!shop?.id,
@@ -83,18 +87,15 @@ const ChooseGame = ({ shop }) => {
       title="Game selection"
       description="Choose from 3 interactive games to engage your users and create a unique experience."
     >
-      <Flex
-        direction={{ base: "column", lg: "row" }}
-        justify="space-around"
-        gap={8}
-      >
-        {games?.map((game) => (
+      <SimpleGrid columns={{ md: 1, lg: 3 }} gap={6}>
+        {games?.map((game, index) => (
           <Controller
             key={game.id}
             control={control}
             name="selectedGameId"
             render={({ field: { onChange, value } }) => (
               <SelectableGameCard
+                index={index}
                 game={game}
                 isSelected={value === game.id}
                 onSelect={() => onChange(game.id)}
@@ -102,7 +103,7 @@ const ChooseGame = ({ shop }) => {
             )}
           />
         ))}
-      </Flex>
+      </SimpleGrid>
       <Flex justify="flex-end">
         <Button
           colorScheme="primary"
@@ -116,12 +117,13 @@ const ChooseGame = ({ shop }) => {
   );
 };
 
-const SelectableGameCard = ({ game, isSelected, onSelect }) => {
+const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
   const borderColor = isSelected ? "primary.500" : "gray.300";
   const border = isSelected ? "2px" : "1px";
 
   return (
     <Flex
+      position="relative"
       direction="column"
       border={border}
       borderColor={borderColor}
@@ -142,6 +144,8 @@ const SelectableGameCard = ({ game, isSelected, onSelect }) => {
       }}
       onClick={onSelect}
       bg={isSelected ? "white" : "inherit"}
+      pointerEvents={index > 0 ? "none" : "auto"}
+      cursor={index > 0 ? "not-allowed" : "pointer"}
     >
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
@@ -161,6 +165,28 @@ const SelectableGameCard = ({ game, isSelected, onSelect }) => {
           borderColor="gray.200"
         />
       </Box>
+      {index > 0 && (
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="rgba(0, 0, 0, 0.6)"
+          backdropFilter="blur(2px)"
+          borderRadius="inherit"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          color="white"
+          fontWeight="bold"
+          fontSize="lg"
+          zIndex={2}
+          pointerEvents="none"
+        >
+          Coming Soon
+        </Box>
+      )}
     </Flex>
   );
 };
