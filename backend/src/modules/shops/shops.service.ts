@@ -28,6 +28,7 @@ import { ActiveGameAssignment } from '../active-game-assignment/entities/active-
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
 import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
+import { RewardRedemption } from 'src/modules/reward-redemption/entities/reward-redemption.entity';
 
 @Injectable()
 export class ShopsService {
@@ -43,6 +44,8 @@ export class ShopsService {
     private cloudinaryService: CloudinaryService,
     @InjectRepository(ChosenAction)
     private readonly chosenActionRepository: Repository<ChosenAction>,
+    @InjectRepository(RewardRedemption)
+    private rewardRedemptionRepository: Repository<RewardRedemption>,
   ) {}
 
   async create(
@@ -520,7 +523,11 @@ export class ShopsService {
           );
         }
         action.redeemedReward++;
-        await this.chosenActionRepository.save(action);
+        const rewardRedemption = this.rewardRedemptionRepository.create({
+          chosenAction: action,
+          shop: shop,
+        });
+        await this.rewardRedemptionRepository.save(rewardRedemption);
       }
       return ApiResponse.success(HttpStatus.OK, {
         isValid,

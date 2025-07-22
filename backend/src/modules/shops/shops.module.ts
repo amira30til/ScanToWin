@@ -9,6 +9,7 @@ import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
+import { RewardRedemption } from 'src/modules/reward-redemption/entities/reward-redemption.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
       ActiveGameAssignment,
       Game,
       ChosenAction,
+      RewardRedemption,
     ]),
   ],
   controllers: [ShopsController],
