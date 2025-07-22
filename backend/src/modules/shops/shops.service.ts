@@ -14,6 +14,7 @@ import {
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
 import {
+  ChosenActionMessages,
   ShopMessages,
   UserMessages,
 } from 'src/common/constants/messages.constants';
@@ -26,6 +27,7 @@ import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
+import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
 
 @Injectable()
 export class ShopsService {
@@ -39,6 +41,8 @@ export class ShopsService {
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
     private cloudinaryService: CloudinaryService,
+    @InjectRepository(ChosenAction)
+    private readonly chosenActionRepository: Repository<ChosenAction>,
   ) {}
 
   async create(
@@ -489,7 +493,7 @@ export class ShopsService {
       return handleServiceError(error);
     }
   }
-  
+
   async verifyGameCodePin(
     dto: VerifyGameCodeDto,
   ): Promise<
@@ -505,7 +509,19 @@ export class ShopsService {
       }
 
       const isValid = shop.gameCodePin === dto.gameCodePin;
+      if (isValid) {
+        const action = await this.chosenActionRepository.findOne({
+          where: { id: dto.actionId },
+        });
 
+        if (!action) {
+          throw new NotFoundException(
+            ChosenActionMessages.NOT_FOUND(dto.actionId),
+          );
+        }
+        action.redeemedReward++;
+        await this.chosenActionRepository.save(action);
+      }
       return ApiResponse.success(HttpStatus.OK, {
         isValid,
         message: isValid
