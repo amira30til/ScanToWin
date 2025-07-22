@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrUpdateChosenActionItemDto } from './dto/create-chosen-action.dto';
 import { UpdateChosenActionDto } from './dto/update-chosen-action.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,9 +9,14 @@ import {
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
 import { ApiResponse } from 'src/common/utils/response.util';
-import { ChosenActionMessages } from 'src/common/constants/messages.constants';
+import {
+  ChosenActionMessages,
+  ShopMessages,
+} from 'src/common/constants/messages.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { Action } from '../actions/entities/action.entity';
+import { ActionClick } from '../action-click/entities/action-click.entity';
+import { Shop } from '../shops/entities/shop.entity';
 
 @Injectable()
 export class ChosenActionService {
@@ -20,6 +25,10 @@ export class ChosenActionService {
     private readonly chosenActionRepository: Repository<ChosenAction>,
     @InjectRepository(Action)
     private readonly actionRepository: Repository<Action>,
+    @InjectRepository(ActionClick)
+    private readonly actionClickRepository: Repository<ActionClick>,
+    @InjectRepository(Shop)
+    private shopsRepository: Repository<Shop>,
   ) {}
   async syncChosenActions(
     shopId: string,
@@ -194,5 +203,41 @@ export class ChosenActionService {
       return handleServiceError(error);
     }
   }
-  async trackAction(shopId:string, action:string) {}
+  async trackActions(
+    chosenActionId: string,
+  ): Promise<ApiResponseInterface<ChosenAction> | ErrorResponseInterface> {
+    try {
+      const chosenAction = await this.chosenActionRepository.findOne({
+        where: { id: chosenActionId },
+      });
+
+      if (!chosenAction) {
+        throw new NotFoundException(
+          ChosenActionMessages.NOT_FOUND(chosenActionId),
+        );
+      }
+
+      const shop = await this.shopsRepository.findOne({
+        where: { id: chosenAction.shopId },
+      });
+
+      if (!shop) {
+        throw new NotFoundException(
+          ShopMessages.SHOP_NOT_FOUND(chosenAction.shopId),
+        );
+      }
+      chosenAction.clickedAction++;
+      await this.chosenActionRepository.save(chosenAction);
+      const click = this.actionClickRepository.create({
+        chosenAction,
+        shop,
+      });
+      await this.actionClickRepository.save(click);
+      return ApiResponse.success(HttpStatus.OK, {
+        message: ChosenActionMessages.INCREMENTED,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
 }

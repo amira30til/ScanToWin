@@ -166,4 +166,6 @@ export const ChosenActionMessages = {
   BY_SHOP_RETRIEVED: (shopId: string) =>
     `Chosen actions retrieved for shop ID '${shopId}'`,
   NOT_FOUND: (id: string) => `Chosen action with ID '${id}' not found`,
+    INCREMENTED: 'Chosen action CLICKED ++',
+
 };

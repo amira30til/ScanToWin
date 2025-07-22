@@ -19,6 +19,8 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ActionsModule } from './modules/actions/actions.module';
 import { ChosenAction } from './modules/chosen-action/entities/chosen-action.entity';
 import { ChosenActionModule } from './modules/chosen-action/chosen-action.module';
+import { RewardRedemptionModule } from './modules/reward-redemption/reward-redemption.module';
+import { ActionClickModule } from './modules/action-click/action-click.module';
 
 @Module({
   imports: [
@@ -56,6 +58,8 @@ import { ChosenActionModule } from './modules/chosen-action/chosen-action.module
     ActionsModule,
     ChosenActionModule,
     MulterModule.register({}),
+    RewardRedemptionModule,
+    ActionClickModule,
   ],
   controllers: [AppController],
   providers: [AppService],
