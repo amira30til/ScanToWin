@@ -51,6 +51,6 @@ export class ChosenAction {
   @Column({ nullable: true })
   actionId: string;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 0 })
   redeemedReward: number;
 }
