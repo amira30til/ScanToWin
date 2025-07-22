@@ -1,3 +1,9 @@
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+
+import { getActionsByShop } from "@/services/actionService";
+
 import {
   Box,
   Flex,
@@ -9,8 +15,7 @@ import {
   StatArrow,
   StatGroup,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
-import useAuthStore from "@/store";
+// import useAuthStore from "@/store";
 import HeaderAdmin from "@/components/HeaderAdmin";
 
 import {
@@ -32,6 +37,8 @@ ChartJS.register(
   Tooltip,
   Legend,
 );
+
+const GOOGLE_NAME = "Avis Google";
 
 export const options = {
   responsive: true,
@@ -65,10 +72,20 @@ export const data = {
 };
 
 const AdminGoogle = () => {
-  const shop = useAuthStore((state) => state.shop);
+  // const shop = useAuthStore((state) => state.shop);
+  const { shopId } = useParams();
+
+  const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
+    queryKey: ["actions-by-shop", shopId],
+    queryFn: async () => {
+      const response = await getActionsByShop(shopId);
+      return response.data.data.chosenActions;
+    },
+    enabled: !!shopId,
+  });
 
   useEffect(() => {
-    console.log("dashboard shop", shop);
+    // console.log("dashboard shop", shop);
 
     // TODO: call an endpoint which returns these values queries by range (Date A to Date B)
     // 1. number of clickedActions
@@ -78,8 +95,15 @@ const AdminGoogle = () => {
     // returns { users: number, redeemedRewards: number }
 
     // should loop through the ChosenAction's of the shop and calculate the total number of users and redeemed rewards
-  }, [shop]);
 
+    if (actionsByShop) {
+      console.log("Actions by Shop:", actionsByShop);
+      const newActions = actionsByShop.filter(
+        (action) => action.name === GOOGLE_NAME,
+      );
+      console.log(newActions);
+    }
+  }, [actionsByShop]);
   return (
     <Box pos="relative">
       <HeaderAdmin title="Dashboard" />
