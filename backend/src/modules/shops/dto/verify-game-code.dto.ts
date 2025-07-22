@@ -9,4 +9,6 @@ export class VerifyGameCodeDto {
   @ApiProperty({ example: 123456 })
   @IsNumber()
   gameCodePin: number;
+  @ApiProperty({ example: '3609f677-c4dd-4772-8a90-563f6ac1f653' })
+  actionId: string;
 }
