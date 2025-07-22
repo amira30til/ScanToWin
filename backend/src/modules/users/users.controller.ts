@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,6 +20,8 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
+  ApiResponse,
 } from '@nestjs/swagger';
 import {
   ApiResponseInterface,
@@ -84,5 +87,28 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+  @Get('by-date')
+  @ApiOperation({ summary: 'Get users by creation date' })
+  @ApiQuery({
+    name: 'date',
+    required: true,
+    description:
+      'Date in YYYY-MM-DD format to filter users by their creation date',
+    example: '2025-07-22',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of users created on the given date',
+    type: [User],
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request if date is missing or invalid',
+  })
+  async findUsersByDate(
+    @Query('date') date: string,
+  ): Promise<ApiResponseInterface<User[]> | ErrorResponseInterface> {
+    return this.usersService.findUsersByDate(date);
   }
 }

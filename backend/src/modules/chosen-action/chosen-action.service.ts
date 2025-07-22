@@ -194,4 +194,5 @@ export class ChosenActionService {
       return handleServiceError(error);
     }
   }
+  async trackAction(shopId:string, action:string) {}
 }
