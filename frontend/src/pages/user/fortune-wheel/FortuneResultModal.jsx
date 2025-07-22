@@ -90,7 +90,7 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
       ...values,
       shopId,
       rewardId: reward?.id,
-      currentActionId: currentAction?.id,
+      actionId: currentAction?.id,
     });
     reset();
     onClose();
