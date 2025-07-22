@@ -15,7 +15,6 @@ import {
   StatArrow,
   StatGroup,
 } from "@chakra-ui/react";
-// import useAuthStore from "@/store";
 import HeaderAdmin from "@/components/HeaderAdmin";
 
 import {
@@ -37,8 +36,6 @@ ChartJS.register(
   Tooltip,
   Legend,
 );
-
-const GOOGLE_NAME = "Avis Google";
 
 export const options = {
   responsive: true,
@@ -71,8 +68,7 @@ export const data = {
   ],
 };
 
-const AdminGoogle = () => {
-  // const shop = useAuthStore((state) => state.shop);
+const Dashboard = ({ title, social }) => {
   const { shopId } = useParams();
 
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
@@ -85,8 +81,6 @@ const AdminGoogle = () => {
   });
 
   useEffect(() => {
-    // console.log("dashboard shop", shop);
-
     // TODO: call an endpoint which returns these values queries by range (Date A to Date B)
     // 1. number of clickedActions
     // 2. number of redeemedRewards
@@ -98,15 +92,18 @@ const AdminGoogle = () => {
 
     if (actionsByShop) {
       console.log("Actions by Shop:", actionsByShop);
-      const newActions = actionsByShop.filter(
-        (action) => action.name === GOOGLE_NAME,
+      const currentAction = actionsByShop.find(
+        (action) => action.name === social,
       );
-      console.log(newActions);
+      console.log(currentAction);
     }
   }, [actionsByShop]);
+
+  if (isLoadingActions) return <Box>Loading...</Box>;
+
   return (
     <Box pos="relative">
-      <HeaderAdmin title="Dashboard" />
+      <HeaderAdmin title={title} />
       <Flex direction="column" gap={10} px={8} py={10} overflow-x="hidden">
         <Flex>
           <Select
@@ -153,4 +150,4 @@ const AdminGoogle = () => {
   );
 };
 
-export default AdminGoogle;
+export default Dashboard;
