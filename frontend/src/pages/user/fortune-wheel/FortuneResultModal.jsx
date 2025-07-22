@@ -45,7 +45,7 @@ const float = keyframes`
   50% { transform: translateY(-10px); }
 `;
 
-const FortuneResultModal = ({ reward, onClose, isOpen }) => {
+const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
   const { shopId } = useParams();
   const toast = useToast();
   const [timestamp, setTimestamp] = useState();
@@ -67,7 +67,6 @@ const FortuneResultModal = ({ reward, onClose, isOpen }) => {
   const onCreateUserSuccess = (data) => {
     const user = data?.data?.data?.user;
     const timestamp = data?.data?.error?.timestamp;
-    console.log(data?.data?.error);
     if (timestamp && data?.data?.error?.code === "USER_COOLDOWN") {
       setTimestamp(timestamp);
       setUserId(data?.data?.error?.userId);
@@ -87,7 +86,12 @@ const FortuneResultModal = ({ reward, onClose, isOpen }) => {
     });
 
   const onSubmit = (values) => {
-    mutateCreateUser({ ...values, shopId, rewardId: reward?.id });
+    mutateCreateUser({
+      ...values,
+      shopId,
+      rewardId: reward?.id,
+      currentActionId: currentAction?.id,
+    });
     reset();
     onClose();
   };

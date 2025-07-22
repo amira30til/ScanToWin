@@ -32,7 +32,10 @@ const App = () => {
     <Routes>
       <Route path="reset-password" element={<ResetPassword />} />
       <Route path="play/:shopId" element={<Play />} />
-      <Route path="play/:shopId/redeem/:userId" element={<Redeem />} />
+      <Route
+        path="play/:shopId/redeem/:userId/action/:actionId"
+        element={<Redeem />}
+      />
       <Route element={<PersistLogin />}>
         <Route exact path="/" element={<Login />} />
         <Route path="login" element={<Login />} />
