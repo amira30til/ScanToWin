@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -195,6 +195,7 @@ export class UsersService {
           reward.id,
           dto.shopId,
           userToNotify.id,
+          dto.actionId,
         );
       } catch (emailError) {
         console.error('Email sending failed');
@@ -270,6 +271,32 @@ export class UsersService {
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         message: UserMessages.USER_DELETED,
       });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  async findUsersByDate(
+    date: string,
+  ): Promise<ApiResponseInterface<User[]> | ErrorResponseInterface> {
+    try {
+      if (!date) {
+        throw new BadRequestException('Date query parameter is required');
+      }
+
+      const startOfDay = new Date(date);
+      startOfDay.setUTCHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      const users = await this.userRepository.find({
+        where: {
+          createdAt: Between(startOfDay, endOfDay),
+        },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, { users });
     } catch (error) {
       return handleServiceError(error);
     }

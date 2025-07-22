@@ -52,12 +52,13 @@ export class MailService {
     rewardId?: string,
     shopId?: string,
     userId?: string,
+    actionId?: string,
   ) {
     if (!process.env.MAIL_FROM) {
       throw new Error('MAIL_FROM is not defined in environment variables');
     }
-  
-    const redeemUrl = `${process.env.FRONTEND_URL}/play/${shopId}/redeem/${userId}`;
+
+    const redeemUrl = `${process.env.FRONTEND_URL}/play/${shopId}/redeem/${userId}/action/${actionId}`;
 
     const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
