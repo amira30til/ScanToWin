@@ -75,7 +75,6 @@ const FortuneWheel = () => {
   };
 
   const onActionHandler = () => {
-    console.log("actionPosition", actionPosition);
     let pos = +actionPosition || 1;
     const currentAction = actionsByShop.find(
       (action) => action.position === pos,
@@ -148,7 +147,12 @@ const FortuneWheel = () => {
           </VStack>
         </Container>
       </Box>
-      <FortuneResultModal reward={reward} isOpen={isOpen} onClose={onClose} />
+      <FortuneResultModal
+        reward={reward}
+        isOpen={isOpen}
+        onClose={onClose}
+        currentAction={currentAction}
+      />
       <ActionModal
         isOpen={isActionOpen}
         onClose={onActionClose}
@@ -175,6 +179,8 @@ const ActionModal = ({
     } else {
       setActionPosition((+actionPosition || 1) + 1);
     }
+
+    // TODO: Call the API to update the "clickedAction" field
 
     onClose();
   };

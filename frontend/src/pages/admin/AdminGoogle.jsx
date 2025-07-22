@@ -71,8 +71,8 @@ const AdminGoogle = () => {
     console.log("dashboard shop", shop);
 
     // TODO: call an endpoint which returns these values queries by range (Date A to Date B)
-    // 1. number of users (query by):
-    // 2. number of redeemed rewards
+    // 1. number of clickedActions
+    // 2. number of redeemedRewards
 
     // endpoint name: "/shop/{shopId}/dashboard/{from}/{to}"
     // returns { users: number, redeemedRewards: number }
