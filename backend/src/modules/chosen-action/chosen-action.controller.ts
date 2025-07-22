@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ChosenActionService } from './chosen-action.service';
 import {
@@ -15,9 +16,19 @@ import {
   UpsertChosenActionsDto,
 } from './dto/create-chosen-action.dto';
 import { UpdateChosenActionDto } from './dto/update-chosen-action.dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { ChosenAction } from './entities/chosen-action.entity';
 import { ChosenActionMessages } from 'src/common/constants/messages.constants';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
 
 @Controller('chosen-action')
 export class ChosenActionController {
@@ -103,5 +114,30 @@ export class ChosenActionController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {
     return this.chosenActionService.remove(id);
+  }
+  @Post('clicked-action')
+  @ApiOperation({ summary: 'Tracking clicked actions' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Clicked Action ++',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Shop not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Chosen Action not found',
+  })
+  @ApiQuery({
+    name: 'chosenActionId',
+    required: true,
+    description: 'Chosen Action ID',
+    type: String,
+  })
+  async trackActions(
+    @Query('chosenActionId') chosenActionId: string,
+  ): Promise<ApiResponseInterface<ChosenAction> | ErrorResponseInterface> {
+    return this.chosenActionService.trackActions(chosenActionId);
   }
 }
