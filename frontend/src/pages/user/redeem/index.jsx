@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 
 const Redeem = () => {
-  const { shopId } = useParams();
+  const { shopId, actionId } = useParams();
   const navigate = useNavigate();
 
   const toast = useToast();
@@ -47,7 +47,6 @@ const Redeem = () => {
   const verifyShopCodePinMutation = useMutation({
     mutationFn: async (values) => await verifyShopCodePin(values),
     onSuccess: (data) => {
-      console.log(data);
       if (data.data.data.isValid === false) {
         toast("Invalid code pin!", "error");
       } else {
@@ -61,7 +60,11 @@ const Redeem = () => {
   const onSubmit = (values) => {
     const fullCode = `${values.digitOne}${values.digitTwo}${values.digitThree}${values.digitFour}`;
     if (!!shopId) {
-      verifyShopCodePinMutation.mutate({ gameCodePin: +fullCode, shopId });
+      verifyShopCodePinMutation.mutate({
+        gameCodePin: +fullCode,
+        shopId,
+        chosenActionId: actionId,
+      });
     }
   };
 
