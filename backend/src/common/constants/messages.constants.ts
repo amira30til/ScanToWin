@@ -166,6 +166,26 @@ export const ChosenActionMessages = {
   BY_SHOP_RETRIEVED: (shopId: string) =>
     `Chosen actions retrieved for shop ID '${shopId}'`,
   NOT_FOUND: (id: string) => `Chosen action with ID '${id}' not found`,
-    INCREMENTED: 'Chosen action CLICKED ++',
+  INCREMENTED: 'Chosen action CLICKED ++',
+};
 
+export const RewardRedemptionMessages = {
+  FOUND_BY_SHOP: (shopId: string) =>
+    `Reward redemptions found for shop with ID ${shopId}`,
+  FOUND_BY_CHOSEN_ACTION: (actionId: string) =>
+    `Reward redemptions found for chosen action with ID ${actionId}`,
+  NO_REDEMPTIONS_FOR_SHOP: (shopId: string) =>
+    `No reward redemptions found for shop with ID ${shopId}`,
+  NO_REDEMPTIONS_FOR_ACTION: (actionId: string) =>
+    `No reward redemptions found for chosen action with ID ${actionId}`,
+};
+export const ActionClickMessages = {
+  FOUND_BY_SHOP: (shopId: string) =>
+    `Action clicks found for shop with ID ${shopId}`,
+  FOUND_BY_ACTION: (actionId: string) =>
+    `Action clicks found for chosen action with ID ${actionId}`,
+  NO_CLICKS_FOR_SHOP: (shopId: string) =>
+    `No action clicks found for shop with ID ${shopId}`,
+  NO_CLICKS_FOR_ACTION: (actionId: string) =>
+    `No action clicks found for chosen action with ID ${actionId}`,
 };
