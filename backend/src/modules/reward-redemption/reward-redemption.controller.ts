@@ -6,17 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { RewardRedemptionService } from './reward-redemption.service';
 import { CreateRewardRedemptionDto } from './dto/create-reward-redemption.dto';
 import { UpdateRewardRedemptionDto } from './dto/update-reward-redemption.dto';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { RewardRedemption } from './entities/reward-redemption.entity';
 import {
   ApiResponseInterface,
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
-
+import { AdminGuard } from '../auth/guards/admins.guard';
+@ApiBearerAuth()
+@UseGuards(AdminGuard)
 @Controller('reward-redemption')
 export class RewardRedemptionController {
   constructor(
