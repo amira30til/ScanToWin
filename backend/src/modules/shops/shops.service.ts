@@ -522,7 +522,6 @@ export class ShopsService {
             ChosenActionMessages.NOT_FOUND(dto.actionId),
           );
         }
-        action.redeemedReward++;
         const rewardRedemption = this.rewardRedemptionRepository.create({
           chosenAction: action,
           shop: shop,

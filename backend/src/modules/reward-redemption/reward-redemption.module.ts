@@ -3,9 +3,11 @@ import { RewardRedemptionService } from './reward-redemption.service';
 import { RewardRedemptionController } from './reward-redemption.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RewardRedemption } from './entities/reward-redemption.entity';
+import { Shop } from '../shops/entities/shop.entity';
+import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RewardRedemption])],
+  imports: [TypeOrmModule.forFeature([RewardRedemption, Shop, ChosenAction])],
   controllers: [RewardRedemptionController],
   providers: [RewardRedemptionService],
   exports: [RewardRedemptionService],
