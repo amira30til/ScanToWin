@@ -9,11 +9,11 @@ import NotFound from "./components/NotFound";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Login from "./pages/auth/Login";
 import SuperAdminHome from "./pages/super-admin/SuperAdminHome";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminGoogle from "./pages/admin/AdminGoogle";
-import AdminFacebook from "./pages/admin/AdminFacebook";
-import AdminInstagram from "./pages/admin/AdminInstagram";
-import AdminTiktok from "./pages/admin/AdminTiktok";
+import Dashboard from "./pages/admin/dashboard";
+import Google from "./pages/admin/dashboard/Google";
+import Facebook from "./pages/admin/dashboard/Facebook";
+import Instagram from "./pages/admin/dashboard/Instagram";
+import Tiktok from "./pages/admin/dashboard/Tiktok";
 import AdminUsersData from "./pages/admin/AdminUsersData";
 import AdminCampaign from "./pages/admin/campaign";
 import AdminSMS from "./pages/admin/AdminSMS";
@@ -53,11 +53,11 @@ const App = () => {
           <Route path="/admin/create-shop" element={<AdminCreateShop />} />
 
           <Route path="/admin/:shopId/*" element={<LayoutAdmin />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="google" element={<AdminGoogle />} />
-            <Route path="facebook" element={<AdminFacebook />} />
-            <Route path="instagram" element={<AdminInstagram />} />
-            <Route path="tiktok" element={<AdminTiktok />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="google" element={<Google />} />
+            <Route path="facebook" element={<Facebook />} />
+            <Route path="instagram" element={<Instagram />} />
+            <Route path="tiktok" element={<Tiktok />} />
             <Route path="usersdata" element={<AdminUsersData />} />
             <Route path="campaign" element={<AdminCampaign />} />
             <Route path="sms" element={<AdminSMS />} />

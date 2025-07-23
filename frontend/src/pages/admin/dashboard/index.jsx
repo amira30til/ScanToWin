@@ -1,3 +1,9 @@
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+
+import { getActionsByShop } from "@/services/actionService";
+
 import {
   Box,
   Flex,
@@ -9,8 +15,6 @@ import {
   StatArrow,
   StatGroup,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
-import useAuthStore from "@/store";
 import HeaderAdmin from "@/components/HeaderAdmin";
 
 import {
@@ -64,25 +68,42 @@ export const data = {
   ],
 };
 
-const AdminFacebook = () => {
-  const shop = useAuthStore((state) => state.shop);
+const Dashboard = ({ title, social }) => {
+  const { shopId } = useParams();
+
+  const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
+    queryKey: ["actions-by-shop", shopId],
+    queryFn: async () => {
+      const response = await getActionsByShop(shopId);
+      return response.data.data.chosenActions;
+    },
+    enabled: !!shopId,
+  });
 
   useEffect(() => {
-    console.log("dashboard shop", shop);
-
     // TODO: call an endpoint which returns these values queries by range (Date A to Date B)
-    // 1. number of users (query by):
-    // 2. number of redeemed rewards
+    // 1. number of clickedActions
+    // 2. number of redeemedRewards
 
     // endpoint name: "/shop/{shopId}/dashboard/{from}/{to}"
     // returns { users: number, redeemedRewards: number }
 
     // should loop through the ChosenAction's of the shop and calculate the total number of users and redeemed rewards
-  }, [shop]);
+
+    if (actionsByShop) {
+      console.log("Actions by Shop:", actionsByShop);
+      const currentAction = actionsByShop.find(
+        (action) => action.name === social,
+      );
+      console.log(currentAction);
+    }
+  }, [actionsByShop]);
+
+  if (isLoadingActions) return <Box>Loading...</Box>;
 
   return (
     <Box pos="relative">
-      <HeaderAdmin title="Dashboard" />
+      <HeaderAdmin title={title} />
       <Flex direction="column" gap={10} px={8} py={10} overflow-x="hidden">
         <Flex>
           <Select
@@ -129,4 +150,4 @@ const AdminFacebook = () => {
   );
 };
 
-export default AdminFacebook;
+export default Dashboard;
