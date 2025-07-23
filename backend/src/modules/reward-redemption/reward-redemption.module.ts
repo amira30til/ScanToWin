@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RewardRedemption } from './entities/reward-redemption.entity';
 import { Shop } from '../shops/entities/shop.entity';
 import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RewardRedemption, Shop, ChosenAction])],
+  imports: [TypeOrmModule.forFeature([RewardRedemption, Shop, ChosenAction,])],
   controllers: [RewardRedemptionController],
-  providers: [RewardRedemptionService],
+  providers: [RewardRedemptionService,JwtService],
   exports: [RewardRedemptionService],
 })
 export class RewardRedemptionModule {}
