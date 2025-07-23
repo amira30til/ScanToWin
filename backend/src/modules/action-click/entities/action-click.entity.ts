@@ -15,11 +15,11 @@ export class ActionClick {
   @CreateDateColumn({ type: 'timestamp' })
   clickedAt: Date;
 
-  @ManyToOne(() => ChosenAction, { eager: true })
+  @ManyToOne(() => ChosenAction)
   @JoinColumn({ name: 'chosenActionId' })
   chosenAction: ChosenAction;
 
-  @ManyToOne(() => Shop, { eager: true })
+  @ManyToOne(() => Shop)
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 }

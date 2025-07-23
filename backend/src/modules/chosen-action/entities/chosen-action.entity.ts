@@ -53,8 +53,6 @@ export class ChosenAction {
   @ApiProperty()
   @Column({ nullable: true, default: 0 })
   redeemedReward: number;
-  @ApiProperty()
-  @Column({ nullable: true, default: 0 })
-  clickedAction: number;
+
 }
 

@@ -226,8 +226,6 @@ export class ChosenActionService {
           ShopMessages.SHOP_NOT_FOUND(chosenAction.shopId),
         );
       }
-      chosenAction.clickedAction++;
-      await this.chosenActionRepository.save(chosenAction);
       const click = this.actionClickRepository.create({
         chosenAction,
         shop,
