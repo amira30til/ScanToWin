@@ -29,7 +29,11 @@ const Play = () => {
 
   return (
     <>
-      {activeGame?.gameId === FORTUNE_WHEEL_ID && <FortuneWheel />}
+      {activeGame?.gameId === FORTUNE_WHEEL_ID ? (
+        <FortuneWheel />
+      ) : (
+        <div>This shop didn't select a game yet!</div>
+      )}
       <UserCooldownModal
         title="You have already played today!"
         description="you can play again in"

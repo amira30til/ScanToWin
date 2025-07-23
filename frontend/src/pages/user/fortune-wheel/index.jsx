@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useLocalStorage } from "@/hooks";
 
-import { getActionsByShop } from "@/services/actionService";
+import { getActionsByShop, chosenActionClick } from "@/services/actionService";
 import { getShop } from "@/services/shopService";
 import tinycolor from "tinycolor2";
 
@@ -173,6 +173,10 @@ const ActionModal = ({
   actionsLength,
   currentAction,
 }) => {
+  const chosenActionClickMutation = useMutation({
+    mutationFn: async (values) => await chosenActionClick(values.id),
+  });
+
   const onActionLinkHandler = () => {
     if (+actionPosition >= actionsLength) {
       setActionPosition(1);
@@ -180,7 +184,7 @@ const ActionModal = ({
       setActionPosition((+actionPosition || 1) + 1);
     }
 
-    // TODO: Call the API to update the "clickedAction" field
+    chosenActionClickMutation.mutate({ id: currentAction.id });
 
     onClose();
   };

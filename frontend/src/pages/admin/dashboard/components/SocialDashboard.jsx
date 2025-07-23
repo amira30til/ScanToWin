@@ -1,9 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-// import axios from "axios";
 
-import { getActionsByShop } from "@/services/actionService";
+import {
+  getActionsByShop,
+  getChosenActionClickedAt,
+} from "@/services/actionService";
 
 import {
   Box,
@@ -40,7 +42,7 @@ ChartJS.register(
   Legend,
 );
 
-export const options = {
+const options = {
   responsive: true,
   plugins: {
     legend: {
@@ -123,7 +125,8 @@ const MOCK_REWARD_TIMESTAMPS = [
 
 const SocialDashboard = ({ title, social }) => {
   const { shopId } = useParams();
-  const [range, setRange] = useState("30"); // Default to last 30 days
+  const [range, setRange] = useState("30");
+  const [actionId, setActionId] = useState(null);
 
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -134,29 +137,24 @@ const SocialDashboard = ({ title, social }) => {
     enabled: !!shopId,
   });
 
-  // MOCK: Simulate fetched reward timestamps
-  const rewardTimestamps = MOCK_REWARD_TIMESTAMPS;
-  const isLoadingTimestamps = false;
-
-  // If you're ready to use the actual endpoint later:
-  /*
-  const { data: rewardTimestamps, isLoading: isLoadingTimestamps } = useQuery({
-    queryKey: ["rewards-timestamps", shopId],
-    queryFn: async () => {
-      const response = await axios.get(`/shop/${shopId}/dashboard/rewards`);
-      return response.data.data;
-    },
-    enabled: !!shopId,
-  });
-  */
+  const { data: actionTimestamps, isLoading: actionTimestampsLoading } =
+    useQuery({
+      queryKey: ["action-timestamps", actionId],
+      queryFn: async () => {
+        const response = await getChosenActionClickedAt(actionId);
+        const data = response.data.data.chosenActions;
+        return data.map((action) => action.clickedAt);
+      },
+      enabled: !!actionId,
+    });
 
   const filteredTimestamps = useMemo(() => {
-    if (!rewardTimestamps) return [];
+    if (!actionTimestamps) return [];
     const now = new Date();
 
     switch (range) {
       case "today":
-        return rewardTimestamps.filter((ts) => {
+        return actionTimestamps.filter((ts) => {
           const date = parseISO(ts);
           return (
             date.getFullYear() === now.getFullYear() &&
@@ -172,21 +170,21 @@ const SocialDashboard = ({ title, social }) => {
         const end = new Date(now);
         end.setHours(0, 0, 0, 0);
 
-        return rewardTimestamps.filter((ts) => {
+        return actionTimestamps.filter((ts) => {
           const date = parseISO(ts);
           return date >= start && date < end;
         });
       }
       case "7":
-        return rewardTimestamps.filter((ts) =>
+        return actionTimestamps.filter((ts) =>
           isAfter(parseISO(ts), subDays(now, 7)),
         );
       case "30":
-        return rewardTimestamps.filter((ts) =>
+        return actionTimestamps.filter((ts) =>
           isAfter(parseISO(ts), subDays(now, 30)),
         );
       case "month":
-        return rewardTimestamps.filter((ts) => {
+        return actionTimestamps.filter((ts) => {
           const date = parseISO(ts);
           return (
             date.getFullYear() === now.getFullYear() &&
@@ -194,17 +192,17 @@ const SocialDashboard = ({ title, social }) => {
           );
         });
       case "year":
-        return rewardTimestamps.filter((ts) => {
+        return actionTimestamps.filter((ts) => {
           const date = parseISO(ts);
           return date.getFullYear() === now.getFullYear();
         });
       case "custom":
         // TODO: handle custom date range using a DatePicker component
-        return rewardTimestamps; // fallback: return all
+        return actionTimestamps; // fallback: return all
       default:
-        return rewardTimestamps;
+        return actionTimestamps;
     }
-  }, [rewardTimestamps, range]);
+  }, [actionTimestamps, range]);
 
   const chartData = useMemo(() => {
     if (!filteredTimestamps.length) return { labels: [], datasets: [] };
@@ -217,11 +215,11 @@ const SocialDashboard = ({ title, social }) => {
       const currentAction = actionsByShop.find(
         (action) => action.name === social,
       );
-      console.log("Current Action:", currentAction);
+      setActionId(currentAction.id);
     }
   }, [actionsByShop]);
 
-  if (isLoadingActions || isLoadingTimestamps) return <Box>Loading...</Box>;
+  if (isLoadingActions || actionTimestampsLoading) return <Box>Loading...</Box>;
 
   return (
     <Box pos="relative">
@@ -251,7 +249,7 @@ const SocialDashboard = ({ title, social }) => {
           <StatGroup>
             <Stat>
               <StatLabel>Total Rewards</StatLabel>
-              <StatNumber>{rewardTimestamps?.length || 0}</StatNumber>
+              <StatNumber>{actionTimestamps?.length || 0}</StatNumber>
               <StatHelpText>
                 <StatArrow type="increase" />
                 12%
