@@ -8,11 +8,22 @@ export const createAction = async (axios, body) =>
 
 export const getActions = async () => await axios.get(ACTION_URL);
 
-export const deleteAction = async (axios, id) =>
-  await axios.delete(`${ACTION_URL}/${id}`);
-
 export const getActionsByShop = async (shopId) =>
   await axios.get(`${CHOSEN_ACTION_URL}/shop/${shopId}`);
 
 export const upsertActions = async (axios, shopId, actions) =>
   await axios.patch(`${CHOSEN_ACTION_URL}/shop/${shopId}/sync`, actions);
+
+export const chosenActionClick = async (chosenActionId) =>
+  await axios.post(
+    `${CHOSEN_ACTION_URL}/clicked-action/?chosenActionId=${chosenActionId}`,
+  );
+
+export const getChosenActionClickedAt = async (chosenActionId) =>
+  await axios.get(`${CHOSEN_ACTION_URL}/clicked-action/${chosenActionId}`);
+
+export const getChosenActionRedeemeddAt = async (chosenActionId) =>
+  await axios.get(`${CHOSEN_ACTION_URL}/redeemed-action/${chosenActionId}`);
+
+export const deleteAction = async (axios, id) =>
+  await axios.delete(`${ACTION_URL}/${id}`);
