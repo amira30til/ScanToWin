@@ -114,6 +114,7 @@ export class ShopsService {
   > {
     try {
       const [shops, total] = await this.shopsRepository.findAndCount({
+        where: { status: ShopStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -154,7 +155,7 @@ export class ShopsService {
       }
 
       const [shops, total] = await this.shopsRepository.findAndCount({
-        where: { adminId: adminId },
+        where: { adminId: adminId, status: ShopStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -176,7 +177,7 @@ export class ShopsService {
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: { id },
+        where: { id, status: ShopStatus.ACTIVE },
         relations: ['admin'],
       });
 
@@ -201,6 +202,7 @@ export class ShopsService {
         where: {
           id: id,
           adminId: adminId,
+          status: ShopStatus.ACTIVE,
         },
       });
 
@@ -325,7 +327,7 @@ export class ShopsService {
   > {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: { id },
+        where: { id, status: ShopStatus.ACTIVE },
       });
 
       if (!shop) {
@@ -343,29 +345,27 @@ export class ShopsService {
   }
 
   async removeByAdmin(
-    id: string,
+    shopId: string,
     adminId: string,
   ): Promise<
     ApiResponseInterface<{ message: string }> | ErrorResponseInterface
   > {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: {
-          id: id,
-          adminId: adminId,
-        },
+        where: { id: shopId, adminId },
       });
 
       if (!shop) {
-        throw new NotFoundException(
-          ShopMessages.SHOP_NOT_FOUND_FOR_ADMIN(id, adminId),
-        );
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
       }
 
-      await this.shopsRepository.remove(shop);
+      shop.status = ShopStatus.ARCHIVED;
+      shop.admin = null;
+
+      await this.shopsRepository.save(shop);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        message: ShopMessages.SHOP_DELETE_SUCCESS(id),
+        message: `Shop with ID ${shopId} has been archived`,
       });
     } catch (error) {
       return handleServiceError(error);
