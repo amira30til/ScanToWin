@@ -123,7 +123,7 @@ export class AdminsController {
     description:
       'Retrieves an admin user by ID. Requires SUPER_ADMIN or ADMIN role.',
   })
-  @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
+  @ApiParam({ name: 'id', description: 'Admin ID', type: String })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Admin user retrieved successfully',
@@ -226,7 +226,7 @@ export class AdminsController {
     summary: 'Delete admin user',
     description: 'Removes an admin user by ID. Requires SUPER_ADMIN role.',
   })
-  @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
+  @ApiParam({ name: 'id', description: 'Admin ID', type: String })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Admin user removed successfully',
@@ -265,7 +265,7 @@ export class AdminsController {
     description:
       'Updates admin status (ACTIVE/INACTIVE). Requires SUPER_ADMIN role.',
   })
-  @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
+  @ApiParam({ name: 'id', description: 'Admin ID', type: String })
   @ApiBody({
     schema: {
       properties: {
@@ -304,5 +304,52 @@ export class AdminsController {
   })
   updateStatus(@Param('id') id: string, @Body('status') status: string) {
     return this.adminsService.updateStatus(id, status);
+  }
+  @Patch(':id/restore')
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
+  @ApiOperation({
+    summary: 'Restore an archived admin',
+    description:
+      'Restores an admin by setting their status back to ACTIVE. Requires SUPER_ADMIN role.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the archived admin to restore',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Admin restored successfully',
+    schema: {
+      properties: {
+        statusCode: { type: 'number', example: 200 },
+        message: { type: 'string', example: 'Success' },
+        data: {
+          type: 'object',
+          properties: {
+            admin: {
+              type: 'object',
+              description: 'Restored admin entity',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Admin not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - requires SUPER_ADMIN role',
+  })
+  restore(@Param('id') id: string) {
+    return this.adminsService.updateStatus(id, AdminStatus.ACTIVE);
   }
 }
