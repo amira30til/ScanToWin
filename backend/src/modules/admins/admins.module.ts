@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Admin } from './entities/admin.entity';
 import { JwtService } from '@nestjs/jwt';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { Shop } from '../shops/entities/shop.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Admin]),CloudinaryModule],
+  imports: [TypeOrmModule.forFeature([Admin, Shop]), CloudinaryModule],
   controllers: [AdminsController],
   providers: [AdminsService, JwtService],
   exports: [AdminsService],

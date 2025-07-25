@@ -67,8 +67,8 @@ export class ShopsController {
     return this.shopsService.findAll(page, limit);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+ // @ApiBearerAuth()
+  //@UseGuards(AdminGuard)
   @Get('admin/:adminId')
   @ApiOperation({ summary: 'Get all shops for a specific admin' })
   @ApiResponse({
@@ -83,7 +83,7 @@ export class ShopsController {
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
   @ApiQuery({
     name: 'page',
@@ -143,7 +143,7 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to retrieve',
-    type: Number,
+    type: String,
   })
   @ApiParam({
     name: 'adminId',
@@ -320,12 +320,12 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to update status',
-    type: Number,
+    type: String,
   })
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
   @ApiQuery({
     name: 'status',
