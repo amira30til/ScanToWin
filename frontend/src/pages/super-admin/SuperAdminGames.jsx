@@ -131,6 +131,10 @@ const SuperAdminGames = () => {
     createGameMutation.mutate(values);
   };
 
+  const deleteGameHandler = (gameId) => {
+    // TODO: delete game endpoint
+  };
+
   return (
     <Flex direction={{ base: "column", md: "row" }} gap={10}>
       <Box minW="400px">
@@ -242,6 +246,15 @@ const SuperAdminGames = () => {
       >
         {games?.map((game) => (
           <Flex direction="column" gap={4} key={game.id}>
+            <Flex justify="end">
+              <Button
+                colorScheme="red"
+                variant="outline"
+                onClick={() => deleteGameHandler(game.id)}
+              >
+                Delete
+              </Button>
+            </Flex>
             <Flex direction="column" gap={4}>
               <Text fontWeight="bold">{game.name}</Text>
               <Flex>
@@ -249,7 +262,7 @@ const SuperAdminGames = () => {
                   {game.status === "active" ? "Active" : "Disabled"}
                 </Badge>
               </Flex>
-              <Text>Game Description: {game.description}</Text>
+              <Text>{game.description}</Text>
             </Flex>
             <Box
               display="flex"
