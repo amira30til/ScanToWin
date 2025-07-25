@@ -95,7 +95,6 @@ export class AdminsService {
   > {
     try {
       const [admins, total] = await this.adminsRepository.findAndCount({
-        where: { adminStatus: AdminStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -186,11 +185,9 @@ export class AdminsService {
         updateAdminDto.profilPicture = result.url;
       }
       if (profilPicture) {
-        console.log('profilPictureeeeeee received:', profilPicture);
       }
 
       await this.adminsRepository.update(id, updateAdminDto);
-      console.log('Update data:', updateAdminDto);
 
       const updatedAdmin = await this.adminsRepository.findOne({
         where: { id },
@@ -204,33 +201,33 @@ export class AdminsService {
     }
   }
 
- async remove(
-  id: string,
-): Promise<ApiResponseInterface<{ message: string }> | ErrorResponseInterface> {
-  try {
-    const admin = await this.adminsRepository.findOne({ where: { id } });
+  async remove(
+    id: string,
+  ): Promise<
+    ApiResponseInterface<{ message: string }> | ErrorResponseInterface
+  > {
+    try {
+      const admin = await this.adminsRepository.findOne({ where: { id } });
 
-    if (!admin) {
-      throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      if (!admin) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      }
+
+      admin.adminStatus = AdminStatus.ARCHIVED;
+      await this.adminsRepository.save(admin);
+
+      await this.shopsRepository.update(
+        { adminId: admin.id },
+        { status: ShopStatus.ARCHIVED },
+      );
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        message: `Admin with ID ${id} has been archived`,
+      });
+    } catch (error) {
+      return handleServiceError(error);
     }
-
-    admin.adminStatus = AdminStatus.ARCHIVED;
-    await this.adminsRepository.save(admin);
-
-    await this.shopsRepository.update(
-      { adminId: admin.id },
-      { status: ShopStatus.ARCHIVED },
-    );
-
-
-    return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-      message: `Admin with ID ${id} has been archived`,
-    });
-  } catch (error) {
-    return handleServiceError(error);
   }
-}
-
 
   async updateStatus(
     id: string,
