@@ -409,8 +409,7 @@ export class RewardService {
     shopId: string,
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     try {
-      console.log('id shop', shopId);
-      console.log('id reward', id);
+      
 
       const reward = await this.rewardRepository.findOne({
         where: {
@@ -420,7 +419,6 @@ export class RewardService {
         },
         relations: [/*'category'*/ 'shop'],
       });
-      console.log('aaaaaaaaaa', reward);
 
       if (!reward) {
         throw new NotFoundException(RewardMessages.REWARD_NOT_FOUND(id));
