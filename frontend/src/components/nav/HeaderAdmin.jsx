@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useCopy, useAxiosPrivate, useToast } from "@/hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import QRCode from "react-qr-code";
 
-import { updateShop } from "@/services/shopService";
+import { updateShop, getShop } from "@/services/shopService";
 
 import {
   Box,
@@ -41,7 +41,6 @@ import { FaLock, FaQrcode } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { pinCodeValidator } from "@/validators/pinCodeValidator";
-import useAuthStore from "@/store";
 
 const HeaderAdmin = ({ title }) => {
   const svgRef = useRef(null);
@@ -175,7 +174,15 @@ const PinCodeModal = ({ isOpen, onClose }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const shop = useAuthStore((state) => state.shop);
+
+  const { data: shop } = useQuery({
+    queryKey: ["shop-by-id", shopId],
+    queryFn: async () => {
+      const response = await getShop(shopId);
+      return response.data.data.shop;
+    },
+    enabled: !!shopId,
+  });
 
   const {
     handleSubmit,

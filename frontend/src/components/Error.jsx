@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Flex, Image, Heading, Button } from "@chakra-ui/react";
 import ErrorImg from "@/assets/error.svg";
 
-const Error = () => {
+const Error = ({ title = "Sorry! An Unexpected error occured!" }) => {
   const navigate = useNavigate();
   return (
     <Flex
@@ -15,7 +15,7 @@ const Error = () => {
     >
       <Image boxSize="400px" src={ErrorImg} alt="Dan Abramov" />
       <Heading size="md" textAlign="center">
-        Sorry! An Unexpected error occured!
+        {title}
       </Heading>
       <Button
         size="sm"

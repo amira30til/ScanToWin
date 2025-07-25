@@ -1,22 +1,17 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-
-import { getActionsByShop } from "@/services/actionService";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useCombinedChartData } from "./hooks/useCombinedChartData";
 
 import {
-  Box,
-  Flex,
-  Select,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  StatGroup,
-} from "@chakra-ui/react";
-import HeaderAdmin from "@/components/HeaderAdmin";
+  getShopActionClick,
+  getShopActionRedeem,
+} from "@/services/actionService";
 
+import HeaderAdmin from "@/components/nav/HeaderAdmin";
+import StatBox from "./components/StatBox";
+
+import { Box, Flex, Select, Spinner, Input } from "@chakra-ui/react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +23,9 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
+import { IoLogoGameControllerB } from "react-icons/io";
+import { FaGift } from "react-icons/fa";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -37,75 +35,81 @@ ChartJS.register(
   Legend,
 );
 
-export const options = {
+const options = {
   responsive: true,
+  scales: {
+    y: {
+      ticks: {
+        callback: function (value) {
+          return Number.isInteger(value) ? value : "";
+        },
+        stepSize: 1,
+      },
+      beginAtZero: true,
+    },
+  },
   plugins: {
     legend: {
       position: "top",
     },
-    title: {
-      display: true,
-      text: "Chart.js Bar Chart",
-    },
   },
 };
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: labels.map(() => 832),
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "Dataset 2",
-      data: labels.map(() => 455),
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
-
-const Dashboard = ({ title, social }) => {
+const Dashboard = () => {
   const { shopId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultRange = searchParams.get("range") || "today";
+  const [range, setRange] = useState(defaultRange);
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
 
-  const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
-    queryKey: ["actions-by-shop", shopId],
-    queryFn: async () => {
-      const response = await getActionsByShop(shopId);
-      return response.data.data.chosenActions;
-    },
-    enabled: !!shopId,
+  const { data: shopActionClick, isLoading: shopActionClickIsLoading } =
+    useQuery({
+      queryKey: ["shop-action-click", shopId],
+      queryFn: async () => {
+        const response = await getShopActionClick(shopId);
+        const data = response.data.data.data;
+        return data.map((action) => action.clickedAt);
+      },
+      enabled: !!shopId,
+    });
+
+  const { data: shopActionRedeem, isLoading: shopActionRedeemIsLoading } =
+    useQuery({
+      queryKey: ["shop-action-redeem", shopId],
+      queryFn: async () => {
+        const response = await getShopActionRedeem(shopId);
+        const data = response.data.data.data;
+        return data.map((action) => action.redeemedAt);
+      },
+      enabled: !!shopId,
+    });
+
+  const {
+    combinedChartData,
+    clickedFilteredTimestamps,
+    redeemedFilteredTimestamps,
+  } = useCombinedChartData({
+    clicked: shopActionClick,
+    redeemed: shopActionRedeem,
+    range,
+    customFrom,
+    customTo,
   });
 
   useEffect(() => {
-    // TODO: call an endpoint which returns these values queries by range (Date A to Date B)
-    // 1. number of clickedActions
-    // 2. number of redeemedRewards
-
-    // endpoint name: "/shop/{shopId}/dashboard/{from}/{to}"
-    // returns { users: number, redeemedRewards: number }
-
-    // should loop through the ChosenAction's of the shop and calculate the total number of users and redeemed rewards
-
-    if (actionsByShop) {
-      console.log("Actions by Shop:", actionsByShop);
-      const currentAction = actionsByShop.find(
-        (action) => action.name === social,
-      );
-      console.log(currentAction);
-    }
-  }, [actionsByShop]);
-
-  if (isLoadingActions) return <Box>Loading...</Box>;
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("range", range);
+      return newParams;
+    });
+  }, [range, setSearchParams]);
 
   return (
     <Box pos="relative">
-      <HeaderAdmin title={title} />
-      <Flex direction="column" gap={10} px={8} py={10} overflow-x="hidden">
-        <Flex>
+      <HeaderAdmin title="Dashboard" />
+      <Flex direction="column" gap={10} px={8} py={10} overflowX="hidden">
+        <Flex direction="column" gap={2}>
           <Select
             maxW="300px"
             bg="white"
@@ -113,38 +117,65 @@ const Dashboard = ({ title, social }) => {
             fontWeight="bold"
             focusBorderColor="primary.500"
             cursor="pointer"
+            onChange={(e) => {
+              setRange(e.target.value);
+            }}
+            value={range}
           >
-            <option value="option1">Today</option>
-            <option value="option1">Yesterday</option>
-            <option value="option1">7 Days ago</option>
-            <option value="option1">30 Days ago</option>
-            <option value="option1">This month</option>
-            <option value="option1">This year</option>
-            <option value="option1">Custom date</option>
+            <option value="today">Today</option>
+            <option value="1">Yesterday</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="month">This month</option>
+            <option value="year">This year</option>
+            <option value="custom">Custom</option>
           </Select>
+          {range === "custom" && (
+            <Flex>
+              <Flex gap={2} mt={2}>
+                <Input
+                  type="date"
+                  value={customFrom}
+                  onChange={(e) => setCustomFrom(e.target.value)}
+                  bg="surface.popover"
+                />
+                <Input
+                  type="date"
+                  value={customTo}
+                  onChange={(e) => setCustomTo(e.target.value)}
+                  bg="surface.popover"
+                />
+              </Flex>
+            </Flex>
+          )}
         </Flex>
-        <Box bg="surface.popover" borderRadius="md" p={6}>
-          <StatGroup>
-            <Stat>
-              <StatLabel>Sent</StatLabel>
-              <StatNumber>345,670</StatNumber>
-              <StatHelpText>
-                <StatArrow type="increase" />
-                23.36%
-              </StatHelpText>
-            </Stat>
 
-            <Stat>
-              <StatLabel>Clicked</StatLabel>
-              <StatNumber>45</StatNumber>
-              <StatHelpText>
-                <StatArrow type="decrease" />
-                9.05%
-              </StatHelpText>
-            </Stat>
-          </StatGroup>
-          <Bar options={options} data={data} />
-        </Box>
+        {shopActionClickIsLoading || shopActionRedeemIsLoading ? (
+          <Flex minH="100%" w="100%" align="center" justify="center">
+            <Spinner display="flex" align="center" color="secondary.500" />
+          </Flex>
+        ) : (
+          <Box>
+            <Flex gap={4} justify="start">
+              <StatBox
+                title="Jeux Lancées"
+                value={redeemedFilteredTimestamps}
+                total={shopActionRedeem}
+                icon={IoLogoGameControllerB}
+              />
+
+              <StatBox
+                title="Cadeaux Gagnés"
+                value={clickedFilteredTimestamps}
+                total={shopActionClick}
+                icon={FaGift}
+              />
+            </Flex>
+            <Box bg="surface.popover" borderRadius="md" px={6} py={4} mt={6}>
+              <Bar options={options} data={combinedChartData} />
+            </Box>
+          </Box>
+        )}
       </Flex>
     </Box>
   );

@@ -1,13 +1,26 @@
-import useAuthStore from "@/store";
 import CustomizeGame from "./CustomizeGame";
 import ChooseGame from "./ChooseGame";
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex, Box, Spinner } from "@chakra-ui/react";
 import Rewards from "./rewards";
 import Actions from "./actions";
-import HeaderAdmin from "@/components/HeaderAdmin";
+import HeaderAdmin from "@/components/nav/HeaderAdmin";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getShop } from "@/services/shopService";
 
 const AdminCampaign = () => {
-  const shop = useAuthStore((state) => state.shop);
+  const { shopId } = useParams();
+
+  const { data: shop, shopIsLoading } = useQuery({
+    queryKey: ["shop-by-id", shopId],
+    queryFn: async () => {
+      const response = await getShop(shopId);
+      return response.data.data.shop;
+    },
+    enabled: !!shopId,
+  });
+
+  if (shopIsLoading) return <Spinner color="secondary.500" />;
 
   return (
     <Box pos="relative">
