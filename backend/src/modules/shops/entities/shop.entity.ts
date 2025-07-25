@@ -91,7 +91,7 @@ export class Shop {
 
   @ManyToOne(() => Admin, (admin) => admin.shops)
   @JoinColumn({ name: 'adminId' })
-  admin: Admin;
+  admin: Admin | null;
 
   @Column({ nullable: true })
   adminId: string;
