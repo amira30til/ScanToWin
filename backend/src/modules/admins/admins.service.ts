@@ -18,6 +18,7 @@ import { ApiResponse } from 'src/common/utils/response.util';
 import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { AdminStatus } from './enums/admin-status.enum';
 
 @Injectable()
 export class AdminsService {
@@ -90,6 +91,7 @@ export class AdminsService {
   > {
     try {
       const [admins, total] = await this.adminsRepository.findAndCount({
+        where: { adminStatus: AdminStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -111,7 +113,7 @@ export class AdminsService {
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({
-        where: { id },
+        where: { id, adminStatus: AdminStatus.ACTIVE },
       });
 
       if (!admin) {
@@ -131,7 +133,7 @@ export class AdminsService {
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({
-        where: { email: email.toLowerCase() },
+        where: { email: email.toLowerCase(), adminStatus: AdminStatus.ACTIVE },
       });
 
       if (!admin) {
@@ -152,7 +154,9 @@ export class AdminsService {
     profilPicture?: Express.Multer.File,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
-      const admin = await this.adminsRepository.findOne({ where: { id } });
+      const admin = await this.adminsRepository.findOne({
+        where: { id, adminStatus: AdminStatus.ACTIVE },
+      });
 
       if (!admin) {
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
@@ -202,18 +206,17 @@ export class AdminsService {
     ApiResponseInterface<{ message: string }> | ErrorResponseInterface
   > {
     try {
-      const admin = await this.adminsRepository.findOne({
-        where: { id },
-      });
+      const admin = await this.adminsRepository.findOne({ where: { id } });
 
       if (!admin) {
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
       }
 
-      await this.adminsRepository.remove(admin);
+      admin.adminStatus = AdminStatus.ARCHIVED;
+      await this.adminsRepository.save(admin);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        message: `Admin with ID ${id} has been successfully removed`,
+        message: `Admin with ID ${id} has been archived`,
       });
     } catch (error) {
       return handleServiceError(error);
@@ -258,7 +261,7 @@ export class AdminsService {
   > {
     try {
       const [admins, total] = await this.adminsRepository.findAndCount({
-        where: { role: 'ADMIN' },
+        where: { role: 'ADMIN', adminStatus: AdminStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -269,6 +272,28 @@ export class AdminsService {
         total,
         page,
         limit,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async restore(
+    id: string,
+  ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
+    try {
+      const admin = await this.adminsRepository.findOne({
+        where: { id },
+      });
+
+      if (!admin) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      }
+
+      admin.adminStatus = AdminStatus.ACTIVE;
+      const updatedAdmin = await this.adminsRepository.save(admin);
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        admin: updatedAdmin,
       });
     } catch (error) {
       return handleServiceError(error);
