@@ -35,7 +35,6 @@ export class ActionsController {
     description: 'Action with this name already exists',
   })
   async create(@Body() createActionDto: CreateActionDto) {
-    console.log('yyyy', createActionDto);
 
     return this.actionsService.create(createActionDto);
   }

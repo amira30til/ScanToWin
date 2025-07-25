@@ -28,7 +28,6 @@ export class SubscriptionPlanService {
     createSubscriptionPlanDto: CreateSubscriptionPlanDto,
   ): Promise<ApiResponseInterface<SubscriptionPlan> | ErrorResponseInterface> {
     try {
-      console.log('Received DTO:', createSubscriptionPlanDto);
       // Check if plan with same name already exists
       const existingPlan = await this.subscriptionPlanRepository.findOne({
         where: { name: createSubscriptionPlanDto.name },
@@ -47,7 +46,6 @@ export class SubscriptionPlanService {
       );
       const savedPlan =
         await this.subscriptionPlanRepository.save(subscriptionPlan);
-      console.log('hhhhhhhhhhhh', savedPlan);
 
       return ApiResponse.success(HttpStatusCodes.CREATED, {
         message: SubscriptionPlanMessages.SUB_PLAN_CREATED,
