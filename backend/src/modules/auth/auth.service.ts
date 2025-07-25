@@ -23,6 +23,7 @@ import { ApiResponse } from 'src/common/utils/response.util';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Response } from 'express';
+import { AdminStatus } from '../admins/enums/admin-status.enum';
 
 export interface JwtPayload {
   sub: string;
@@ -42,39 +43,45 @@ export class AuthService {
   async login(dto: LoginDto, res: Response) {
     try {
       const { email, password } = dto;
+
       const user = await this.adminsRepository
         .createQueryBuilder('user')
         .where('user.email = :email', {
           email: email.toLowerCase(),
         })
-        .addSelect('user.password')
+        .addSelect(['user.password', 'user.adminStatus'])
         .getOne();
 
       if (!user) {
         throw new NotFoundException(UserMessages.EMAIL_USER_NOT_FOUND('email'));
       }
+
+      if (user.adminStatus !== AdminStatus.ACTIVE) {
+        throw new UnauthorizedException('Your account is not active');
+      }
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         throw new UnauthorizedException(AuthMessages.INVALID_PASSWORD);
       }
-      // Create JWT token for authentication with email
+
       const payload = {
         sub: user.id,
         email: user.email,
         role: user.role,
       };
+
       const accessToken = await this.jwtService.signAsync(payload, {
         secret: `${process.env.JWT_SECRET}`,
         expiresIn: `${process.env.JWT_EXPIRED}`,
       });
+
       const refreshToken = await this.jwtService.signAsync(payload, {
         secret: `${process.env.REFRESH_JWT_SECRET}`,
         expiresIn: `${process.env.REFRESH_JWT_EXPIRED}`,
       });
 
-      // Set refresh token in HTTP-only cookie
       this.setRefreshTokenCookie(res, refreshToken);
-
       user.refreshToken = refreshToken;
       await this.adminsRepository.save(user);
 
@@ -83,6 +90,7 @@ export class AuthService {
       return handleServiceError(e);
     }
   }
+
   /*------------------------------ REFRESH TOKEN ------------------------------*/
   async refreshToken(
     refreshToken: string,
