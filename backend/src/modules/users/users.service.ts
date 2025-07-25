@@ -120,7 +120,6 @@ export class UsersService {
             currentTime.getTime() - lastPlayedTime.getTime();
           const hoursDifference = timeDifference / (1000 * 60 * 60);
 
-          console.log(`Last played at shop: ${lastPlayedTime.toISOString()}`);
 
           if (hoursDifference < 24) {
             const remainingMs = 24 * 60 * 60 * 1000 - timeDifference;
@@ -157,7 +156,6 @@ export class UsersService {
           existingUserGame.rewardId = dto.rewardId;
           existingUserGame.activeGameAssignmentId = activeGameAssignment.id;
           await this.userGameRepository.save(existingUserGame);
-          console.log(`Updated existing game record: ${existingUserGame.id}`);
         } else {
           await this.userGameRepository.save({
             userId: existingUser.id,
