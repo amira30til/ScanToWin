@@ -12,8 +12,9 @@ export const getAdminById = async (axios, id) =>
 export const createAdmin = async (axios, body) =>
   await axios.post(ADMIN_URL, body);
 
-export const deleteAdmin = async (axios, id) =>
-  await axios.delete(`${ADMIN_URL}/${id}`);
+export const deleteAdmin = async (axios, id) => {
+  return await axios.delete(`${ADMIN_URL}/${id}`);
+};
 
 export const createGame = async (axios, formData) =>
   await axios.post(GAME_URL, formData, {

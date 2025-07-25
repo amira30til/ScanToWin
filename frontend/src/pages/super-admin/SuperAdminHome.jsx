@@ -30,7 +30,6 @@ import IconButton from "@/components/common/IconButton";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 const HEADERS = [
-  "Name",
   "Email",
   "Role",
   "Status",
@@ -51,7 +50,10 @@ const SuperAdminHome = () => {
     queryKey: ["admins"],
     queryFn: async () => {
       const response = await getAdmins(axiosPrivate);
-      return response.data.data.admins;
+      const data = response.data.data.admins.filter(
+        (admin) => admin.role !== "SUPER_ADMIN",
+      );
+      return data;
     },
     onError: () => toast("Failed to fetch admins", "error"),
   });
@@ -76,9 +78,6 @@ const SuperAdminHome = () => {
 
   const rows = (admin) => (
     <>
-      <Td fontWeight="bold">
-        {admin?.firstName} {admin?.lastName}
-      </Td>
       <Td>{admin?.email}</Td>
       <Td>{admin?.role}</Td>
       <Td>{admin?.adminStatus}</Td>

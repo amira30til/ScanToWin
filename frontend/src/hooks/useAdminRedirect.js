@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosPrivate } from "@/hooks";
@@ -8,7 +8,6 @@ const useAdminRedirect = (adminId) => {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const { shopId } = useParams();
-  const [currentShop, setFoundShop] = useState(null);
 
   const {
     data: shops,
@@ -34,14 +33,12 @@ const useAdminRedirect = (adminId) => {
         const currentShop = shops.find((shop) => `${shop.id}` === shopId);
         if (!currentShop) {
           navigate("/admin/create-shop", { replace: true });
-        } else {
-          setFoundShop(currentShop);
         }
       }
     }
   }, [isLoading, shopId, shops, navigate]);
 
-  return { isLoading, error, currentShop, shops };
+  return { isLoading, error, shops };
 };
 
 export default useAdminRedirect;

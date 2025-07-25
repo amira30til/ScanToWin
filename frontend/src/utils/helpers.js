@@ -46,3 +46,7 @@ export const dataURLtoFile = (dataUrl, filename, onError = () => {}) => {
 
   return new File([u8arr], filename, { type: mime });
 };
+
+export const isPlainObject = (value) => {
+  return Object.prototype.toString.call(value) === "[object Object]";
+};

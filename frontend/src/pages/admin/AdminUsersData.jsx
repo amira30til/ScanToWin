@@ -9,9 +9,7 @@ import {
   StatArrow,
   StatGroup,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
-import useAuthStore from "@/store";
-import HeaderAdmin from "@/components/HeaderAdmin";
+import HeaderAdmin from "@/components/nav/HeaderAdmin";
 
 import {
   Chart as ChartJS,
@@ -65,21 +63,6 @@ export const data = {
 };
 
 const AdminUsersData = () => {
-  const shop = useAuthStore((state) => state.shop);
-
-  useEffect(() => {
-    console.log("dashboard shop", shop);
-
-    // TODO: call an endpoint which returns these values queries by range (Date A to Date B)
-    // 1. number of users (query by):
-    // 2. number of redeemed rewards
-
-    // endpoint name: "/shop/{shopId}/dashboard/{from}/{to}"
-    // returns { users: number, redeemedRewards: number }
-
-    // should loop through the ChosenAction's of the shop and calculate the total number of users and redeemed rewards
-  }, [shop]);
-
   return (
     <Box pos="relative">
       <HeaderAdmin title="Dashboard" />

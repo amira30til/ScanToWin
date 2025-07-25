@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import PersistLogin from "./components/PersistLogin";
-import RequireAuth from "./components/RequireAuth";
-import LayoutSuperAdmin from "./components/LayoutSuperAdmin";
-import LayoutAdmin from "./components/LayoutAdmin";
+import PersistLogin from "./components/layout/PersistLogin";
+import RequireAuth from "./components/layout/RequireAuth";
+import LayoutSuperAdmin from "./components/layout/LayoutSuperAdmin";
+import LayoutAdmin from "./components/layout/LayoutAdmin";
 import NotFound from "./components/NotFound";
 
 import ResetPassword from "./pages/auth/ResetPassword";

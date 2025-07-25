@@ -20,7 +20,7 @@ import {
   FormErrorMessage,
   Box,
   Heading,
-  Divider,
+  Badge,
   Text,
   Image,
   IconButton,
@@ -132,125 +132,146 @@ const SuperAdminGames = () => {
   };
 
   return (
-    <Box w="25%">
-      <Heading size="md">Games</Heading>
-      <Flex
-        mt={4}
-        as="form"
-        direction="column"
-        bg="white"
-        px={4}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <FormControl pt={4} isInvalid={!!formState?.errors?.name}>
-          <FormLabel>Name</FormLabel>
-          <Input
-            {...register("name")}
-            focusBorderColor="primary.500"
-            placeholder="Enter game name"
-          />
-          <FormErrorMessage>
-            {formState?.errors?.name?.message}
-          </FormErrorMessage>
-        </FormControl>
-        <FormControl pt={4} isInvalid={!!formState?.errors?.name}>
-          <FormLabel>Description</FormLabel>
-          <Textarea
-            {...register("description")}
-            focusBorderColor="primary.500"
-            placeholder="Enter game description"
-          />
-          <FormErrorMessage>
-            {formState?.errors?.description?.message}
-          </FormErrorMessage>
-        </FormControl>
-        <FormControl pt={4} isInvalid={!!formState?.errors?.isActive}>
-          <FormLabel>Is Active</FormLabel>
-          <Switch colorScheme="primary" {...register("isActive")} />
-          <FormErrorMessage>
-            {formState?.errors?.isActive?.message}
-          </FormErrorMessage>
-        </FormControl>
+    <Flex direction={{ base: "column", md: "row" }} gap={10}>
+      <Box minW="400px">
+        <Heading size="md">Games</Heading>
+        <Flex
+          mt={4}
+          as="form"
+          direction="column"
+          bg="white"
+          px={4}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <FormControl pt={4} isInvalid={!!formState?.errors?.name}>
+            <FormLabel>Name</FormLabel>
+            <Input
+              {...register("name")}
+              focusBorderColor="primary.500"
+              placeholder="Enter game name"
+            />
+            <FormErrorMessage>
+              {formState?.errors?.name?.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl pt={4} isInvalid={!!formState?.errors?.name}>
+            <FormLabel>Description</FormLabel>
+            <Textarea
+              {...register("description")}
+              focusBorderColor="primary.500"
+              placeholder="Enter game description"
+            />
+            <FormErrorMessage>
+              {formState?.errors?.description?.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl pt={4} isInvalid={!!formState?.errors?.isActive}>
+            <FormLabel>Is Active</FormLabel>
+            <Switch colorScheme="primary" {...register("isActive")} />
+            <FormErrorMessage>
+              {formState?.errors?.isActive?.message}
+            </FormErrorMessage>
+          </FormControl>
 
-        <FormControl>
-          <FormLabel>Game Picture</FormLabel>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handlePictureChange}
-            accept="image/*"
-            style={{ display: "none" }}
-          />
+          <FormControl>
+            <FormLabel>Game Picture</FormLabel>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handlePictureChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
 
-          {previewImage ? (
-            <Box position="relative" width="fit-content">
-              <Image
-                src={previewImage}
-                alt="Picture Preview"
-                maxHeight="100px"
+            {previewImage ? (
+              <Box position="relative" width="fit-content">
+                <Image
+                  src={previewImage}
+                  alt="Picture Preview"
+                  maxHeight="100px"
+                  borderRadius="md"
+                />
+                <IconButton
+                  aria-label="Remove pictureUrl"
+                  icon={<LuX size={16} />}
+                  size="sm"
+                  position="absolute"
+                  top="-8px"
+                  right="-8px"
+                  colorScheme="red"
+                  rounded="full"
+                  onClick={clearPicture}
+                />
+              </Box>
+            ) : (
+              <Flex
+                direction="column"
+                align="center"
+                justify="center"
+                border="2px dashed"
+                borderColor="gray.300"
                 borderRadius="md"
-              />
-              <IconButton
-                aria-label="Remove pictureUrl"
-                icon={<LuX size={16} />}
-                size="sm"
-                position="absolute"
-                top="-8px"
-                right="-8px"
-                colorScheme="red"
-                rounded="full"
-                onClick={clearPicture}
+                p={5}
+                cursor="pointer"
+                onClick={triggerPictureUpload}
+                _hover={{ borderColor: "primary.500" }}
+                transition="all 0.2s"
+              >
+                <LuUpload size={24} color={primary500} />
+                <Text mt={2} fontSize="sm">
+                  Upload pictureUrl image
+                </Text>
+              </Flex>
+            )}
+          </FormControl>
+          <Button
+            type="submit"
+            colorScheme="primary"
+            mt={4}
+            isLoading={createGameMutation.isPending}
+          >
+            Create Game
+          </Button>
+        </Flex>
+      </Box>
+      <Flex
+        bg="surface.popover"
+        direction={{ base: "column", lg: "row" }}
+        gap={8}
+        p={10}
+      >
+        {games?.map((game) => (
+          <Flex direction="column" gap={4} key={game.id}>
+            <Flex direction="column" gap={4}>
+              <Text fontWeight="bold">{game.name}</Text>
+              <Flex>
+                <Badge colorScheme={game.status === "active" ? "green" : "red"}>
+                  {game.status === "active" ? "Active" : "Disabled"}
+                </Badge>
+              </Flex>
+              <Text>Game Description: {game.description}</Text>
+            </Flex>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              mt={4}
+            >
+              <Image
+                src={game.pictureUrl}
+                alt={game.name}
+                boxSize="280px"
+                objectFit="cover"
+                borderRadius="full"
+                boxShadow="lg"
+                border="2px solid"
+                borderColor="gray.200"
               />
             </Box>
-          ) : (
-            <Flex
-              direction="column"
-              align="center"
-              justify="center"
-              border="2px dashed"
-              borderColor="gray.300"
-              borderRadius="md"
-              p={5}
-              cursor="pointer"
-              onClick={triggerPictureUpload}
-              _hover={{ borderColor: "primary.500" }}
-              transition="all 0.2s"
-            >
-              <LuUpload size={24} color={primary500} />
-              <Text mt={2} fontSize="sm">
-                Upload pictureUrl image
-              </Text>
-            </Flex>
-          )}
-        </FormControl>
-        <Button
-          type="submit"
-          colorScheme="primary"
-          mt={4}
-          isLoading={createGameMutation.isPending}
-        >
-          Create Game
-        </Button>
-      </Flex>
-
-      <Divider my={4} bg="gray.900" />
-
-      <Flex gap={4}>
-        {games?.map((game) => (
-          <Box key={game.id}>
-            <Text>Game Name: {game.name}</Text>
-            <Text>Game Description: {game.description}</Text>
-            <Text>IsActive: {game.isActive ? "true" : "false"}</Text>
-            <Image
-              src={game.pictureUrl}
-              alt="Picture Preview"
-              maxHeight="100px"
-              borderRadius="md"
-            />
-          </Box>
+          </Flex>
         ))}
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 

@@ -1,25 +1,18 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useCombinedChartData } from "../hooks/useCombinedChartData";
 
 import {
   getActionsByShop,
   getChosenActionClickedAt,
+  getChosenActionRedeemedAt,
 } from "@/services/actionService";
 
-import {
-  Box,
-  Flex,
-  Select,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  StatGroup,
-} from "@chakra-ui/react";
-import HeaderAdmin from "@/components/HeaderAdmin";
+import HeaderAdmin from "@/components/nav/HeaderAdmin";
+import StatBox from "./StatBox";
 
+import { Box, Flex, Select, Spinner, Input } from "@chakra-ui/react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,7 +24,8 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-import { format, parseISO, isAfter, subDays } from "date-fns";
+import { IoLogoGameControllerB } from "react-icons/io";
+import { FaGift } from "react-icons/fa";
 
 ChartJS.register(
   CategoryScale,
@@ -44,89 +38,33 @@ ChartJS.register(
 
 const options = {
   responsive: true,
+  scales: {
+    y: {
+      ticks: {
+        callback: function (value) {
+          return Number.isInteger(value) ? value : "";
+        },
+        stepSize: 1,
+      },
+      beginAtZero: true,
+    },
+  },
   plugins: {
     legend: {
       position: "top",
     },
-    title: {
-      display: true,
-      text: "Rewards Over Time",
-    },
   },
 };
 
-const groupRewardsByDay = (timestamps) => {
-  return timestamps.reduce((acc, timestamp) => {
-    const day = format(parseISO(timestamp), "yyyy-MM-dd");
-    acc[day] = (acc[day] || 0) + 1;
-    return acc;
-  }, {});
-};
-
-const prepareChartData = (groupedData) => {
-  const labels = Object.keys(groupedData).sort();
-  const values = labels.map((label) => groupedData[label]);
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: "Rewards",
-        data: values,
-        backgroundColor: "rgba(75, 192, 192, 0.5)",
-      },
-    ],
-  };
-};
-
-// MOCKED DATA FOR TESTING
-const MOCK_REWARD_TIMESTAMPS = [
-  "2025-07-22T10:00:00Z",
-  "2025-07-22T11:30:00Z",
-  "2025-07-21T14:00:00Z",
-  "2025-07-20T09:15:00Z",
-  "2025-07-20T10:45:00Z",
-  "2025-07-18T08:30:00Z",
-  "2025-07-15T16:00:00Z",
-  "2025-07-10T13:00:00Z",
-  "2025-06-25T12:00:00Z",
-  "2025-06-10T18:15:00Z",
-  "2025-05-30T14:45:00Z",
-  "2025-05-01T09:10:00Z",
-  "2025-04-15T08:00:00Z",
-  "2025-03-25T20:00:00Z",
-  "2025-03-05T17:30:00Z",
-  "2025-02-10T11:25:00Z",
-  "2025-01-01T10:00:00Z",
-  "2024-12-15T13:40:00Z",
-  "2024-11-25T07:55:00Z",
-  "2024-10-10T18:20:00Z",
-  "2024-09-18T09:50:00Z",
-  "2024-08-01T15:35:00Z",
-  "2024-07-14T12:15:00Z",
-  "2024-06-30T16:45:00Z",
-  "2024-06-10T11:30:00Z",
-  "2024-05-20T14:00:00Z",
-  "2024-04-05T17:45:00Z",
-  "2024-03-15T10:10:00Z",
-  "2024-02-25T08:30:00Z",
-  "2024-02-10T19:20:00Z",
-  "2024-01-05T13:15:00Z",
-  "2023-12-22T11:00:00Z",
-  "2023-11-18T16:00:00Z",
-  "2023-10-01T14:45:00Z",
-  "2023-09-10T09:30:00Z",
-  "2023-08-28T20:00:00Z",
-  "2023-08-15T10:00:00Z",
-  "2023-07-30T07:00:00Z",
-  "2023-07-10T15:00:00Z",
-  "2023-07-01T13:00:00Z",
-];
-
 const SocialDashboard = ({ title, social }) => {
   const { shopId } = useParams();
-  const [range, setRange] = useState("30");
   const [actionId, setActionId] = useState(null);
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultRange = searchParams.get("range") || "today";
+  const [range, setRange] = useState(defaultRange);
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
 
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -137,95 +75,70 @@ const SocialDashboard = ({ title, social }) => {
     enabled: !!shopId,
   });
 
-  const { data: actionTimestamps, isLoading: actionTimestampsLoading } =
-    useQuery({
-      queryKey: ["action-timestamps", actionId],
-      queryFn: async () => {
-        const response = await getChosenActionClickedAt(actionId);
-        const data = response.data.data.chosenActions;
-        return data.map((action) => action.clickedAt);
-      },
-      enabled: !!actionId,
-    });
+  const {
+    data: actionClickedTimestamps,
+    isLoading: actionClickedTimestampsLoading,
+  } = useQuery({
+    queryKey: ["action-clicked-timestamps", actionId],
+    queryFn: async () => {
+      const response = await getChosenActionClickedAt(actionId);
+      const data = response.data.data.data;
+      return data.map((action) => action.clickedAt);
+    },
+    enabled: !!actionId,
+  });
 
-  const filteredTimestamps = useMemo(() => {
-    if (!actionTimestamps) return [];
-    const now = new Date();
+  const {
+    data: actionRedeemedTimestamps,
+    isLoading: actionRedeemedTimestampsLoading,
+  } = useQuery({
+    queryKey: ["action-redeemed-timestamps", actionId],
+    queryFn: async () => {
+      const response = await getChosenActionRedeemedAt(actionId);
+      const data = response.data.data.data;
+      return data.map((action) => action.redeemedAt);
+    },
+    enabled: !!actionId,
+  });
 
-    switch (range) {
-      case "today":
-        return actionTimestamps.filter((ts) => {
-          const date = parseISO(ts);
-          return (
-            date.getFullYear() === now.getFullYear() &&
-            date.getMonth() === now.getMonth() &&
-            date.getDate() === now.getDate()
-          );
-        });
-      case "1": {
-        const start = new Date(now);
-        start.setDate(now.getDate() - 1);
-        start.setHours(0, 0, 0, 0);
-
-        const end = new Date(now);
-        end.setHours(0, 0, 0, 0);
-
-        return actionTimestamps.filter((ts) => {
-          const date = parseISO(ts);
-          return date >= start && date < end;
-        });
-      }
-      case "7":
-        return actionTimestamps.filter((ts) =>
-          isAfter(parseISO(ts), subDays(now, 7)),
-        );
-      case "30":
-        return actionTimestamps.filter((ts) =>
-          isAfter(parseISO(ts), subDays(now, 30)),
-        );
-      case "month":
-        return actionTimestamps.filter((ts) => {
-          const date = parseISO(ts);
-          return (
-            date.getFullYear() === now.getFullYear() &&
-            date.getMonth() === now.getMonth()
-          );
-        });
-      case "year":
-        return actionTimestamps.filter((ts) => {
-          const date = parseISO(ts);
-          return date.getFullYear() === now.getFullYear();
-        });
-      case "custom":
-        // TODO: handle custom date range using a DatePicker component
-        return actionTimestamps; // fallback: return all
-      default:
-        return actionTimestamps;
-    }
-  }, [actionTimestamps, range]);
-
-  const chartData = useMemo(() => {
-    if (!filteredTimestamps.length) return { labels: [], datasets: [] };
-    const grouped = groupRewardsByDay(filteredTimestamps);
-    return prepareChartData(grouped);
-  }, [filteredTimestamps]);
+  const {
+    combinedChartData,
+    clickedFilteredTimestamps,
+    redeemedFilteredTimestamps,
+  } = useCombinedChartData({
+    clicked: actionClickedTimestamps,
+    redeemed: actionRedeemedTimestamps,
+    range,
+    customFrom,
+    customTo,
+  });
 
   useEffect(() => {
     if (actionsByShop) {
       const currentAction = actionsByShop.find(
         (action) => action.name === social,
       );
-      setActionId(currentAction.id);
+      if (currentAction) {
+        setActionId(currentAction.id);
+      } else {
+        navigate(`/admin/${shopId}/dashboard`);
+      }
     }
-  }, [actionsByShop]);
+  }, [actionsByShop, social]);
 
-  if (isLoadingActions || actionTimestampsLoading) return <Box>Loading...</Box>;
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("range", range);
+      return newParams;
+    });
+  }, [range, setSearchParams]);
 
   return (
     <Box pos="relative">
       <HeaderAdmin title={title} />
       <Flex direction="column" gap={10} px={8} py={10} overflowX="hidden">
-        <Flex>
+        <Flex direction="column" gap={2}>
           <Select
             maxW="300px"
             bg="white"
@@ -244,29 +157,54 @@ const SocialDashboard = ({ title, social }) => {
             <option value="year">This year</option>
             <option value="custom">Custom date</option>
           </Select>
+          {range === "custom" && (
+            <Flex>
+              <Flex gap={2} mt={2}>
+                <Input
+                  type="date"
+                  value={customFrom}
+                  onChange={(e) => setCustomFrom(e.target.value)}
+                  bg="surface.popover"
+                />
+                <Input
+                  type="date"
+                  value={customTo}
+                  onChange={(e) => setCustomTo(e.target.value)}
+                  bg="surface.popover"
+                />
+              </Flex>
+            </Flex>
+          )}
         </Flex>
-        <Box bg="surface.popover" borderRadius="md" p={6}>
-          <StatGroup>
-            <Stat>
-              <StatLabel>Total Rewards</StatLabel>
-              <StatNumber>{actionTimestamps?.length || 0}</StatNumber>
-              <StatHelpText>
-                <StatArrow type="increase" />
-                12%
-              </StatHelpText>
-            </Stat>
 
-            <Stat>
-              <StatLabel>In Selected Range</StatLabel>
-              <StatNumber>{filteredTimestamps.length}</StatNumber>
-              <StatHelpText>
-                <StatArrow type="increase" />
-                7%
-              </StatHelpText>
-            </Stat>
-          </StatGroup>
-          <Bar options={options} data={chartData} />
-        </Box>
+        {isLoadingActions ||
+        actionClickedTimestampsLoading ||
+        actionRedeemedTimestampsLoading ? (
+          <Flex minH="100%" w="100%" align="center" justify="center">
+            <Spinner display="flex" align="center" color="secondary.500" />
+          </Flex>
+        ) : (
+          <Box>
+            <Flex gap={4} justify="start">
+              <StatBox
+                title="Jeux Lancées"
+                value={redeemedFilteredTimestamps}
+                total={actionRedeemedTimestamps}
+                icon={IoLogoGameControllerB}
+              />
+
+              <StatBox
+                title="Cadeaux Gagnés"
+                value={clickedFilteredTimestamps}
+                total={actionClickedTimestamps}
+                icon={FaGift}
+              />
+            </Flex>
+            <Box bg="surface.popover" borderRadius="md" px={6} py={4} mt={6}>
+              <Bar options={options} data={combinedChartData} />
+            </Box>
+          </Box>
+        )}
       </Flex>
     </Box>
   );
