@@ -19,6 +19,8 @@ import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { AdminStatus } from './enums/admin-status.enum';
+import { Shop } from '../shops/entities/shop.entity';
+import { ShopStatus } from '../shops/enums/shop-status.enum';
 
 @Injectable()
 export class AdminsService {
@@ -26,6 +28,8 @@ export class AdminsService {
     @InjectRepository(Admin)
     private adminsRepository: Repository<Admin>,
     private cloudinaryService: CloudinaryService,
+    @InjectRepository(Shop)
+    private shopsRepository: Repository<Shop>,
   ) {}
   /*--------------------------------CREATE USER(Admin or Super-Admin )-------------------------------*/
   async create(
@@ -91,7 +95,6 @@ export class AdminsService {
   > {
     try {
       const [admins, total] = await this.adminsRepository.findAndCount({
-        where: { adminStatus: AdminStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -182,11 +185,9 @@ export class AdminsService {
         updateAdminDto.profilPicture = result.url;
       }
       if (profilPicture) {
-        console.log('profilPictureeeeeee received:', profilPicture);
       }
 
       await this.adminsRepository.update(id, updateAdminDto);
-      console.log('Update data:', updateAdminDto);
 
       const updatedAdmin = await this.adminsRepository.findOne({
         where: { id },
@@ -214,6 +215,11 @@ export class AdminsService {
 
       admin.adminStatus = AdminStatus.ARCHIVED;
       await this.adminsRepository.save(admin);
+
+      await this.shopsRepository.update(
+        { adminId: admin.id },
+        { status: ShopStatus.ARCHIVED },
+      );
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         message: `Admin with ID ${id} has been archived`,

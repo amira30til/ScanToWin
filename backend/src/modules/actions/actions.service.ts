@@ -35,7 +35,6 @@ export class ActionsService {
           ActionMessages.ACTION_NAME_EXISTS(dto.name),
         );
       }
-      console.log('hhhhhhhhhhhhhhhhhhhhh', dto);
 
       const newAction = this.actionRepository.create(dto);
       const saved = await this.actionRepository.save(newAction);

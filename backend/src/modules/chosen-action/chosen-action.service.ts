@@ -38,18 +38,13 @@ export class ChosenActionService {
       const existingActions = await this.chosenActionRepository.find({
         where: { shopId },
       });
-      console.log('✅ Existing DB actions:', existingActions);
 
       const receivedIds = receivedActions.filter((a) => a.id).map((a) => a.id);
-      console.log('🟢 Received IDs from frontend:', receivedIds);
 
       const toDelete = existingActions.filter(
         (dbItem) => !receivedIds.includes(dbItem.id),
       );
-      console.log(
-        '🗑️ To delete:',
-        toDelete.map((i) => i.id),
-      );
+     
 
       if (toDelete.length > 0) {
         await this.chosenActionRepository.remove(toDelete);
