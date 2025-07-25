@@ -8,14 +8,16 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { ActionsService } from './actions.service';
 import { CreateActionDto } from './dto/create-action.dto';
 import { UpdateActionDto } from './dto/update-action.dto';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ActionMessages } from 'src/common/constants/messages.constants';
 import { Action } from './entities/action.entity';
 import { ErrorResponseInterface } from 'src/common/interfaces/response.interface';
+import { AdminGuard } from '../auth/guards/admins.guard';
 
 @Controller('actions')
 export class ActionsController {
