@@ -7,11 +7,19 @@ import {
   Param,
   Delete,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { UserGameService } from './user-game.service';
-import { CreateUserGameDto } from './dto/create-user-game.dto';
+import {
+  CreateUserGameDto,
+  UserGameStatsDto,
+} from './dto/create-user-game.dto';
 import { UpdateUserGameDto } from './dto/update-user-game.dto';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
 
 @Controller('user-game')
 export class UserGameController {
@@ -130,5 +138,28 @@ export class UserGameController {
     @Param('shopId') shopId: string,
   ): Promise<{ userId: string; code?: string; timestamp?: number }> {
     return await this.userGameService.verifyUserCooldown(userId, shopId);
+  }
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (default: all)',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Results per page (default: all)',
+    type: Number,
+  })
+  @ApiOperation({ summary: 'Get users by shop with optional pagination and total count' })
+  @Get('by-shop/:shopId')
+  async getUsersByShopId(
+    @Param('shopId') shopId: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ): Promise<
+    ApiResponseInterface<{ users: UserGameStatsDto[] }> | ErrorResponseInterface
+  > {
+    return this.userGameService.getUsersByShopId(shopId, page, limit);
   }
 }
