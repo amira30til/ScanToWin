@@ -37,7 +37,7 @@ const schema = yup
   })
   .required();
 
-const SuperAdminGames = () => {
+const Games = () => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const fileInputRef = useRef(null);
@@ -288,4 +288,4 @@ const SuperAdminGames = () => {
   );
 };
 
-export default SuperAdminGames;
+export default Games;

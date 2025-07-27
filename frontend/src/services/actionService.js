@@ -21,16 +21,16 @@ export const chosenActionClick = async (chosenActionId) =>
     `${CHOSEN_ACTION_URL}/clicked-action/?chosenActionId=${chosenActionId}`,
   );
 
-export const getChosenActionClickedAt = async (chosenActionId) =>
+export const getChosenActionClickedAt = async (axios, chosenActionId) =>
   await axios.get(`${ACITON_CLICK_URL}/chosen-action/${chosenActionId}`);
 
-export const getChosenActionRedeemedAt = async (chosenActionId) =>
+export const getChosenActionRedeemedAt = async (axios, chosenActionId) =>
   await axios.get(`${REWARD_REDEMPTION_URL}/chosen-action/${chosenActionId}`);
 
-export const getShopActionClick = async (shopId) =>
+export const getShopActionClick = async (axios, shopId) =>
   await axios.get(`${ACITON_CLICK_URL}/shop/${shopId}`);
 
-export const getShopActionRedeem = async (shopId) =>
+export const getShopActionRedeem = async (axios, shopId) =>
   await axios.get(`${REWARD_REDEMPTION_URL}/shop/${shopId}`);
 
 export const deleteAction = async (axios, id) =>

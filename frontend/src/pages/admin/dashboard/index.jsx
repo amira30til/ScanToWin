@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCombinedChartData } from "./hooks/useCombinedChartData";
+import { useAxiosPrivate } from "@/hooks";
 
 import {
   getShopActionClick,
@@ -62,12 +63,13 @@ const Dashboard = () => {
   const [range, setRange] = useState(defaultRange);
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
+  const axiosPrivate = useAxiosPrivate();
 
   const { data: shopActionClick, isLoading: shopActionClickIsLoading } =
     useQuery({
       queryKey: ["shop-action-click", shopId],
       queryFn: async () => {
-        const response = await getShopActionClick(shopId);
+        const response = await getShopActionClick(axiosPrivate, shopId);
         const data = response.data.data.data;
         return data.map((action) => action.clickedAt);
       },
@@ -78,7 +80,7 @@ const Dashboard = () => {
     useQuery({
       queryKey: ["shop-action-redeem", shopId],
       queryFn: async () => {
-        const response = await getShopActionRedeem(shopId);
+        const response = await getShopActionRedeem(axiosPrivate, shopId);
         const data = response.data.data.data;
         return data.map((action) => action.redeemedAt);
       },
@@ -159,15 +161,14 @@ const Dashboard = () => {
             <Flex gap={4} justify="start">
               <StatBox
                 title="Jeux Lancées"
-                value={redeemedFilteredTimestamps}
-                total={shopActionRedeem}
-                icon={IoLogoGameControllerB}
-              />
-
-              <StatBox
-                title="Cadeaux Gagnés"
                 value={clickedFilteredTimestamps}
                 total={shopActionClick}
+                icon={IoLogoGameControllerB}
+              />
+              <StatBox
+                title="Cadeaux Gagnés"
+                value={redeemedFilteredTimestamps}
+                total={shopActionRedeem}
                 icon={FaGift}
               />
             </Flex>

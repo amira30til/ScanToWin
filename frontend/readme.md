@@ -7,3 +7,13 @@ docker-compose up
 ## Run dev
 
 - pnpm dev
+
+## Hard coded Values
+
+- FORTUNE_WHEEL_ID - used in
+
+  - pages/user/index.jsx
+
+- ADMIN_ROLE
+- SUPER_ADMIN_ROLE
+  - app.jsx
