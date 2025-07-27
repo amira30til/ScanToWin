@@ -157,7 +157,7 @@ const Rewards = () => {
   };
 
   useEffect(() => {
-    if (rewards?.length) {
+    if (rewards !== undefined) {
       reset({ rewards });
     }
   }, [rewards, reset]);

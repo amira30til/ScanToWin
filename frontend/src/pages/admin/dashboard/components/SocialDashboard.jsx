@@ -26,6 +26,7 @@ import { Bar } from "react-chartjs-2";
 
 import { IoLogoGameControllerB } from "react-icons/io";
 import { FaGift } from "react-icons/fa";
+import { useAxiosPrivate } from "@/hooks";
 
 ChartJS.register(
   CategoryScale,
@@ -65,6 +66,7 @@ const SocialDashboard = ({ title, social }) => {
   const [range, setRange] = useState(defaultRange);
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
+  const axiosPrivate = useAxiosPrivate();
 
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -81,7 +83,7 @@ const SocialDashboard = ({ title, social }) => {
   } = useQuery({
     queryKey: ["action-clicked-timestamps", actionId],
     queryFn: async () => {
-      const response = await getChosenActionClickedAt(actionId);
+      const response = await getChosenActionClickedAt(axiosPrivate, actionId);
       const data = response.data.data.data;
       return data.map((action) => action.clickedAt);
     },
@@ -94,7 +96,7 @@ const SocialDashboard = ({ title, social }) => {
   } = useQuery({
     queryKey: ["action-redeemed-timestamps", actionId],
     queryFn: async () => {
-      const response = await getChosenActionRedeemedAt(actionId);
+      const response = await getChosenActionRedeemedAt(axiosPrivate, actionId);
       const data = response.data.data.data;
       return data.map((action) => action.redeemedAt);
     },
@@ -118,6 +120,8 @@ const SocialDashboard = ({ title, social }) => {
       const currentAction = actionsByShop.find(
         (action) => action.name === social,
       );
+
+      console.log(currentAction);
       if (currentAction) {
         setActionId(currentAction.id);
       } else {
@@ -188,15 +192,15 @@ const SocialDashboard = ({ title, social }) => {
             <Flex gap={4} justify="start">
               <StatBox
                 title="Jeux Lancées"
-                value={redeemedFilteredTimestamps}
-                total={actionRedeemedTimestamps}
+                value={clickedFilteredTimestamps}
+                total={actionClickedTimestamps}
                 icon={IoLogoGameControllerB}
               />
 
               <StatBox
                 title="Cadeaux Gagnés"
-                value={clickedFilteredTimestamps}
-                total={actionClickedTimestamps}
+                value={redeemedFilteredTimestamps}
+                total={actionRedeemedTimestamps}
                 icon={FaGift}
               />
             </Flex>

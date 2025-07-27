@@ -2,7 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { Flex, Image, Heading, Button } from "@chakra-ui/react";
 import ErrorImg from "@/assets/error.svg";
 
-const Error = ({ title = "Sorry! An Unexpected error occured!" }) => {
+const Error = ({
+  title = "Sorry! An Unexpected error occured!",
+  link = "/",
+}) => {
   const navigate = useNavigate();
   return (
     <Flex
@@ -23,7 +26,7 @@ const Error = ({ title = "Sorry! An Unexpected error occured!" }) => {
         _hover={{
           opacity: 0.8,
         }}
-        onClick={() => navigate("/")}
+        onClick={() => navigate(link)}
       >
         Return to the home page
       </Button>

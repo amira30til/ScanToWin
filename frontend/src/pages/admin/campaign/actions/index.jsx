@@ -99,7 +99,7 @@ const Actions = () => {
   };
 
   useEffect(() => {
-    if (actionsByShop?.length) {
+    if (actionsByShop !== undefined) {
       const sortedActions = [...actionsByShop].sort(
         (a, b) => a.position - b.position,
       );
