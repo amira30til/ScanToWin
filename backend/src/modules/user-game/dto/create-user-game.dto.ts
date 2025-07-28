@@ -14,3 +14,27 @@ export class CreateUserGameDto {
   @IsNumber()
   nbPlayedTimes?: number;
 }
+export class UserGameStatsDto {
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  firstName: string;
+
+  @ApiProperty()
+  lastName: string;
+
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  lastPlayedAt: Date;
+
+  @ApiProperty()
+  totalPlayCount: number;
+
+  @ApiProperty()
+  favoriteGameId: string;
+  @ApiProperty()
+  tel: string;
+}
