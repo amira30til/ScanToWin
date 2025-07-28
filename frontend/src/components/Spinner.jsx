@@ -11,7 +11,7 @@ const Spinner = () => {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      zIndex="5"
+      zIndex="6"
     >
       <ChakraSpinner
         thickness="4px"

@@ -181,7 +181,6 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
           color="white"
           fontWeight="bold"
           fontSize="lg"
-          zIndex={2}
           pointerEvents="none"
         >
           Coming Soon
