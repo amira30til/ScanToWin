@@ -52,7 +52,7 @@ const actionMap = {
 
 const Sidebar = ({ shops, children }) => {
   return (
-    <Box w="100%">
+    <Box w="sidebar">
       <DrawerElement />
       <Flex as="section" minH="100vh" w="100%">
         <SidebarContent
@@ -84,6 +84,10 @@ const DrawerElement = () => {
   return (
     <>
       <IconButton
+        bg="secondary.100"
+        color="secondary.800"
+        position="fixed"
+        top="0"
         aria-label="Menu"
         display={{
           base: "inline-flex",
@@ -92,7 +96,9 @@ const DrawerElement = () => {
         onClick={sidebar.onOpen}
         icon={<FiMenu />}
         size="sm"
-        m="4"
+        my={4}
+        mx={8}
+        zIndex="5"
       />
       <Drawer
         isOpen={sidebar.isOpen}
@@ -101,7 +107,7 @@ const DrawerElement = () => {
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton zIndex={1101} />
+          <DrawerCloseButton zIndex="5" />
           <SidebarContent w="full" borderRight="none" />
         </DrawerContent>
       </Drawer>

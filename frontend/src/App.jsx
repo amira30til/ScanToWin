@@ -14,11 +14,10 @@ import Google from "./pages/admin/dashboard/Google";
 import Facebook from "./pages/admin/dashboard/Facebook";
 import Instagram from "./pages/admin/dashboard/Instagram";
 import Tiktok from "./pages/admin/dashboard/Tiktok";
-import AdminUsersData from "./pages/admin/AdminUsersData";
 import AdminCampaign from "./pages/admin/campaign";
 import AdminSMS from "./pages/admin/AdminSMS";
 import AdminReview from "./pages/admin/AdminReview";
-import AdminUsers from "./pages/admin/AdminUsers";
+import Users from "./pages/admin/Users";
 import AdminAccount from "@/pages/admin/AdminAccount";
 import AdminCreateShop from "@/pages/admin/AdminCreateShop";
 import Play from "@/pages/user";
@@ -61,11 +60,10 @@ const App = () => {
             <Route path="facebook" element={<Facebook />} />
             <Route path="instagram" element={<Instagram />} />
             <Route path="tiktok" element={<Tiktok />} />
-            <Route path="usersdata" element={<AdminUsersData />} />
             <Route path="campaign" element={<AdminCampaign />} />
             <Route path="sms" element={<AdminSMS />} />
             <Route path="review" element={<AdminReview />} />
-            <Route path="users" element={<AdminUsers />} />
+            <Route path="users" element={<Users />} />
             <Route path="account" element={<AdminAccount />} />
             <Route path="*" element={<Navigate to="dashboard" replace />} />
           </Route>

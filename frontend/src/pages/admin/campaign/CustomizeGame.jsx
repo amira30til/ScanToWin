@@ -270,11 +270,11 @@ const CustomizeGame = ({ shop }) => {
                     </Text>
                   </Flex>
                 </Flex>
-                <Flex justify="center">
+                {/* <Flex justify="center">
                   <Button size="sm" variant="outline" colorScheme="primary">
                     Show Preview
                   </Button>
-                </Flex>
+                </Flex> */}
               </Flex>
             </Flex>
             <Flex w="full" justify="end">
