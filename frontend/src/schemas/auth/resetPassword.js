@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const loginValidator = yup
+export const resetPasswordSchema = yup
   .object({
     email: yup
       .string()
@@ -10,7 +10,12 @@ export const loginValidator = yup
       )
       .required("Email is required"),
 
-    password: yup
+    verificationCode: yup
+      .string()
+      .required("PIN is required")
+      .matches(/^\d{4}$/, "PIN must be a 4-digit number"),
+
+    newPassword: yup
       .string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")

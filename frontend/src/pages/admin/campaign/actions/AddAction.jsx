@@ -3,7 +3,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { upsertActionsValidator } from "@/validators/upsertActionsValidator";
+import { upsertActionsSchema } from "@/schemas/action/upsertActions";
 
 import {
   Flex,
@@ -43,7 +43,7 @@ const AddAction = ({ actions, append }) => {
   const [availableActions, setAvailableActions] = useState([]);
 
   const { watch } = useFormContext({
-    resolver: yupResolver(upsertActionsValidator),
+    resolver: yupResolver(upsertActionsSchema),
   });
   const watchedActions = watch("actionsByShop");
 

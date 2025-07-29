@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const createShopValidator = yup.object().shape({
+export const createShopSchema = yup.object().shape({
   name: yup
     .string()
     .min(2, "Shop name must be at least 2 characters")

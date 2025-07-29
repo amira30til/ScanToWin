@@ -7,7 +7,7 @@ import { useToken } from "@chakra-ui/react";
 
 import { updateShop, getShop } from "@/services/shopService";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { pinCodeValidator } from "@/validators/pinCodeValidator";
+import { pinCodeSchema } from "@/schemas/reward/pinCode";
 
 import QRCode from "react-qr-code";
 
@@ -195,7 +195,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
     register,
     formState: { errors },
     reset,
-  } = useForm({ resolver: yupResolver(pinCodeValidator) });
+  } = useForm({ resolver: yupResolver(pinCodeSchema) });
 
   const onUpdateShopSuccess = async () => {
     await queryClient.invalidateQueries(["shop-by-id", shopId]);

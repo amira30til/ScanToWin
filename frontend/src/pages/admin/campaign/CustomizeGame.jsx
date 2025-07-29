@@ -8,7 +8,7 @@ import { decodeToken } from "@/utils/auth";
 import useAuthStore from "@/store";
 
 // FUNCTIONS
-import { updateShopColorValidator } from "@/validators/updateShopColorValidator";
+import { updateShopColorSchema } from "@/schemas/shop/updateShopColor";
 import { updateShop } from "@/services/shopService";
 import { dataURLtoFile } from "@/utils/helpers";
 
@@ -49,7 +49,7 @@ const CustomizeGame = ({ shop }) => {
 
   const methods = useForm({
     defaultValues,
-    resolver: yupResolver(updateShopColorValidator),
+    resolver: yupResolver(updateShopColorSchema),
   });
   const { handleSubmit, watch } = methods;
   const gameColor1 = watch("gameColor1");
