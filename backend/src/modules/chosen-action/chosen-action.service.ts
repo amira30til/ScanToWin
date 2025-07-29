@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrUpdateChosenActionItemDto } from './dto/create-chosen-action.dto';
 import { UpdateChosenActionDto } from './dto/update-chosen-action.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,12 +44,15 @@ export class ChosenActionService {
       const toDelete = existingActions.filter(
         (dbItem) => !receivedIds.includes(dbItem.id),
       );
-     
 
       if (toDelete.length > 0) {
         await this.chosenActionRepository.remove(toDelete);
       }
-
+      if (receivedActions.length === 0) {
+        throw new BadRequestException(
+          'At least one chosen action must be provided.',
+        );
+      }
       const results: ChosenAction[] = [];
 
       for (const actionDto of receivedActions) {
