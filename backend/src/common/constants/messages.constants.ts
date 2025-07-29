@@ -145,6 +145,7 @@ export const RewardMessages = {
   SHOP_NEEDS_UNLIMITED_FOR_GUARANTEED:
     "Pour activer le mode 100% gagnant, vous devez d'abord créer au moins un gain illimité.",
   REWARDS_UPSERT_DONE: 'Rewards successfully processed.',
+  NOT_SELECTED: 'No reward was selected.',
 };
 export const ActionMessages = {
   ACTION_CREATED: 'Action created successfully',

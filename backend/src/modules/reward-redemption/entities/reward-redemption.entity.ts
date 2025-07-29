@@ -15,7 +15,7 @@ export class RewardRedemption {
   @CreateDateColumn({ type: 'timestamp' })
   redeemedAt: Date;
 
-  @ManyToOne(() => ChosenAction)
+  @ManyToOne(() => ChosenAction, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'chosenActionId' })
   chosenAction: ChosenAction;
 
