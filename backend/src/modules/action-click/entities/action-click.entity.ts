@@ -15,7 +15,7 @@ export class ActionClick {
   @CreateDateColumn({ type: 'timestamp' })
   clickedAt: Date;
 
-  @ManyToOne(() => ChosenAction)
+  @ManyToOne(() => ChosenAction, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'chosenActionId' })
   chosenAction: ChosenAction;
 
