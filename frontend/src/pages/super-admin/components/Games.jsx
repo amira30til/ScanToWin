@@ -7,7 +7,7 @@ import { dataURLtoFile } from "@/utils/helpers";
 import * as yup from "yup";
 import { useToast, useAxiosPrivate } from "@/hooks";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createGame, getGames } from "@/services/adminService";
+import { createGame, getGames } from "@/services/gameService";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/constants";
 import {
   useToken,
@@ -83,7 +83,6 @@ const Games = () => {
   };
 
   const onCreateGameError = (error) => {
-    console.log(error);
     const errorMessages = {
       409: ERROR_MESSAGES.GAME_ALREADY_EXISTS,
     };

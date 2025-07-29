@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { getShopGameAssignement } from "@/services/adminService";
+import { getShopGameAssignement } from "@/services/gameService";
 import { getShop } from "@/services/shopService";
 
 import FortuneWheel from "./components/fortune-wheel";

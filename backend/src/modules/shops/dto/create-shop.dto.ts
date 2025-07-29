@@ -104,13 +104,14 @@ export class CreateShopDto {
   @ApiProperty({
     description: 'Whether the shop guarantees a win',
     required: false,
-    example: false,
-    default: false,
+    example: true,
+    default: true,
   })
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
   isGuaranteedWin?: boolean;
+
   @ApiProperty({
     description: 'Logo URL of the shop',
     required: false,

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "@/components/Logo";
 import Games from "./components/Games";
 import Actions from "./components/actions";
-import Admins from "./components/Admins";
+import Admins from "./components/admins";
 
 import { Flex, Box, Button, Heading } from "@chakra-ui/react";
 

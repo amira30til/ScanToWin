@@ -62,8 +62,7 @@ const CustomizeGame = ({ shop }) => {
     toast("Shop updated successfully!", "success");
   };
 
-  const onUpdateShopError = (error) => {
-    console.log(error);
+  const onUpdateShopError = () => {
     toast("Failed to update shop!", "error");
   };
 
