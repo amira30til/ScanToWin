@@ -23,7 +23,7 @@ import { createShop } from "@/services/shopService";
 import { decodeToken } from "@/utils/auth";
 import { queryClient } from "@/index";
 
-const AdminCreateShop = () => {
+const CreateShop = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const auth = useAuthStore((state) => state.auth);
@@ -193,4 +193,4 @@ const AdminCreateShop = () => {
   );
 };
 
-export default AdminCreateShop;
+export default CreateShop;

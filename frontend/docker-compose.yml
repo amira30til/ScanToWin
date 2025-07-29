@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
-    restart: unless-stopped
-    # Uncomment for development with hot-reload (requires additional Dockerfile changes)
-    # volumes:
-    #  - ./src:/app/src
-    #  - ./public:/app/public
+      - "5173:5173"
+    # comment volumes for production
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: pnpm dev

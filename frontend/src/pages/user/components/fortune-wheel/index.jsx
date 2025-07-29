@@ -1,13 +1,12 @@
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocalStorage } from "@/hooks";
 
-import { getActionsByShop } from "@/services/actionService";
-import { getShop } from "@/services/shopService";
+import { getActionsByShop, chosenActionClick } from "@/services/actionService";
 import tinycolor from "tinycolor2";
 
-import Wheel from "./Wheel";
+import Wheel from "./wheel";
 import FortuneResultModal from "./FortuneResultModal";
 
 import {
@@ -34,9 +33,11 @@ import FacebookSvg from "@/assets/components/FacebookSvg";
 import GoogleSvg from "@/assets/components/GoogleSvg";
 import InstagramSvg from "@/assets/components/InstagramSvg";
 import TiktokSvg from "@/assets/components/TiktokSvg";
+import logo from "@/assets/logo.png";
 
-const FortuneWheel = () => {
+const FortuneWheel = ({ shop }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
   const {
     isOpen: isActionOpen,
     onOpen: onActionOpen,
@@ -50,15 +51,6 @@ const FortuneWheel = () => {
   const [showAction, setShowAction] = useState(true);
   const [currentAction, setCurrentAction] = useState();
   const { shopId } = useParams();
-
-  const { data: shop, isLoading } = useQuery({
-    queryKey: ["shop-by-id", shopId],
-    queryFn: async () => {
-      const response = await getShop(shopId);
-      return response.data.data.shop;
-    },
-    enabled: !!shopId,
-  });
 
   const { data: actionsByShop } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -84,7 +76,11 @@ const FortuneWheel = () => {
     onActionOpen();
   };
 
-  if (isLoading) return <div>loading...</div>;
+  useEffect(() => {
+    if (actionsByShop !== undefined && actionsByShop.length < 1) {
+      navigate(`/play/${shopId}/coming-soon`);
+    }
+  }, [actionsByShop]);
 
   return (
     <>
@@ -101,7 +97,7 @@ const FortuneWheel = () => {
             <VStack spacing={6}>
               <Image
                 objectFit="cover"
-                src={shop?.logo ?? ""}
+                src={shop?.logo ?? logo}
                 alt="logo"
                 h="auto"
                 w="80px"
@@ -123,27 +119,25 @@ const FortuneWheel = () => {
                 et attendez que la roue s'arrête.
               </Text>
             </VStack>
-            {!isLoading && (
-              <Box position="relative" display="inline-block">
-                <Wheel
-                  onReward={rewardHandler}
-                  primaryColor={shop?.gameColor1}
-                  secondaryColor={shop?.gameColor2}
-                />
+            <Box position="relative" display="inline-block">
+              <Wheel
+                onReward={rewardHandler}
+                primaryColor={shop?.gameColor1}
+                secondaryColor={shop?.gameColor2}
+              />
 
-                {showAction && (
-                  <Box
-                    position="absolute"
-                    top={0}
-                    left={0}
-                    right={0}
-                    bottom={0}
-                    zIndex={10}
-                    onClick={onActionHandler}
-                  />
-                )}
-              </Box>
-            )}
+              {showAction && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  zIndex={10}
+                  onClick={onActionHandler}
+                />
+              )}
+            </Box>
           </VStack>
         </Container>
       </Box>
@@ -173,14 +167,20 @@ const ActionModal = ({
   actionsLength,
   currentAction,
 }) => {
+  const chosenActionClickMutation = useMutation({
+    mutationFn: async (values) => await chosenActionClick(values.id),
+  });
+
   const onActionLinkHandler = () => {
-    if (+actionPosition >= actionsLength) {
+    const current = +actionPosition || 1;
+
+    if (current >= actionsLength) {
       setActionPosition(1);
     } else {
-      setActionPosition((+actionPosition || 1) + 1);
+      setActionPosition(current + 1);
     }
 
-    // TODO: Call the API to update the "clickedAction" field
+    chosenActionClickMutation.mutate({ id: currentAction.id });
 
     onClose();
   };

@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { redeemCodeValidator } from "@/validators/redeemCodeValidator";
 import { getShop, verifyShopCodePin } from "@/services/shopService";
 
-import UserCooldownModal from "../components/UserCooldownModal";
+import UserCooldownModal from "./components/UserCooldownModal";
 
 import {
   Flex,
@@ -22,8 +22,10 @@ import {
   Image,
 } from "@chakra-ui/react";
 
+import logo from "@/assets/logo.png";
+
 const Redeem = () => {
-  const { shopId, actionId } = useParams();
+  const { shopId, actionId, userId } = useParams();
   const navigate = useNavigate();
 
   const toast = useToast();
@@ -59,11 +61,12 @@ const Redeem = () => {
 
   const onSubmit = (values) => {
     const fullCode = `${values.digitOne}${values.digitTwo}${values.digitThree}${values.digitFour}`;
-    if (!!shopId) {
+    if (!!shopId && !!userId && !!actionId) {
       verifyShopCodePinMutation.mutate({
         gameCodePin: +fullCode,
         shopId,
-        chosenActionId: actionId,
+        actionId,
+        userId,
       });
     }
   };
@@ -81,7 +84,7 @@ const Redeem = () => {
           <Box>
             <Image
               objectFit="cover"
-              src={shop?.logo ?? ""}
+              src={shop?.logo ?? logo}
               alt="logo"
               h="auto"
               w="80px"
@@ -94,7 +97,11 @@ const Redeem = () => {
             Show this page to the staff and enter the code given to you.
           </Text>
           <HStack>
-            <PinInput size="lg" focusBorderColor="primary.500" autoFocus>
+            <PinInput
+              size="lg"
+              focusBorderColor={shop?.gameColor2 || "primary.500"}
+              autoFocus
+            >
               <PinInputField borderColor="gray.500" {...register("digitOne")} />
               <PinInputField borderColor="gray.500" {...register("digitTwo")} />
               <PinInputField
@@ -114,7 +121,11 @@ const Redeem = () => {
           )}
           <Button
             type="submit"
-            colorScheme="primary"
+            bg={shop?.gameColor1 || "primary.500"}
+            color="#fff"
+            _hover={{
+              opacity: 0.8,
+            }}
             isLoading={verifyShopCodePinMutation.isLoading}
           >
             Submit
