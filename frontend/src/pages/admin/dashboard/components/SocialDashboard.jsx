@@ -139,6 +139,7 @@ const SocialDashboard = ({ title, social }) => {
 
   return (
     <Box pos="relative">
+      <Box>Google Review Stats</Box>
       <HeaderAdmin title={title} />
       <Flex direction="column" gap={10} px={8} py={10} overflowX="hidden">
         <Flex direction="column" gap={2}>
