@@ -13,7 +13,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import Logo from "@/components/Logo";
-import { createShopValidator } from "@/validators/createShopValidator";
+import { createShopSchema } from "@/schemas/shop/createShop";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useToast, useAxiosPrivate } from "@/hooks";
 import { useMutation } from "@tanstack/react-query";
@@ -37,7 +37,7 @@ const CreateShop = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(createShopValidator),
+    resolver: yupResolver(createShopSchema),
   });
 
   const onCreateShopSuccess = async () => {

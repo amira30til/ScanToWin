@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const createAdminValidator = yup
+export const createAdminSchema = yup
   .object({
     email: yup
       .string()

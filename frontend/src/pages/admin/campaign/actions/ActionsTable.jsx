@@ -1,4 +1,4 @@
-import { upsertActionsValidator } from "@/validators/upsertActionsValidator";
+import { upsertActionsSchema } from "@/schemas/action/upsertActions";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFormContext } from "react-hook-form";
 
@@ -40,7 +40,7 @@ const ActionsTable = ({ fields, move, remove }) => {
     register,
     formState: { errors },
   } = useFormContext({
-    resolver: yupResolver(upsertActionsValidator),
+    resolver: yupResolver(upsertActionsSchema),
   });
 
   return (

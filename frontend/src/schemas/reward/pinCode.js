@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const pinCodeValidator = yup.object().shape({
+export const pinCodeSchema = yup.object().shape({
   newPin: yup
     .string()
     .required("new pin is required")

@@ -5,7 +5,7 @@ import { useAxiosPrivate, useToast } from "@/hooks";
 
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createAdminValidator } from "@/validators/createAdminValidator";
+import { createAdminSchema } from "@/schemas/createAdmin";
 import { createAdmin } from "@/services/adminService";
 
 // STYLE
@@ -32,7 +32,7 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState, reset } = useForm({
-    resolver: yupResolver(createAdminValidator),
+    resolver: yupResolver(createAdminSchema),
   });
 
   const onCreateAdminSuccess = () => {
