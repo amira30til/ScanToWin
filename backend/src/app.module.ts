@@ -21,6 +21,7 @@ import { ChosenAction } from './modules/chosen-action/entities/chosen-action.ent
 import { ChosenActionModule } from './modules/chosen-action/chosen-action.module';
 import { RewardRedemptionModule } from './modules/reward-redemption/reward-redemption.module';
 import { ActionClickModule } from './modules/action-click/action-click.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -60,6 +61,14 @@ import { ActionClickModule } from './modules/action-click/action-click.module';
     MulterModule.register({}),
     RewardRedemptionModule,
     ActionClickModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 100,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
