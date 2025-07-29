@@ -409,8 +409,6 @@ export class RewardService {
     shopId: string,
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     try {
-      
-
       const reward = await this.rewardRepository.findOne({
         where: {
           id,
@@ -547,19 +545,26 @@ export class RewardService {
         };
       }
 
-      // 4. Pick a reward by percentage (NO normalization needed since we enforce 100%)
+      // 4. Pick a reward by percentage
       const roll = Math.random() * 100;
       let cumulative = 0;
       let selectedReward: Reward | null = null;
 
+      const totalPercent = shopRewards.reduce(
+        (sum, r) => sum + r.percentage,
+        0,
+      );
+
       for (const r of shopRewards) {
-        cumulative += r.percentage || 0;
+        const normalizedPercent = (r.percentage / totalPercent) * 100;
+        cumulative += normalizedPercent || 0;
         if (roll <= cumulative) {
           selectedReward = r;
           break;
         }
       }
 
+      // TODO: throw an error! This should not happen!
       if (!selectedReward) {
         return {
           success: true,
@@ -573,7 +578,7 @@ export class RewardService {
         winnerCount: (selectedReward.winnerCount ?? 0) + 1,
       };
       if (!selectedReward.isUnlimited) {
-        update.nbRewardTowin = selectedReward.nbRewardTowin ?? 0 - 1;
+        update.nbRewardTowin = (selectedReward.nbRewardTowin ?? 0) - 1;
       }
 
       await this.rewardRepository.update({ id: selectedReward.id }, update);

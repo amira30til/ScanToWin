@@ -26,15 +26,8 @@ export const globalStyles = {
     },
 
     fortune: {
-      purple: "#9b87f5",
-      pink: "#ff6b95",
-      blue: "#5c9ce4",
       yellow: "#ffcf5c",
-      green: "#4cd2a9",
-      orange: "#ff965c",
     },
-
-    loading: "#615EFC",
     surface: {
       main: "#F1F3F9",
       navigation: "#F9FAFB",
@@ -45,6 +38,15 @@ export const globalStyles = {
       navigation: "#1E1E22",
       popover: "#2A2A2E",
     },
+  },
+  space: {
+    header: {
+      web: "68px",
+      mobile: "136px",
+    },
+  },
+  sizes: {
+    sidebar: "240px",
   },
   fonts: {
     body: '"Montserrat", Helvetica, sans-serif',

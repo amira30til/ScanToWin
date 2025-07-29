@@ -1,30 +1,39 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useToken } from "@chakra-ui/react";
+
 import {
   getRewardsByShop,
   getShopRandomReward,
 } from "@/services/rewardService";
-import { VStack, Spinner, Box } from "@chakra-ui/react";
+
 import WheelCanvas from "./WheelCanvas";
+
+import { VStack, Spinner, Box } from "@chakra-ui/react";
 
 const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
   const { shopId } = useParams();
+  const [primary500] = useToken("colors", ["primary.500"]);
+  const [secondary500] = useToken("colors", ["secondary.500"]);
   const [colors, setColors] = useState([]);
+  const navigate = useNavigate();
 
   const { data: rewards, isLoading: isLoadingRewards } = useQuery({
-    queryKey: ["rewards-by-shop"],
+    queryKey: ["rewards-by-shop", shopId],
     queryFn: async () => {
+      let primColor = primaryColor || primary500;
+      let seconColor = secondaryColor || secondary500;
       const response = await getRewardsByShop(shopId);
       const fetchedRewards = response.data.data.rewards;
-      setColors(extractColors(fetchedRewards, primaryColor, secondaryColor));
+      setColors(extractColors(fetchedRewards, primColor, seconColor));
       return fetchedRewards;
     },
     enabled: !!shopId,
   });
 
   const { data: randomReward, isLoading: isLoadingRandomReward } = useQuery({
-    queryKey: ["shop-random-reward"],
+    queryKey: ["shop-random-reward", shopId],
     queryFn: async () => {
       const response = await getShopRandomReward(shopId);
       return response.data.data.reward;
@@ -36,6 +45,12 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
     onReward(randomReward);
   };
 
+  useEffect(() => {
+    if (rewards !== undefined && rewards.length < 1) {
+      navigate(`/play/${shopId}/coming-soon`);
+    }
+  }, [rewards]);
+
   if (isLoadingRewards || isLoadingRandomReward) return <Spinner />;
 
   return (
@@ -46,8 +61,8 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
           segColors={colors}
           onFinished={(reward) => onFinished(reward)}
           contrastColor="#000"
-          borderColor={primaryColor}
-          needleColor={lightenHexColor(secondaryColor, 60)}
+          borderColor={primaryColor || primary500}
+          needleColor={lightenHexColor(secondaryColor || secondary500, 60)}
           buttonText="Spin"
           buttonTextColor="#252525"
           isOnlyOnce={true}
@@ -61,6 +76,7 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
 };
 
 const lightenHexColor = (hex, amount = 20) => {
+  if (!hex) return;
   let col = hex.replace("#", "");
 
   if (col.length === 3) {

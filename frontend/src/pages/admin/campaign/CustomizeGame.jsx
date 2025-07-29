@@ -62,8 +62,7 @@ const CustomizeGame = ({ shop }) => {
     toast("Shop updated successfully!", "success");
   };
 
-  const onUpdateShopError = (error) => {
-    console.log(error);
+  const onUpdateShopError = () => {
     toast("Failed to update shop!", "error");
   };
 
@@ -270,11 +269,11 @@ const CustomizeGame = ({ shop }) => {
                     </Text>
                   </Flex>
                 </Flex>
-                <Flex justify="center">
+                {/* <Flex justify="center">
                   <Button size="sm" variant="outline" colorScheme="primary">
                     Show Preview
                   </Button>
-                </Flex>
+                </Flex> */}
               </Flex>
             </Flex>
             <Flex w="full" justify="end">

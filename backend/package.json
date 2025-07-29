@@ -22,6 +22,7 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.817.0",
     "@aws-sdk/credential-providers": "^3.817.0",
+    "@faker-js/faker": "^9.9.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -42,7 +43,6 @@
     "express": "^5.1.0",
     "multer": "^2.0.0",
     "mysql2": "^3.14.1",
-    "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -66,7 +66,6 @@
     "@types/jest": "^29.5.14",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
-    "@types/nodemailer": "^6.4.17",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",

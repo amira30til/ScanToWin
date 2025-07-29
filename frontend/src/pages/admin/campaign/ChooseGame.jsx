@@ -3,12 +3,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { useAxiosPrivate, useToast } from "@/hooks";
 
-// FUNCTIONS
 import {
   getActiveGames,
   selectGame,
   getShopGameAssignement,
-} from "@/services/adminService";
+} from "@/services/gameService";
 
 // COMPONENTS
 import AdminSection from "@/components/common/AdminSection";
@@ -181,7 +180,6 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
           color="white"
           fontWeight="bold"
           fontSize="lg"
-          zIndex={2}
           pointerEvents="none"
         >
           Coming Soon

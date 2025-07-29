@@ -1,7 +1,10 @@
 import { useLogout } from "@/hooks";
-import Logo from "./Logo";
+import { useQuery } from "@tanstack/react-query";
 
-// STYLE
+import { getActionsByShop } from "@/services/actionService";
+
+import Logo from "../Logo";
+
 import {
   useDisclosure,
   Box,
@@ -17,33 +20,39 @@ import {
   Select,
   Button,
   VStack,
+  Spinner,
 } from "@chakra-ui/react";
 
-// ASSETS
 import {
   MdKeyboardArrowRight,
   MdOutlineSpaceDashboard,
-  MdMessage,
+  // MdMessage,
   MdAccountCircle,
 } from "react-icons/md";
 import {
   FaFolderOpen,
-  FaStar,
+  // FaStar,
   FaGoogle,
   FaInstagram,
   FaTiktok,
   FaFacebook,
 } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaUsers } from "react-icons/fa6";
 import { BiLogOut } from "react-icons/bi";
-import useAuthStore from "@/store";
 import { AddIcon } from "@chakra-ui/icons";
+
+const actionMap = {
+  "Avis Google": { icon: FaGoogle, link: "google" },
+  Facebook: { icon: FaFacebook, link: "facebook" },
+  Instagram: { icon: FaInstagram, link: "instagram" },
+  Tiktok: { icon: FaTiktok, link: "tiktok" },
+};
 
 const Sidebar = ({ shops, children }) => {
   return (
-    <Box w="100%">
+    <Box w="sidebar">
       <DrawerElement />
       <Flex as="section" minH="100vh" w="100%">
         <SidebarContent
@@ -61,7 +70,7 @@ const Sidebar = ({ shops, children }) => {
           transition=".3s ease"
           w="100%"
         >
-          <Box as="main" bg="surface.main" h="100%">
+          <Box as="main" bg="surface.main" h="100%" w="100vw">
             {children}
           </Box>
         </Box>
@@ -75,6 +84,10 @@ const DrawerElement = () => {
   return (
     <>
       <IconButton
+        bg="secondary.100"
+        color="secondary.800"
+        position="fixed"
+        top="0"
         aria-label="Menu"
         display={{
           base: "inline-flex",
@@ -83,7 +96,9 @@ const DrawerElement = () => {
         onClick={sidebar.onOpen}
         icon={<FiMenu />}
         size="sm"
-        m="4"
+        my={4}
+        mx={8}
+        zIndex="5"
       />
       <Drawer
         isOpen={sidebar.isOpen}
@@ -92,7 +107,7 @@ const DrawerElement = () => {
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton zIndex={1101} />
+          <DrawerCloseButton zIndex="5" />
           <SidebarContent w="full" borderRight="none" />
         </DrawerContent>
       </Drawer>
@@ -102,21 +117,26 @@ const DrawerElement = () => {
 
 const SidebarContent = ({ shops, ...rest }) => {
   const integrations = useDisclosure({ defaultIsOpen: true });
-  const navigate = useNavigate();
-  const logout = useLogout();
   const { shopId } = useParams();
-  const { shopId: currentShopId } = useParams();
-  const setFullShop = useAuthStore((state) => state.setFullShop);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryString = location.search;
+  const logout = useLogout();
+
+  const { data: actionsByShop, isLoading: actionsByShopIsLoading } = useQuery({
+    queryKey: ["actions-by-shop", shopId],
+    queryFn: async () => {
+      const response = await getActionsByShop(shopId);
+      return response.data.data.chosenActions;
+    },
+    enabled: !!shopId,
+  });
 
   const handleShopChange = (event) => {
     const newShopId = event.target.value;
-    if (newShopId !== currentShopId) {
-      navigate(`/admin/${newShopId}/dashboard`);
-    }
-
-    const shop = shops?.find((shop) => shop.id === newShopId);
-    if (shop) {
-      setFullShop({ shop });
+    if (newShopId !== shopId) {
+      const newPath = location.pathname.replace(shopId, newShopId);
+      navigate(newPath);
     }
   };
 
@@ -140,8 +160,7 @@ const SidebarContent = ({ shops, ...rest }) => {
       zIndex="sticky"
       h="full"
       pb="10"
-      overflowX="hidden"
-      overflowY="auto"
+      overflow="hidden auto"
       bg="surface.navigation"
       border
       color="inherit"
@@ -163,7 +182,7 @@ const SidebarContent = ({ shops, ...rest }) => {
         </Button>
         {shops && (
           <Select
-            value={currentShopId}
+            value={shopId}
             onChange={handleShopChange}
             bg="white"
             borderRadius="md"
@@ -193,7 +212,7 @@ const SidebarContent = ({ shops, ...rest }) => {
       >
         <NavItem
           icon={MdOutlineSpaceDashboard}
-          href={`${shopId}/dashboard`}
+          href={`${shopId}/dashboard/${queryString}`}
           boxSize={5}
         >
           Dashboard
@@ -211,37 +230,38 @@ const SidebarContent = ({ shops, ...rest }) => {
             }
           ></IconButton>
         </NavItem>
+
+        {actionsByShopIsLoading && (
+          <Flex justify="center">
+            <Spinner color="secondary.500" />
+          </Flex>
+        )}
+
         <Collapse in={integrations.isOpen}>
-          <NavItem icon={FaGoogle} pl="10" py="2" href={`${shopId}/google`}>
-            Google Reviews
-          </NavItem>
-          <NavItem
-            icon={FaInstagram}
-            pl="10"
-            py="2"
-            href={`${shopId}/instagram`}
-          >
-            Instagram
-          </NavItem>
-          <NavItem icon={FaTiktok} pl="10" py="2" href={`${shopId}/tiktok`}>
-            TikTok
-          </NavItem>
-          <NavItem icon={FaFacebook} pl="10" py="2" href={`${shopId}/facebook`}>
-            Facebook
-          </NavItem>
-          <NavItem icon={FaUsers} pl="10" py="2" href={`${shopId}/usersdata`}>
-            Users Data
-          </NavItem>
+          {actionsByShop?.map((action, index) => {
+            const IconComponent = actionMap[action.name];
+            return (
+              <NavItem
+                key={index}
+                icon={IconComponent.icon}
+                pl="10"
+                py="2"
+                href={`${shopId}/${IconComponent.link}/${queryString}`}
+              >
+                {action.name}
+              </NavItem>
+            );
+          })}
         </Collapse>
         <NavItem icon={FaFolderOpen} href={`${shopId}/campaign`} boxSize={4}>
           My Campaign
         </NavItem>
-        <NavItem icon={MdMessage} href={`${shopId}/sms`} boxSize={4}>
+        {/* <NavItem icon={MdMessage} href={`${shopId}/sms`} boxSize={4}>
           SMS Campaign
         </NavItem>
         <NavItem icon={FaStar} href={`${shopId}/review`} boxSize={4}>
           Manage Reviews
-        </NavItem>
+        </NavItem> */}
         <NavItem icon={FaUsers} href={`${shopId}/users`} boxSize={5}>
           My Users
         </NavItem>
@@ -263,13 +283,17 @@ const NavItem = (props) => {
   const { icon, children, href, boxSize, ...rest } = props;
   const hasHref = href !== undefined && href !== "";
   const urlPath = window.location.pathname;
-  const isActive = hasHref && urlPath === `/admin/${href}`;
+  const cleanHref = href?.split("?")[0];
+
+  const isActive =
+    hasHref &&
+    (urlPath === `/admin/${cleanHref}` ||
+      urlPath.startsWith(`/admin/${cleanHref}/`));
 
   const isActiveColor = "primary.700";
 
   if (isActive) {
     rest.color = isActiveColor;
-    // rest.color = "gray.900";
     rest.bg = "primary.50";
   }
 
@@ -286,7 +310,6 @@ const NavItem = (props) => {
       _hover={{
         bg: "primary.50",
         color: isActive ? isActiveColor : "primary.600",
-        // color: "gray.900",
       }}
       role="group"
       fontWeight="semibold"

@@ -1,10 +1,15 @@
 import { useRef } from "react";
 import { useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { useCopy, useAxiosPrivate, useToast } from "@/hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import QRCode from "react-qr-code";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useToken } from "@chakra-ui/react";
 
-import { updateShop } from "@/services/shopService";
+import { updateShop, getShop } from "@/services/shopService";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { pinCodeValidator } from "@/validators/pinCodeValidator";
+
+import QRCode from "react-qr-code";
 
 import {
   Box,
@@ -38,16 +43,13 @@ import {
   AlertIcon,
 } from "@chakra-ui/icons";
 import { FaLock, FaQrcode } from "react-icons/fa";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { pinCodeValidator } from "@/validators/pinCodeValidator";
-import useAuthStore from "@/store";
 
 const HeaderAdmin = ({ title }) => {
   const svgRef = useRef(null);
   const { shopId } = useParams();
   const [_, copy] = useCopy();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [sidebarWidth] = useToken("sizes", ["sidebar"]);
 
   const copyQrLinkHandler = () => {
     const qrCodeLink = `${import.meta.env.VITE_FRONTEND_URL}/play/${shopId}`;
@@ -90,14 +92,17 @@ const HeaderAdmin = ({ title }) => {
   return (
     <>
       <Box
-        position="sticky"
+        position="fixed"
         top="0"
+        left="0"
         bg="surface.navigation"
         shadow="sm"
         w="100%"
-        zIndex="10"
-        px={8}
-        py={4}
+        zIndex="4"
+        pe={8}
+        ps={{ sm: 8, md: `calc(${sidebarWidth} + 32px)` }}
+        pb={4}
+        pt={{ sm: 12, md: 4 }}
       >
         <Flex justify="space-between" align="center">
           <Heading size="lg">{title}</Heading>
@@ -175,7 +180,15 @@ const PinCodeModal = ({ isOpen, onClose }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const shop = useAuthStore((state) => state.shop);
+
+  const { data: shop } = useQuery({
+    queryKey: ["shop-by-id", shopId],
+    queryFn: async () => {
+      const response = await getShop(shopId);
+      return response.data.data.shop;
+    },
+    enabled: !!shopId,
+  });
 
   const {
     handleSubmit,
