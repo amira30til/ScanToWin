@@ -564,13 +564,8 @@ export class RewardService {
         }
       }
 
-      // TODO: throw an error! This should not happen!
       if (!selectedReward) {
-        return {
-          success: true,
-          statusCode: 200,
-          data: { reward: null, message: 'No reward was selected.' },
-        };
+        throw new BadRequestException(RewardMessages.NOT_SELECTED);
       }
 
       // 5. Update winner count / stock
