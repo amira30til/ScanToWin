@@ -29,7 +29,7 @@ import {
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
-import { submitUserDataValidator } from "@/validators/submitUserDataValidator";
+import { submitUserDataSchema } from "@/schemas/submitUserData";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 
@@ -57,7 +57,7 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(submitUserDataValidator),
+    resolver: yupResolver(submitUserDataSchema),
   });
 
   const onCreateUserError = () => {

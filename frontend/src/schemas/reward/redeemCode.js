@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const redeemCodeValidator = yup
+export const redeemCodeSchema = yup
   .object({
     digitOne: yup.string().required("Digit is required"),
     digitTwo: yup.string().required("Digit is required"),

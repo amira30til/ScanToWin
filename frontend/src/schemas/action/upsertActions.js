@@ -1,11 +1,11 @@
 import * as Yup from "yup";
 
 const actionSchema = Yup.object().shape({
-  targetLink: Yup.string().required("Name is required"),
+  targetLink: Yup.string(),
 });
 
-export const upsertActionsValidator = Yup.object().shape({
-  rewards: Yup.array()
+export const upsertActionsSchema = Yup.object().shape({
+  actionsByShop: Yup.array()
     .of(actionSchema)
     .min(1, "At least one action is required"),
 });

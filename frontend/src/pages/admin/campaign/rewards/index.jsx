@@ -5,7 +5,7 @@ import { useToast, useAxiosPrivate } from "@/hooks";
 import { useForm, useFieldArray } from "react-hook-form";
 
 import { upsertRewards, getRewardsByShop } from "@/services/rewardService";
-import { upsertRewardsValidator } from "@/validators/upsertRewardsValidator";
+import { upsertRewardsSchema } from "@/schemas/reward/upsertRewards";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import AdminSection from "@/components/common/AdminSection";
@@ -92,7 +92,7 @@ const Rewards = () => {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(upsertRewardsValidator),
+    resolver: yupResolver(upsertRewardsSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control,
