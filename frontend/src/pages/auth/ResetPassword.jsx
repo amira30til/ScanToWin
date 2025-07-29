@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
-import { resetValidator } from "@/validators/resetValidator";
+import { resetPasswordSchema } from "@/schemas/auth/resetPassword";
 import { resetPassword } from "@/services/authService";
 
 // COMPONENTS
@@ -48,7 +48,7 @@ const ResetPassword = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   const { register, handleSubmit, formState, reset } = useForm({
-    resolver: yupResolver(resetValidator),
+    resolver: yupResolver(resetPasswordSchema),
     defaultValues: {
       email: emailFromState,
       verificationCode: "",

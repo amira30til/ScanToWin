@@ -5,7 +5,7 @@ import { useToast, useAxiosPrivate } from "@/hooks";
 import { useForm, useFieldArray, FormProvider } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { upsertActionsValidator } from "@/validators/upsertActionsValidator";
+import { upsertActionsSchema } from "@/schemas/action/upsertActions";
 import {
   getActionsByShop,
   getActions,
@@ -60,7 +60,7 @@ const Actions = () => {
   });
 
   const methods = useForm({
-    resolver: yupResolver(upsertActionsValidator),
+    resolver: yupResolver(upsertActionsSchema),
   });
 
   const {
@@ -78,6 +78,8 @@ const Actions = () => {
 
   const onSubmit = (values) => {
     const { actionsByShop } = values;
+
+    console.log("actions", actionsByShop);
 
     if (!!shopId) {
       const chosenActions = actionsByShop.map((action, index) => {

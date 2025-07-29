@@ -5,7 +5,7 @@ import { useAxiosPrivate, useToast } from "@/hooks";
 
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createActionValidator } from "@/validators/createActionValidator";
+import { createActionSchema } from "@/schemas/action/createAction";
 import { createAction } from "@/services/actionService";
 
 // STYLE
@@ -32,7 +32,7 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState, reset } = useForm({
-    resolver: yupResolver(createActionValidator),
+    resolver: yupResolver(createActionSchema),
   });
 
   const onCreateActionSuccess = () => {

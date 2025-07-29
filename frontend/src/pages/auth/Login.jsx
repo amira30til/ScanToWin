@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 
 // FUNCTIONS
 import { loginUser, forgotPassword } from "@/services/authService";
-import { loginValidator } from "@/validators/loginValidator";
+import { loginSchema } from "@/schemas/auth/login";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 // COMPONENTS
@@ -44,7 +44,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState, watch } = useForm({
-    resolver: yupResolver(loginValidator),
+    resolver: yupResolver(loginSchema),
   });
 
   const email = watch("email");

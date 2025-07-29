@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { redeemCodeValidator } from "@/validators/redeemCodeValidator";
+import { redeemCodeSchema } from "@/schemas/reward/redeemCode";
 import { getShop, verifyShopCodePin } from "@/services/shopService";
 
 import UserCooldownModal from "./components/UserCooldownModal";
@@ -34,7 +34,7 @@ const Redeem = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(redeemCodeValidator),
+    resolver: yupResolver(redeemCodeSchema),
   });
 
   const { data: shop } = useQuery({
