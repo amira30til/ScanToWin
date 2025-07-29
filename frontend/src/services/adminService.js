@@ -1,8 +1,4 @@
-import axios from "@/api/axios";
-
 const ADMIN_URL = "/admins";
-const GAME_URL = "/game";
-const GAME_ASSIGNMENT_URL = "/active-game-assignment";
 
 export const getAdmins = async (axios) => await axios.get(ADMIN_URL);
 
@@ -15,24 +11,3 @@ export const createAdmin = async (axios, body) =>
 export const deleteAdmin = async (axios, id) => {
   return await axios.delete(`${ADMIN_URL}/${id}`);
 };
-
-export const createGame = async (axios, formData) =>
-  await axios.post(GAME_URL, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-export const getGames = async (axios) => await axios.get(GAME_URL);
-
-export const getShopGameAssignement = async (shopId) =>
-  await axios.get(`${GAME_ASSIGNMENT_URL}/${shopId}/active-game`);
-
-export const getActiveGames = async () =>
-  await axios.get(GAME_URL + "/by-status?status=active");
-
-export const selectGame = async (axios, shopId, gameId, adminId, body) =>
-  await axios.post(
-    `${GAME_ASSIGNMENT_URL}/${shopId}/games/${gameId}/assign/${adminId}`,
-    body,
-  );

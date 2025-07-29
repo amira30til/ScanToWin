@@ -511,13 +511,18 @@ export class ShopsService {
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
       }
 
+      // TODO: if 24h haven't passed => show error
+      // 1. shopId = shop.id
+      // 2. userId = dto.userId
+      // 2. check the UserGame.lastPlayedAt
+
       const isValid = shop.gameCodePin === dto.gameCodePin;
       if (isValid) {
         const action = await this.chosenActionRepository.findOne({
           where: { id: dto.actionId },
         });
 
-        if (!action) {
+        if (!action || !dto.actionId) {
           throw new NotFoundException(
             ChosenActionMessages.NOT_FOUND(dto.actionId),
           );

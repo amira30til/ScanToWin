@@ -9,4 +9,4 @@ export const verifyUserCooldown = async (userId, shopId) =>
   await axios.get(`${USER_GAME_URL}/verify/${userId}/${shopId}`);
 
 export const getShopUsers = async (shopId) =>
-  await axios.get(`${USER_URL}}/${shopId}`);
+  await axios.get(`${USER_GAME_URL}/by-shop/${shopId}`);

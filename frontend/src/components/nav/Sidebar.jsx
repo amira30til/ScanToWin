@@ -70,7 +70,7 @@ const Sidebar = ({ shops, children }) => {
           transition=".3s ease"
           w="100%"
         >
-          <Box as="main" bg="surface.main" h="100%">
+          <Box as="main" bg="surface.main" h="100%" w="100vw">
             {children}
           </Box>
         </Box>

@@ -5,7 +5,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { deleteAdmin, getAdmins } from "@/services/adminService";
 import { DateTime } from "luxon";
 
-import CreateAdminModal from "@/components/modals/CreateAdminModal";
+import CreateAdminModal from "./CreateAdminModal";
 import DataTable from "@/components/DataTable";
 import IconButton from "@/components/common/IconButton";
 

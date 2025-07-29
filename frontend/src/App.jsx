@@ -15,11 +15,9 @@ import Facebook from "./pages/admin/dashboard/Facebook";
 import Instagram from "./pages/admin/dashboard/Instagram";
 import Tiktok from "./pages/admin/dashboard/Tiktok";
 import AdminCampaign from "./pages/admin/campaign";
-import AdminSMS from "./pages/admin/AdminSMS";
-import AdminReview from "./pages/admin/AdminReview";
 import Users from "./pages/admin/Users";
-import AdminAccount from "@/pages/admin/AdminAccount";
-import AdminCreateShop from "@/pages/admin/AdminCreateShop";
+import Account from "@/pages/admin/Account";
+import CreateShop from "@/pages/admin/CreateShop";
 import Play from "@/pages/user";
 import Redeem from "@/pages/user/Redeem";
 import ComingSoon from "./components/ComingSoon";
@@ -52,7 +50,7 @@ const App = () => {
         </Route>
 
         <Route element={<RequireAuth allowedRole={ADMIN_ROLE} />}>
-          <Route path="/admin/create-shop" element={<AdminCreateShop />} />
+          <Route path="/admin/create-shop" element={<CreateShop />} />
 
           <Route path="/admin/:shopId/*" element={<LayoutAdmin />}>
             <Route path="dashboard" element={<Dashboard />} />
@@ -61,10 +59,8 @@ const App = () => {
             <Route path="instagram" element={<Instagram />} />
             <Route path="tiktok" element={<Tiktok />} />
             <Route path="campaign" element={<AdminCampaign />} />
-            <Route path="sms" element={<AdminSMS />} />
-            <Route path="review" element={<AdminReview />} />
             <Route path="users" element={<Users />} />
-            <Route path="account" element={<AdminAccount />} />
+            <Route path="account" element={<Account />} />
             <Route path="*" element={<Navigate to="dashboard" replace />} />
           </Route>
           <Route path="/admin" element={<LayoutAdmin />} />

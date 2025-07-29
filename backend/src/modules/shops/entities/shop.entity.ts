@@ -74,7 +74,7 @@ export class Shop {
   gameCodePin: number;
 
   @ApiProperty()
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true, default: true })
   isGuaranteedWin: boolean;
 
   @ApiProperty()

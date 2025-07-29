@@ -121,7 +121,6 @@ const SocialDashboard = ({ title, social }) => {
         (action) => action.name === social,
       );
 
-      console.log(currentAction);
       if (currentAction) {
         setActionId(currentAction.id);
       } else {

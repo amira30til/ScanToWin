@@ -36,7 +36,6 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
     queryKey: ["shop-random-reward", shopId],
     queryFn: async () => {
       const response = await getShopRandomReward(shopId);
-      console.log("response", response);
       return response.data.data.reward;
     },
     enabled: !!shopId,

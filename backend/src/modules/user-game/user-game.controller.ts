@@ -139,6 +139,8 @@ export class UserGameController {
   ): Promise<{ userId: string; code?: string; timestamp?: number }> {
     return await this.userGameService.verifyUserCooldown(userId, shopId);
   }
+
+  @Get('by-shop/:shopId')
   @ApiQuery({
     name: 'page',
     required: false,
@@ -151,8 +153,9 @@ export class UserGameController {
     description: 'Results per page (default: all)',
     type: Number,
   })
-  @ApiOperation({ summary: 'Get users by shop with optional pagination and total count' })
-  @Get('by-shop/:shopId')
+  @ApiOperation({
+    summary: 'Get users by shop with optional pagination and total count',
+  })
   async getUsersByShopId(
     @Param('shopId') shopId: string,
     @Query('page') page?: number,

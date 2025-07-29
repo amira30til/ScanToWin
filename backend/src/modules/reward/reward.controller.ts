@@ -171,7 +171,6 @@ export class RewardController {
     @Param('shopId') shopId: string,
     @Body() updateRewardDto: UpdateRewardDto,
   ) {
-
     return this.rewardService.update(id, shopId, updateRewardDto);
   }
 

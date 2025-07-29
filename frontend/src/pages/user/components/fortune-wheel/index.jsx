@@ -62,7 +62,6 @@ const FortuneWheel = ({ shop }) => {
   });
 
   const rewardHandler = (reward) => {
-    console.log("setReward", reward);
     setReward(reward);
     onOpen();
   };
