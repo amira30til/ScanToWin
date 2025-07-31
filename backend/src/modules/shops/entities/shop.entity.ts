@@ -13,6 +13,7 @@ import { ShopStatus } from '../enums/shop-status.enum';
 import { Admin } from 'src/modules/admins/entities/admin.entity';
 import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
 import { Reward } from 'src/modules/reward/entities/reward.entity';
+import { ChosenAction } from 'src/modules/chosen-action/entities/chosen-action.entity';
 
 @Entity()
 export class Shop {
@@ -73,7 +74,7 @@ export class Shop {
   gameCodePin: number;
 
   @ApiProperty()
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true, default: true })
   isGuaranteedWin: boolean;
 
   @ApiProperty()
@@ -90,7 +91,7 @@ export class Shop {
 
   @ManyToOne(() => Admin, (admin) => admin.shops)
   @JoinColumn({ name: 'adminId' })
-  admin: Admin;
+  admin: Admin | null;
 
   @Column({ nullable: true })
   adminId: string;
@@ -110,4 +111,6 @@ export class Shop {
     scale: 2,
   })
   winningPercentage: number;
+  @OneToMany(() => ChosenAction, (chosenAction) => chosenAction.shop)
+  chosenActions: ChosenAction[];
 }

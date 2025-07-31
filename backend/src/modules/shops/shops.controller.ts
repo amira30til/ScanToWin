@@ -34,69 +34,13 @@ import {
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
 
 @ApiTags('shops')
-@ApiBearerAuth()
+//@ApiBearerAuth()
 @Controller('shops')
 export class ShopsController {
   constructor(private readonly shopsService: ShopsService) {}
-
-  @ApiBearerAuth()
-  @UseGuards(AdminGuard)
-  @UseInterceptors(FileInterceptor('logo'))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Create Shop with optional logo upload',
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', example: 'ZVAAAAAAAAAAAA' },
-        address: { type: 'string', example: '123 Main Street' },
-        city: { type: 'string', example: 'New York' },
-        country: { type: 'string', example: 'USA' },
-        zipCode: { type: 'number', example: 10001 },
-        nbSiret: { type: 'number', example: 12345678900000 },
-        tel: { type: 'string', example: '+1234567890' },
-        gameColor1: { type: 'string', example: '#FF5733' },
-        gameColor2: { type: 'string', example: '#33FFBD' },
-        gameCodePin: { type: 'number', example: 1234 },
-        isGuaranteedWin: { type: 'boolean', example: false },
-        logo: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-      required: ['name'],
-    },
-  })
-  @Post(':adminId')
-  @ApiOperation({ summary: 'Create a new shop ' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Shop created successfully',
-    type: Shop,
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data',
-  })
-  @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description: 'Shop with this name already exists',
-  })
-  @ApiParam({
-    name: 'adminId',
-    description: 'ID of the admin to create shop for',
-    type: String,
-    required: true,
-  })
-  create(
-    @Param('adminId') adminId: string,
-    @Body() createShopDto: CreateShopDto,
-    @UploadedFile() logo: Express.Multer.File,
-  ) {
-    return this.shopsService.create(adminId, createShopDto, logo);
-  }
 
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
@@ -123,8 +67,8 @@ export class ShopsController {
     return this.shopsService.findAll(page, limit);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+ // @ApiBearerAuth()
+  //@UseGuards(AdminGuard)
   @Get('admin/:adminId')
   @ApiOperation({ summary: 'Get all shops for a specific admin' })
   @ApiResponse({
@@ -139,7 +83,7 @@ export class ShopsController {
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
   @ApiQuery({
     name: 'page',
@@ -199,7 +143,7 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to retrieve',
-    type: Number,
+    type: String,
   })
   @ApiParam({
     name: 'adminId',
@@ -376,12 +320,12 @@ export class ShopsController {
   @ApiParam({
     name: 'id',
     description: 'ID of the shop to update status',
-    type: Number,
+    type: String,
   })
   @ApiParam({
     name: 'adminId',
     description: 'ID of the admin',
-    type: Number,
+    type: String,
   })
   @ApiQuery({
     name: 'status',
@@ -453,5 +397,78 @@ export class ShopsController {
       page,
       limit,
     );
+  }
+  @Post('verify-game-code')
+  @ApiOperation({ summary: 'Verify shop game code pin' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns true if the game code matches',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Shop not found',
+  })
+  async verifyGameCode(
+    @Body() dto: VerifyGameCodeDto,
+  ): Promise<
+    ApiResponseInterface<{ isValid: boolean }> | ErrorResponseInterface
+  > {
+    return this.shopsService.verifyGameCodePin(dto);
+  }
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('logo'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Create Shop with optional logo upload',
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', example: 'ZVAAAAAAAAAAAA' },
+        address: { type: 'string', example: '123 Main Street' },
+        city: { type: 'string', example: 'New York' },
+        country: { type: 'string', example: 'USA' },
+        zipCode: { type: 'number', example: 10001 },
+        nbSiret: { type: 'number', example: 12345678900000 },
+        tel: { type: 'string', example: '+1234567890' },
+        gameColor1: { type: 'string', example: '#FF5733' },
+        gameColor2: { type: 'string', example: '#33FFBD' },
+        gameCodePin: { type: 'number', example: 1234 },
+        isGuaranteedWin: { type: 'boolean', example: false },
+        logo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['name'],
+    },
+  })
+  @Post(':adminId')
+  @ApiOperation({ summary: 'Create a new shop ' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Shop created successfully',
+    type: Shop,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'Shop with this name already exists',
+  })
+  @ApiParam({
+    name: 'adminId',
+    description: 'ID of the admin to create shop for',
+    type: String,
+    required: true,
+  })
+  create(
+    @Param('adminId') adminId: string,
+    @Body() createShopDto: CreateShopDto,
+    @UploadedFile() logo: Express.Multer.File,
+  ) {
+    return this.shopsService.create(adminId, createShopDto, logo);
   }
 }

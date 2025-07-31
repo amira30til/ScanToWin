@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ChosenAction } from 'src/modules/chosen-action/entities/chosen-action.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -14,9 +16,6 @@ export class Action {
   @ApiProperty()
   @Column({ nullable: true })
   name: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  icon: string;
   @ApiProperty()
   @Column({ nullable: true })
   isActive: boolean;
@@ -30,4 +29,6 @@ export class Action {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+  @OneToMany(() => ChosenAction, (chosenAction) => chosenAction.action)
+  chosenActions: ChosenAction[];
 }

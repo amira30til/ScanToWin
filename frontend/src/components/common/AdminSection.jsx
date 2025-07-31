@@ -1,8 +1,9 @@
 import { Flex, Heading, Text } from "@chakra-ui/react";
 
-const Section = ({ title, description, children }) => {
+const Section = ({ title, description, children, ...props }) => {
   return (
     <Flex
+      {...props}
       direction="column"
       gap={10}
       bg="surface.navigation"

@@ -37,7 +37,7 @@ export class ActiveGameAssignmentService {
   > {
     try {
       const activeGame = await this.activeGameAssignmentRepository.find({
-        relations: ['admin', 'game','shop'],
+        relations: ['admin', 'game', 'shop'],
       });
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         activeGame,
@@ -217,14 +217,8 @@ export class ActiveGameAssignmentService {
         relations: ['game'],
       });
 
-      if (!activeGame) {
-        throw new NotFoundException(
-          GameMessages.NO_ACTIVE_GAME_FOR_SHOP(shopId),
-        );
-      }
-
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        data: activeGame,
+        data: activeGame ?? [],
         message: GameMessages.ACTIVE_GAME_FETCHED,
       });
     } catch (error) {

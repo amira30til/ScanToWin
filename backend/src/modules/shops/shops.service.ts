@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import {
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
 import {
+  ChosenActionMessages,
   ShopMessages,
   UserMessages,
 } from 'src/common/constants/messages.constants';
@@ -24,6 +26,9 @@ import { ShopStatus } from './enums/shop-status.enum';
 import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
+import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
+import { RewardRedemption } from 'src/modules/reward-redemption/entities/reward-redemption.entity';
 
 @Injectable()
 export class ShopsService {
@@ -37,6 +42,10 @@ export class ShopsService {
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
     private cloudinaryService: CloudinaryService,
+    @InjectRepository(ChosenAction)
+    private readonly chosenActionRepository: Repository<ChosenAction>,
+    @InjectRepository(RewardRedemption)
+    private rewardRedemptionRepository: Repository<RewardRedemption>,
   ) {}
 
   async create(
@@ -105,6 +114,7 @@ export class ShopsService {
   > {
     try {
       const [shops, total] = await this.shopsRepository.findAndCount({
+        where: { status: ShopStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -145,7 +155,7 @@ export class ShopsService {
       }
 
       const [shops, total] = await this.shopsRepository.findAndCount({
-        where: { adminId: adminId },
+        where: { adminId: adminId, status: ShopStatus.ACTIVE },
         skip: (page - 1) * limit,
         take: limit,
         order: { createdAt: 'DESC' },
@@ -167,7 +177,7 @@ export class ShopsService {
   ): Promise<ApiResponseInterface<Shop> | ErrorResponseInterface> {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: { id },
+        where: { id, status: ShopStatus.ACTIVE },
         relations: ['admin'],
       });
 
@@ -192,6 +202,7 @@ export class ShopsService {
         where: {
           id: id,
           adminId: adminId,
+          status: ShopStatus.ACTIVE,
         },
       });
 
@@ -316,7 +327,7 @@ export class ShopsService {
   > {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: { id },
+        where: { id, status: ShopStatus.ACTIVE },
       });
 
       if (!shop) {
@@ -334,29 +345,27 @@ export class ShopsService {
   }
 
   async removeByAdmin(
-    id: string,
+    shopId: string,
     adminId: string,
   ): Promise<
     ApiResponseInterface<{ message: string }> | ErrorResponseInterface
   > {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: {
-          id: id,
-          adminId: adminId,
-        },
+        where: { id: shopId, adminId },
       });
 
       if (!shop) {
-        throw new NotFoundException(
-          ShopMessages.SHOP_NOT_FOUND_FOR_ADMIN(id, adminId),
-        );
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
       }
 
-      await this.shopsRepository.remove(shop);
+      shop.status = ShopStatus.ARCHIVED;
+      shop.admin = null;
+
+      await this.shopsRepository.save(shop);
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        message: ShopMessages.SHOP_DELETE_SUCCESS(id),
+        message: `Shop with ID ${shopId} has been archived`,
       });
     } catch (error) {
       return handleServiceError(error);
@@ -482,6 +491,53 @@ export class ShopsService {
         total,
         page,
         limit,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  async verifyGameCodePin(
+    dto: VerifyGameCodeDto,
+  ): Promise<
+    ApiResponseInterface<{ isValid: boolean }> | ErrorResponseInterface
+  > {
+    try {
+      const shop = await this.shopsRepository.findOne({
+        where: { id: dto.shopId },
+      });
+
+      if (!shop) {
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
+      }
+
+      // TODO: if 24h haven't passed => show error
+      // 1. shopId = shop.id
+      // 2. userId = dto.userId
+      // 2. check the UserGame.lastPlayedAt
+
+      const isValid = shop.gameCodePin === dto.gameCodePin;
+      if (isValid) {
+        const action = await this.chosenActionRepository.findOne({
+          where: { id: dto.actionId },
+        });
+
+        if (!action || !dto.actionId) {
+          throw new NotFoundException(
+            ChosenActionMessages.NOT_FOUND(dto.actionId),
+          );
+        }
+        const rewardRedemption = this.rewardRedemptionRepository.create({
+          chosenAction: action,
+          shop: shop,
+        });
+        await this.rewardRedemptionRepository.save(rewardRedemption);
+      }
+      return ApiResponse.success(HttpStatus.OK, {
+        isValid,
+        message: isValid
+          ? ShopMessages.GAME_CODE_MATCHED
+          : ShopMessages.GAME_CODE_MISMATCH,
       });
     } catch (error) {
       return handleServiceError(error);
