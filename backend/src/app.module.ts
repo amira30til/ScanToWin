@@ -22,6 +22,7 @@ import { ChosenActionModule } from './modules/chosen-action/chosen-action.module
 import { RewardRedemptionModule } from './modules/reward-redemption/reward-redemption.module';
 import { ActionClickModule } from './modules/action-click/action-click.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { GamePlayTrackingModule } from './modules/game-play-tracking/game-play-tracking.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         },
       ],
     }),
+    GamePlayTrackingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
