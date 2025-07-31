@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, ValidateNested, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+  IsArray,
+} from 'class-validator';
 import { RewardStatus } from '../enums/reward-status.enums';
 import { Type } from 'class-transformer';
 
@@ -78,8 +84,11 @@ export class CreateRewardDto {
   @IsOptional()
   id?: string;
 }
+
 export class UpsertRewardsDto {
   @ApiProperty({ example: 'shop-uuid' })
+  @IsString()
+  @IsNotEmpty()
   shopId: string;
 
   @ApiProperty({ type: [CreateRewardDto] })

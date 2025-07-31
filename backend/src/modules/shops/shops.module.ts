@@ -8,13 +8,22 @@ import { JwtService } from '@nestjs/jwt';
 import { Game } from '../game/entities/game.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
+import { RewardRedemption } from 'src/modules/reward-redemption/entities/reward-redemption.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Shop, Admin, ActiveGameAssignment, Game]),
+    TypeOrmModule.forFeature([
+      Shop,
+      Admin,
+      ActiveGameAssignment,
+      Game,
+      ChosenAction,
+      RewardRedemption,
+    ]),
   ],
   controllers: [ShopsController],
-  providers: [ShopsService, JwtService,CloudinaryService],
+  providers: [ShopsService, JwtService, CloudinaryService],
   exports: [ShopsService],
 })
 export class ShopsModule {}

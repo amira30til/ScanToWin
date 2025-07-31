@@ -1,0 +1,143 @@
+import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useParams, useNavigate } from "react-router-dom";
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import { redeemCodeSchema } from "@/schemas/reward/redeemCode";
+import { getShop, verifyShopCodePin } from "@/services/shopService";
+
+import UserCooldownModal from "./components/UserCooldownModal";
+
+import {
+  Flex,
+  Box,
+  HStack,
+  PinInput,
+  PinInputField,
+  Heading,
+  Text,
+  VStack,
+  Button,
+  Image,
+} from "@chakra-ui/react";
+
+import logo from "@/assets/logo.png";
+
+const Redeem = () => {
+  const { shopId, actionId, userId } = useParams();
+  const navigate = useNavigate();
+
+  const toast = useToast();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(redeemCodeSchema),
+  });
+
+  const { data: shop } = useQuery({
+    queryKey: ["shop-by-id", shopId],
+    queryFn: async () => {
+      const response = await getShop(shopId);
+      return response.data.data.shop;
+    },
+    enabled: !!shopId,
+  });
+
+  const verifyShopCodePinMutation = useMutation({
+    mutationFn: async (values) => await verifyShopCodePin(values),
+    onSuccess: (data) => {
+      if (data.data.data.isValid === false) {
+        toast("Invalid code pin!", "error");
+      } else {
+        toast("You won congrats!", "success");
+        navigate(`/play/${shopId}`);
+      }
+    },
+    onError: () => {},
+  });
+
+  const onSubmit = (values) => {
+    const fullCode = `${values.digitOne}${values.digitTwo}${values.digitThree}${values.digitFour}`;
+    if (!!shopId && !!userId && !!actionId) {
+      verifyShopCodePinMutation.mutate({
+        gameCodePin: +fullCode,
+        shopId,
+        actionId,
+        userId,
+      });
+    }
+  };
+
+  return (
+    <>
+      <Flex h="100vh" w="100vw" bg="gray.50" align="center" justify="center">
+        <VStack
+          as="form"
+          textAlign="center"
+          spacing={12}
+          maxW="md"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Box>
+            <Image
+              objectFit="cover"
+              src={shop?.logo ?? logo}
+              alt="logo"
+              h="auto"
+              w="80px"
+            />
+          </Box>
+          <Heading as="h1" fontSize="xl" letterSpacing="tight">
+            You reward is waiting for you!
+          </Heading>
+          <Text fontSize="sm" color="gray.600">
+            Show this page to the staff and enter the code given to you.
+          </Text>
+          <HStack>
+            <PinInput
+              size="lg"
+              focusBorderColor={shop?.gameColor2 || "primary.500"}
+              autoFocus
+            >
+              <PinInputField borderColor="gray.500" {...register("digitOne")} />
+              <PinInputField borderColor="gray.500" {...register("digitTwo")} />
+              <PinInputField
+                borderColor="gray.500"
+                {...register("digitThree")}
+              />
+              <PinInputField
+                borderColor="gray.500"
+                {...register("digitFour")}
+              />
+            </PinInput>
+          </HStack>
+          {errors?.[""]?.message && (
+            <Text fontSize="sm" color="red">
+              {errors?.[""]?.message}
+            </Text>
+          )}
+          <Button
+            type="submit"
+            bg={shop?.gameColor1 || "primary.500"}
+            color="#fff"
+            _hover={{
+              opacity: 0.8,
+            }}
+            isLoading={verifyShopCodePinMutation.isLoading}
+          >
+            Submit
+          </Button>
+        </VStack>
+      </Flex>
+      <UserCooldownModal
+        title="24h haven't passed yet!"
+        description="you can get your gift in:"
+      />
+    </>
+  );
+};
+
+export default Redeem;

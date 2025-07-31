@@ -1,11 +1,13 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -118,14 +120,24 @@ export class UsersService {
             currentTime.getTime() - lastPlayedTime.getTime();
           const hoursDifference = timeDifference / (1000 * 60 * 60);
 
-          console.log(`Last played at shop: ${lastPlayedTime.toISOString()}`);
 
           if (hoursDifference < 24) {
-            const remainingHours = (24 - hoursDifference).toFixed(1);
-
-            throw new BadRequestException(
-              `You can play again after 24 hours from your last game at this shop. Time remaining: ${remainingHours} hours`,
+            const remainingMs = 24 * 60 * 60 * 1000 - timeDifference;
+            const nextPlayTime = new Date(
+              lastPlayedTime.getTime() + 24 * 60 * 60 * 1000,
             );
+
+            return {
+              statusCode: HttpStatusCodes.BAD_REQUEST,
+              error: {
+                code: 'USER_COOLDOWN',
+                message:
+                  'You can play again after 24 hours from your last game at this shop',
+                timestamp: nextPlayTime.getTime(),
+                remainingTime: remainingMs,
+                userId: existingUser.id,
+              },
+            };
           }
         }
 
@@ -144,7 +156,6 @@ export class UsersService {
           existingUserGame.rewardId = dto.rewardId;
           existingUserGame.activeGameAssignmentId = activeGameAssignment.id;
           await this.userGameRepository.save(existingUserGame);
-          console.log(`Updated existing game record: ${existingUserGame.id}`);
         } else {
           await this.userGameRepository.save({
             userId: existingUser.id,
@@ -179,6 +190,10 @@ export class UsersService {
           validFromDate,
           validUntilDate,
           emailCode,
+          reward.id,
+          dto.shopId,
+          userToNotify.id,
+          dto.actionId,
         );
       } catch (emailError) {
         console.error('Email sending failed');
@@ -188,6 +203,7 @@ export class UsersService {
         isNewUser ? HttpStatusCodes.CREATED : HttpStatusCodes.SUCCESS,
         {
           user: userToNotify,
+          userId: userToNotify.id,
           message: isNewUser
             ? 'User created successfully and reward email sent'
             : 'User game record updated successfully and reward email sent',
@@ -253,6 +269,32 @@ export class UsersService {
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         message: UserMessages.USER_DELETED,
       });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  async findUsersByDate(
+    date: string,
+  ): Promise<ApiResponseInterface<User[]> | ErrorResponseInterface> {
+    try {
+      if (!date) {
+        throw new BadRequestException('Date query parameter is required');
+      }
+
+      const startOfDay = new Date(date);
+      startOfDay.setUTCHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      const users = await this.userRepository.find({
+        where: {
+          createdAt: Between(startOfDay, endOfDay),
+        },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, { users });
     } catch (error) {
       return handleServiceError(error);
     }

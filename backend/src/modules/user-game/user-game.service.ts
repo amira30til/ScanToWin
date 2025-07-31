@@ -6,7 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserGame } from './entities/user-game.entity';
-import { CreateUserGameDto } from './dto/create-user-game.dto';
+import {
+  CreateUserGameDto,
+  UserGameStatsDto,
+} from './dto/create-user-game.dto';
 import { UpdateUserGameDto } from './dto/update-user-game.dto';
 import { User } from '../users/entities/user.entity';
 import { UserGameMessages } from 'src/common/constants/messages.constants';
@@ -530,4 +533,113 @@ export class UserGameService {
   //     return handleServiceError(error);
   //   }
   // }
+
+  //////////////////////////////////////////////////
+  async verifyUserCooldown(
+    userId: string,
+    shopId: string,
+  ): Promise<{ userId: string; code?: string; timestamp?: number }> {
+    const lastGameAtShop = await this.userGameRepository.findOne({
+      where: {
+        userId,
+        shopId,
+      },
+      order: { lastPlayedAt: 'DESC' },
+    });
+
+    if (!lastGameAtShop) {
+      return { userId };
+    }
+
+    const currentTime = new Date();
+    const lastPlayedTime = new Date(lastGameAtShop.lastPlayedAt);
+    const timeDifference = currentTime.getTime() - lastPlayedTime.getTime();
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    const nextPlayTime = new Date(
+      lastPlayedTime.getTime() + 24 * 60 * 60 * 1000,
+    );
+
+    if (hoursDifference < 24) {
+      return {
+        userId,
+        code: 'COOLDOWN',
+        timestamp: nextPlayTime.getTime(),
+      };
+    }
+
+    return { userId };
+  }
+  async getUsersByShopId(
+    shopId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<
+    | ApiResponseInterface<{ users: UserGameStatsDto[]; total: number }>
+    | ErrorResponseInterface
+  > {
+    try {
+      const hasPagination = page !== undefined && limit !== undefined;
+      const skip = hasPagination ? (page - 1) * limit : 0;
+
+      const baseQuery = `
+      WITH ranked_games AS (
+        SELECT
+          ug."userId",
+          ug."gameId",
+          ug."shopId",
+          ug."playCount",
+          ROW_NUMBER() OVER (PARTITION BY ug."userId" ORDER BY ug."playCount" DESC) as rank
+        FROM user_game ug
+        WHERE ug."shopId" = $1
+      ),
+      favorite_games AS (
+        SELECT "userId", "gameId"
+        FROM ranked_games
+        WHERE rank = 1
+      )
+      SELECT
+        u.id AS "userId",
+        u."firstName",
+        u."lastName",
+        u.email,
+        u.tel,
+        MAX(ug."lastPlayedAt") AS "lastPlayedAt",
+        SUM(ug."playCount") AS "totalPlayCount",
+        fg."gameId" AS "favoriteGameId"
+      FROM user_game ug
+      INNER JOIN "user" u ON u.id = ug."userId"
+      LEFT JOIN favorite_games fg ON fg."userId" = u.id
+      WHERE ug."shopId" = $1
+      GROUP BY u.id, fg."gameId"
+      ORDER BY u."firstName"
+    `;
+
+      const paginationClause = hasPagination ? ` OFFSET $2 LIMIT $3` : '';
+      const finalQuery = baseQuery + paginationClause;
+      const queryParams = hasPagination ? [shopId, skip, limit] : [shopId];
+
+      const rawUsers = await this.userGameRepository.query(
+        finalQuery,
+        queryParams,
+      );
+
+      const countQuery = `
+      SELECT COUNT(DISTINCT ug."userId") AS total
+      FROM user_game ug
+      WHERE ug."shopId" = $1
+    `;
+      const countResult = await this.userGameRepository.query(countQuery, [
+        shopId,
+      ]);
+      const total = parseInt(countResult[0]?.total ?? '0', 10);
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        users: rawUsers,
+        total,
+        message: `Users for shop ${shopId} fetched successfully`,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
 }

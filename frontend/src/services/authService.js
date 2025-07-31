@@ -1,45 +1,18 @@
-import axios from "@/api/axios";
+import axios, { axiosAuth } from "@/api/axios";
 
-const LOGIN_URL = "/auth";
-const REFRESH_URL = "/auth/refresh-token";
-const LOGOUT_URL = "/auth/logout";
-const FORGOT_URL = "/auth/forgot-password";
-const RESET_URL = "/auth/reset-password";
+const AUTH_URL = "/auth";
 
-export const loginUser = async ({ email, password }) => {
-  return await axios.post(
-    LOGIN_URL,
-    { email, password },
-    {
-      withCredentials: true,
-    },
-  );
-};
+export const loginUser = async ({ email, password }) =>
+  await axiosAuth.post(AUTH_URL, { email, password });
 
-export const refreshToken = async () => {
-  return await axios.post(
-    REFRESH_URL,
-    {},
-    {
-      withCredentials: true,
-    },
-  );
-};
+export const refreshToken = async () =>
+  await axiosAuth.post(`${AUTH_URL}/refresh-token`, {});
 
-export const logoutUser = async () => {
-  return await axios.post(
-    LOGOUT_URL,
-    {},
-    {
-      withCredentials: true,
-    },
-  );
-};
+export const logoutUser = async () =>
+  await axiosAuth.post(`${AUTH_URL}/logout`, {});
 
-export const forgotPassword = async (email) => {
-  return await axios.post(FORGOT_URL, { email });
-};
+export const forgotPassword = async (email) =>
+  await axios.post(`${AUTH_URL}/forgot-password`, { email });
 
-export const resetPassword = async (body) => {
-  return await axios.post(RESET_URL, body);
-};
+export const resetPassword = async (body) =>
+  await axios.post(`${AUTH_URL}/reset-password`, body);

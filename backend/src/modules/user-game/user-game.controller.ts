@@ -6,11 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { UserGameService } from './user-game.service';
-import { CreateUserGameDto } from './dto/create-user-game.dto';
+import {
+  CreateUserGameDto,
+  UserGameStatsDto,
+} from './dto/create-user-game.dto';
 import { UpdateUserGameDto } from './dto/update-user-game.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
 
 @Controller('user-game')
 export class UserGameController {
@@ -79,5 +88,81 @@ export class UserGameController {
   @ApiResponse({ status: 404, description: 'Chosen game not found' })
   async findByChosenGame(@Param('gameId') gameId: string) {
     return this.userGameService.findByChosenGame(gameId);
+  }
+
+  ///////////////////////
+  @Get('verify/:userId/:shopId')
+  @ApiOperation({
+    summary: 'Verify user cooldown status',
+    description:
+      'Check if a user can play again at a specific shop based on 24-hour cooldown period since last play',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'The ID of the user to check',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    type: String,
+  })
+  @ApiParam({
+    name: 'shopId',
+    description: 'The ID of the shop to check against',
+    example: '987e6543-e21b-54d3-a789-426614175000',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User can play - no cooldown active',
+    schema: {
+      example: {
+        userId: '123e4567-e89b-12d3-a456-426614174000',
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User cannot play - cooldown active',
+    schema: {
+      example: {
+        userId: '123e4567-e89b-12d3-a456-426614174000',
+        code: 'COOLDOWN',
+        timestamp: 12345678,
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid parameters provided',
+  })
+  async verifyUserCooldown(
+    @Param('userId') userId: string,
+    @Param('shopId') shopId: string,
+  ): Promise<{ userId: string; code?: string; timestamp?: number }> {
+    return await this.userGameService.verifyUserCooldown(userId, shopId);
+  }
+
+  @Get('by-shop/:shopId')
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (default: all)',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Results per page (default: all)',
+    type: Number,
+  })
+  @ApiOperation({
+    summary: 'Get users by shop with optional pagination and total count',
+  })
+  async getUsersByShopId(
+    @Param('shopId') shopId: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ): Promise<
+    ApiResponseInterface<{ users: UserGameStatsDto[] }> | ErrorResponseInterface
+  > {
+    return this.userGameService.getUsersByShopId(shopId, page, limit);
   }
 }

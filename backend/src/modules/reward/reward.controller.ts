@@ -70,9 +70,7 @@ export class RewardController {
     return this.rewardService.findAll(page, limit);
   }
 
-  @UseGuards(AdminGuard)
   @Get('by-shop/:shopId')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get rewards by shop',
     description:
@@ -173,9 +171,6 @@ export class RewardController {
     @Param('shopId') shopId: string,
     @Body() updateRewardDto: UpdateRewardDto,
   ) {
-    console.log('shopp', shopId);
-    console.log('ids', id);
-
     return this.rewardService.update(id, shopId, updateRewardDto);
   }
 

@@ -36,9 +36,9 @@ export class CreateUserDto {
     description: 'User phone number',
     example: 123456789,
   })
-  @IsNumber()
   @IsOptional()
-  tel?: number;
+  @IsString()
+  tel?: string;
   @ApiProperty({ default: false })
   @IsOptional()
   agreeToPromotions: boolean;
@@ -57,4 +57,11 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   rewardId: string;
+  @ApiProperty({
+    description: 'Chosen action Id',
+    example: '3609f677-c4dd-4772-8a90-563f6ac1f653',
+  })
+  @IsString()
+  @IsNotEmpty()
+  actionId: string;
 }
