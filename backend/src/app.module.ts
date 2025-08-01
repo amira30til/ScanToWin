@@ -21,8 +21,9 @@ import { ChosenAction } from './modules/chosen-action/entities/chosen-action.ent
 import { ChosenActionModule } from './modules/chosen-action/chosen-action.module';
 import { RewardRedemptionModule } from './modules/reward-redemption/reward-redemption.module';
 import { ActionClickModule } from './modules/action-click/action-click.module';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { GamePlayTrackingModule } from './modules/game-play-tracking/game-play-tracking.module';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -73,6 +74,12 @@ import { GamePlayTrackingModule } from './modules/game-play-tracking/game-play-t
     GamePlayTrackingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
