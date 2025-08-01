@@ -29,6 +29,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
 import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
 import { RewardRedemption } from 'src/modules/reward-redemption/entities/reward-redemption.entity';
+import { UserGame } from '../user-game/entities/user-game.entity';
 
 @Injectable()
 export class ShopsService {
@@ -46,6 +47,8 @@ export class ShopsService {
     private readonly chosenActionRepository: Repository<ChosenAction>,
     @InjectRepository(RewardRedemption)
     private rewardRedemptionRepository: Repository<RewardRedemption>,
+    @InjectRepository(UserGame)
+    private readonly userGameRepository: Repository<UserGame>,
   ) {}
 
   async create(
@@ -511,10 +514,40 @@ export class ShopsService {
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(dto.shopId));
       }
 
-      // TODO: if 24h haven't passed => show error
-      // 1. shopId = shop.id
-      // 2. userId = dto.userId
-      // 2. check the UserGame.lastPlayedAt
+      // ✅ 24h cooldown check BEFORE code validation
+      const userGame = await this.userGameRepository.findOne({
+        where: {
+          userId: dto.userId,
+          shopId: dto.shopId,
+        },
+        order: { lastPlayedAt: 'DESC' },
+      });
+
+      if (userGame?.lastPlayedAt) {
+        const now = new Date();
+        const lastPlayed = new Date(userGame.lastPlayedAt);
+        const timeDiffMs = now.getTime() - lastPlayed.getTime();
+
+        const twentyFourHoursMs = 24 * 60 * 60 * 1000;
+        if (timeDiffMs < twentyFourHoursMs) {
+          const remainingMs = twentyFourHoursMs - timeDiffMs;
+          const nextAllowedTime = new Date(
+            lastPlayed.getTime() + twentyFourHoursMs,
+          );
+
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            error: {
+              code: 'USER_COOLDOWN',
+              message:
+                'You can play again after 24 hours from your last game at this shop',
+              timestamp: nextAllowedTime.getTime(),
+              remainingTime: remainingMs, 
+              userId: dto.userId,
+            },
+          };
+        }
+      }
 
       const isValid = shop.gameCodePin === dto.gameCodePin;
       if (isValid) {
@@ -533,6 +566,7 @@ export class ShopsService {
         });
         await this.rewardRedemptionRepository.save(rewardRedemption);
       }
+
       return ApiResponse.success(HttpStatus.OK, {
         isValid,
         message: isValid
