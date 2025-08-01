@@ -78,7 +78,7 @@ const FortuneWheel = ({ shop }) => {
 
   useEffect(() => {
     if (actionsByShop !== undefined && actionsByShop.length < 1) {
-      navigate(`/play/${shopId}/coming-soon`);
+      navigate(`/user/${shopId}/coming-soon`);
     }
   }, [actionsByShop]);
 

@@ -47,7 +47,7 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
 
   useEffect(() => {
     if (rewards !== undefined && rewards.length < 1) {
-      navigate(`/play/${shopId}/coming-soon`);
+      navigate(`/user/${shopId}/coming-soon`);
     }
   }, [rewards]);
 

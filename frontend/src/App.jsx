@@ -29,12 +29,12 @@ const App = () => {
   return (
     <Routes>
       <Route path="reset-password" element={<ResetPassword />} />
-      <Route path="play/:shopId" element={<Play />} />
+      <Route path="user/:shopId" element={<Play />} />
       <Route
-        path="play/:shopId/redeem/:userId/action/:actionId"
+        path="user/:shopId/redeem/:userId/action/:actionId"
         element={<Redeem />}
       />
-      <Route path="play/:shopId/coming-soon" element={<ComingSoon />} />
+      <Route path="user/:shopId/coming-soon" element={<ComingSoon />} />
 
       <Route element={<PersistLogin />}>
         <Route exact path="/" element={<Login />} />

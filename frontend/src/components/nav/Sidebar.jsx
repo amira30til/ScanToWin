@@ -1,5 +1,6 @@
 import { useLogout } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 
 import { getActionsByShop } from "@/services/actionService";
 
@@ -38,7 +39,7 @@ import {
   FaFacebook,
 } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaUsers } from "react-icons/fa6";
 import { BiLogOut } from "react-icons/bi";
 import { AddIcon } from "@chakra-ui/icons";
@@ -279,41 +280,30 @@ const SidebarContent = ({ shops, ...rest }) => {
   );
 };
 
-const NavItem = (props) => {
-  const { icon, children, href, boxSize, ...rest } = props;
+const NavItem = ({ icon, children, href, boxSize, ...rest }) => {
+  const location = useLocation();
+  const urlPath = location.pathname;
+
   const hasHref = href !== undefined && href !== "";
-  const urlPath = window.location.pathname;
-  const cleanHref = href?.split("?")[0];
 
-  const isActive =
-    hasHref &&
-    (urlPath === `/admin/${cleanHref}` ||
-      urlPath.startsWith(`/admin/${cleanHref}/`));
-
-  const isActiveColor = "primary.700";
-
-  if (isActive) {
-    rest.color = isActiveColor;
-    rest.bg = "primary.50";
-  }
+  const cleanHref = `/admin/${href?.split("?")[0]}`;
+  const isActive = hasHref && cleanHref.startsWith(urlPath);
 
   return (
     <Flex
       as={hasHref ? Link : "div"}
       to={hasHref ? `/admin/${href}` : undefined}
       align="center"
-      px="4"
-      pl="4"
-      py="3"
+      bg={isActive ? "primary.50" : undefined}
+      color={isActive ? "primary.700" : undefined}
+      p={3}
       cursor="pointer"
-      color="inherit"
-      _hover={{
-        bg: "primary.50",
-        color: isActive ? isActiveColor : "primary.600",
-      }}
-      role="group"
       fontWeight="semibold"
       transition="all .15s ease"
+      _hover={{
+        bg: "primary.50",
+        color: isActive ? undefined : "primary.700",
+      }}
       {...rest}
     >
       {icon && <Icon mx="2" boxSize={boxSize} as={icon} />}

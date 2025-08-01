@@ -54,7 +54,7 @@ export class UserGame {
   lastPlayedAt: Date;
   @ManyToOne(() => Reward, {
     nullable: true,
-    onDelete: 'SET NULL', 
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'rewardId' })
   reward: Reward;

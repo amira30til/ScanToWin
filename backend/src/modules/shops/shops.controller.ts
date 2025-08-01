@@ -67,7 +67,7 @@ export class ShopsController {
     return this.shopsService.findAll(page, limit);
   }
 
- // @ApiBearerAuth()
+  // @ApiBearerAuth()
   //@UseGuards(AdminGuard)
   @Get('admin/:adminId')
   @ApiOperation({ summary: 'Get all shops for a specific admin' })

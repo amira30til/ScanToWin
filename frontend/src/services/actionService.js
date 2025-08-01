@@ -27,6 +27,9 @@ export const getChosenActionClickedAt = async (axios, chosenActionId) =>
 export const getChosenActionRedeemedAt = async (axios, chosenActionId) =>
   await axios.get(`${REWARD_REDEMPTION_URL}/chosen-action/${chosenActionId}`);
 
+// export const getChosenActionPlayedAt = async (axios, chosenActionId) =>
+//   await axios.get(`${ACITON_CLICK_URL}/chosen-action/${chosenActionId}`);
+
 export const getShopActionClick = async (axios, shopId) =>
   await axios.get(`${ACITON_CLICK_URL}/shop/${shopId}`);
 
