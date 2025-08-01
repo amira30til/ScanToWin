@@ -120,7 +120,6 @@ export class UsersService {
             currentTime.getTime() - lastPlayedTime.getTime();
           const hoursDifference = timeDifference / (1000 * 60 * 60);
 
-
           if (hoursDifference < 24) {
             const remainingMs = 24 * 60 * 60 * 1000 - timeDifference;
             const nextPlayTime = new Date(
@@ -213,6 +212,7 @@ export class UsersService {
       return handleServiceError(error);
     }
   }
+
   async findAll(): Promise<
     ApiResponseInterface<User[]> | ErrorResponseInterface
   > {

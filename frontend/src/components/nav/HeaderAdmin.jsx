@@ -52,7 +52,7 @@ const HeaderAdmin = ({ title }) => {
   const [sidebarWidth] = useToken("sizes", ["sidebar"]);
 
   const copyQrLinkHandler = () => {
-    const qrCodeLink = `${import.meta.env.VITE_FRONTEND_URL}/play/${shopId}`;
+    const qrCodeLink = `${import.meta.env.VITE_FRONTEND_URL}/user/${shopId}`;
     copy(qrCodeLink);
   };
 
@@ -136,7 +136,7 @@ const HeaderAdmin = ({ title }) => {
                         height: "auto",
                         width: "100%",
                       }}
-                      value={`${import.meta.env.VITE_FRONTEND_URL}/play/${shopId}`}
+                      value={`${import.meta.env.VITE_FRONTEND_URL}/user/${shopId}`}
                       viewBox={`0 0 256 256`}
                     />
                   </Box>

@@ -48,13 +48,13 @@ const Play = () => {
 
   useEffect(() => {
     if (activeGame !== undefined && activeGame.gameId !== FORTUNE_WHEEL_ID) {
-      navigate(`/play/${shopId}/coming-soon`);
+      navigate(`/user/${shopId}/coming-soon`);
     }
   }, [activeGame]);
 
   if (shopIsLoading || activeGameIsLoading) return <Spinner />;
 
-  if (shopError || activeGameError) return <Error link={`/play/${shopId}`} />;
+  if (shopError || activeGameError) return <Error link={`/user/${shopId}`} />;
 
   return (
     <>

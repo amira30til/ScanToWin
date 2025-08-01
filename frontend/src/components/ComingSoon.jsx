@@ -5,6 +5,11 @@ import { useNavigate, useParams } from "react-router-dom";
 const ComingSoon = () => {
   const navigate = useNavigate();
   const { shopId } = useParams();
+
+  const tryAgainHandler = async () => {
+    navigate(`/user/${shopId}`);
+  };
+
   return (
     <Flex
       bg="#fff"
@@ -18,7 +23,7 @@ const ComingSoon = () => {
       <Heading size="md" textAlign="center">
         The game is coming soon!
       </Heading>
-      <Button colorScheme="primary" onClick={() => navigate(`/play/${shopId}`)}>
+      <Button colorScheme="primary" onClick={tryAgainHandler}>
         Try Again!
       </Button>
     </Flex>
