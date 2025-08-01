@@ -8,11 +8,15 @@ import {
   ApiResponseInterface,
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
-import { ChosenActionMessages } from 'src/common/constants/messages.constants';
+import {
+  ChosenActionMessages,
+  ShopMessages,
+} from 'src/common/constants/messages.constants';
 import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
+import { Shop } from '../shops/entities/shop.entity';
 
 @Injectable()
 export class GamePlayTrackingService {
@@ -21,6 +25,8 @@ export class GamePlayTrackingService {
     private readonly gamePlayTrackingRepository: Repository<GamePlayTracking>,
     @InjectRepository(ChosenAction)
     private readonly chosenActionRepository: Repository<ChosenAction>,
+    @InjectRepository(Shop)
+    private shopsRepository: Repository<Shop>,
   ) {}
 
   async findAllByChosenActionId(
@@ -42,7 +48,6 @@ export class GamePlayTrackingService {
       const logs = await this.gamePlayTrackingRepository.find({
         where: { chosenAction: { id: chosenActionId } },
         order: { playedAt: 'DESC' },
-        relations: ['user', 'shop', 'game', 'reward', 'activeGameAssignment'],
       });
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
@@ -50,6 +55,38 @@ export class GamePlayTrackingService {
         message: logs.length
           ? `Found ${logs.length} game plays for chosen action ${chosenActionId}`
           : `No game plays found for chosen action ${chosenActionId}`,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async findAllByShopId(
+    shopId: string,
+  ): Promise<
+    ApiResponseInterface<GamePlayTracking[]> | ErrorResponseInterface
+  > {
+    try {
+      const shop = await this.shopsRepository.findOne({
+        where: { id: shopId },
+      });
+
+      if (!shop) {
+        throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(shopId));
+      }
+
+      const gamePlayLogs = await this.gamePlayTrackingRepository.find({
+        where: {
+          shop: { id: shopId },
+        },
+
+        order: { playedAt: 'DESC' },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        data: gamePlayLogs,
+        message: gamePlayLogs.length
+          ? `Found ${gamePlayLogs.length} gameplay logs for shop ${shopId}`
+          : `No gameplay logs found for shop ${shopId}`,
       });
     } catch (error) {
       return handleServiceError(error);
