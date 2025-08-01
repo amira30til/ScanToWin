@@ -9,6 +9,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import {
   getShopActionClick,
   getShopActionRedeem,
+  getShopActionPlay,
 } from "@/services/actionService";
 
 import HeaderAdmin from "@/components/nav/HeaderAdmin";
@@ -99,10 +100,21 @@ const Dashboard = () => {
       enabled: !!shopId,
     });
 
+  const { data: shopActionPlay, isLoading: shopActionPlayIsLoading } = useQuery(
+    {
+      queryKey: ["shop-action-play", shopId],
+      queryFn: async () => {
+        const response = await getShopActionPlay(axiosPrivate, shopId);
+        const data = response.data.data.data;
+        return data.map((action) => action.playedAt);
+      },
+      enabled: !!shopId,
+    },
+  );
+
   const clickedSelected = useSelectStat(shopActionClick);
   const redeemedSelected = useSelectStat(shopActionRedeem);
-  // const gamePlayedSelected = useSelectStat(actionPlayedTimestamps);
-  const gamePlayedSelected = [];
+  const gamePlayedSelected = useSelectStat(shopActionPlay);
 
   const combinedChartData = useChartData(
     clickedSelected,
@@ -163,7 +175,9 @@ const Dashboard = () => {
           )}
         </Flex>
 
-        {shopActionClickIsLoading || shopActionRedeemIsLoading ? (
+        {shopActionClickIsLoading ||
+        shopActionRedeemIsLoading ||
+        shopActionPlayIsLoading ? (
           <Flex minH="100%" w="100%" align="center" justify="center">
             <Spinner display="flex" align="center" color="secondary.500" />
           </Flex>
@@ -185,7 +199,7 @@ const Dashboard = () => {
               <StatBox
                 title="Jeux Lancées"
                 value={gamePlayedSelected}
-                // total={gamePlayedTimestamps}
+                total={shopActionPlay}
                 icon={Gamepad2}
               />
             </Flex>

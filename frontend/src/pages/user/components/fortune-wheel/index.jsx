@@ -68,6 +68,18 @@ const FortuneWheel = ({ shop }) => {
 
   const onActionHandler = () => {
     let pos = +actionPosition || 1;
+
+    const totalActions = actionsByShop.length;
+
+    if (totalActions === 0) {
+      setCurrentAction(null);
+      return;
+    }
+
+    if (!actionsByShop.some((action) => action.position === pos)) {
+      pos = 1;
+    }
+
     const currentAction = actionsByShop.find(
       (action) => action.position === pos,
     );
