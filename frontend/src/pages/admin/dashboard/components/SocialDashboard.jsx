@@ -10,7 +10,7 @@ import {
   getActionsByShop,
   getChosenActionClickedAt,
   getChosenActionRedeemedAt,
-  // getGamePlayedAt
+  getChosenActionPlayedAt,
 } from "@/services/actionService";
 
 import HeaderAdmin from "@/components/nav/HeaderAdmin";
@@ -117,23 +117,22 @@ const SocialDashboard = ({ title, social }) => {
     enabled: !!actionId,
   });
 
-  //   const {
-  //   data: gamePlayedTimestamps,
-  //   isLoading: gamePlayedTimestampsLoading,
-  // } = useQuery({
-  //   queryKey: ["game-played-timestamps", actionId],
-  //   queryFn: async () => {
-  //     const response = await getGamePlayedAt(axiosPrivate, actionId);
-  //     const data = response.data.data.data;
-  //     return data.map((action) => action.playedAt);
-  //   },
-  //   enabled: !!actionId,
-  // });
+  const {
+    data: actionPlayedTimestamps,
+    isLoading: actionPlayedTimestampsLoading,
+  } = useQuery({
+    queryKey: ["game-played-timestamps", actionId],
+    queryFn: async () => {
+      const response = await getChosenActionPlayedAt(axiosPrivate, actionId);
+      const data = response.data.data.data;
+      return data.map((action) => action.playedAt);
+    },
+    enabled: !!actionId,
+  });
 
   const clickedSelected = useSelectStat(actionClickedTimestamps);
   const redeemedSelected = useSelectStat(actionRedeemedTimestamps);
-  // const gamePlayedSelected = useSelectStat(actionPlayedTimestamps);
-  const gamePlayedSelected = [];
+  const gamePlayedSelected = useSelectStat(actionPlayedTimestamps);
 
   const combinedChartData = useChartData(
     clickedSelected,
@@ -210,7 +209,7 @@ const SocialDashboard = ({ title, social }) => {
 
         {isLoadingActions ||
         actionClickedTimestampsLoading ||
-        // gamePlayedTimestampsLoading ||
+        actionPlayedTimestampsLoading ||
         actionRedeemedTimestampsLoading ? (
           <Flex minH="100%" w="100%" align="center" justify="center">
             <Spinner display="flex" align="center" color="secondary.500" />
@@ -235,7 +234,7 @@ const SocialDashboard = ({ title, social }) => {
               <StatBox
                 title="Jeux Lancées"
                 value={gamePlayedSelected}
-                // total={gamePlayedTimestamps}
+                total={actionPlayedTimestamps}
                 icon={Gift}
               />
             </Flex>
