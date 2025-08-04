@@ -381,7 +381,7 @@ export class AdminsController {
   async getAdminsByIdAndStatus(
     @Param('id') id: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
-    return this.adminsService.findAdminById(id);
+    return await this.adminsService.findAdminById(id);
   }
   //@ApiBearerAuth()
   //@UseGuards(SuperAdminGuard)
