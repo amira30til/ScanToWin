@@ -89,7 +89,9 @@ export class Shop {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Admin, (admin) => admin.shops)
+  @ManyToOne(() => Admin, (admin) => admin.shops, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'adminId' })
   admin: Admin | null;
 
