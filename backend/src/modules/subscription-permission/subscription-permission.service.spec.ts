@@ -9,7 +9,9 @@ describe('SubscriptionPermissionService', () => {
       providers: [SubscriptionPermissionService],
     }).compile();
 
-    service = module.get<SubscriptionPermissionService>(SubscriptionPermissionService);
+    service = module.get<SubscriptionPermissionService>(
+      SubscriptionPermissionService,
+    );
   });
 
   it('should be defined', () => {

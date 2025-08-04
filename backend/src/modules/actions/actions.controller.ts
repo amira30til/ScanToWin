@@ -13,7 +13,12 @@ import {
 import { ActionsService } from './actions.service';
 import { CreateActionDto } from './dto/create-action.dto';
 import { UpdateActionDto } from './dto/update-action.dto';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { ActionMessages } from 'src/common/constants/messages.constants';
 import { Action } from './entities/action.entity';
 import { ErrorResponseInterface } from 'src/common/interfaces/response.interface';
@@ -35,7 +40,6 @@ export class ActionsController {
     description: 'Action with this name already exists',
   })
   async create(@Body() createActionDto: CreateActionDto) {
-
     return this.actionsService.create(createActionDto);
   }
 
