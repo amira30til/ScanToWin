@@ -21,6 +21,7 @@ import CreateShop from "@/pages/admin/CreateShop";
 import Play from "@/pages/user";
 import Redeem from "@/pages/user/Redeem";
 import ComingSoon from "./components/ComingSoon";
+import AdminDetails from "./pages/super-admin/AdminDetails";
 
 const ADMIN_ROLE = "ADMIN";
 const SUPER_ADMIN_ROLE = "SUPER_ADMIN";
@@ -42,6 +43,7 @@ const App = () => {
         <Route element={<RequireAuth allowedRole={SUPER_ADMIN_ROLE} />}>
           <Route path="/super-admin/*" element={<LayoutSuperAdmin />}>
             <Route path="dashboard" element={<SuperAdmin />} />
+            <Route path=":adminId" element={<AdminDetails />} />
             <Route
               path="*"
               element={<Navigate to="/super-admin/dashboard" />}

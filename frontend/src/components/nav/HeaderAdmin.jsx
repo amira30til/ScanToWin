@@ -235,7 +235,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" gap={6}>
-              <Alert status="warning">
+              <Alert status="warning" borderRadius="md">
                 <AlertIcon />
                 To secure gift collection, each customer will need to present a
                 PIN code to be validated by your team (cash register, counter,
