@@ -26,7 +26,12 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
     ]),
   ],
   controllers: [UserGameController],
-  providers: [UserGameService, ActiveGameAssignmentService, AdminsService,CloudinaryService],
+  providers: [
+    UserGameService,
+    ActiveGameAssignmentService,
+    AdminsService,
+    CloudinaryService,
+  ],
   exports: [UserGameService],
 })
 export class UserGameModule {}

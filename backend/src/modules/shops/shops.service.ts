@@ -542,7 +542,7 @@ export class ShopsService {
               message:
                 'You can play again after 24 hours from your last game at this shop',
               timestamp: nextAllowedTime.getTime(),
-              remainingTime: remainingMs, 
+              remainingTime: remainingMs,
               userId: dto.userId,
             },
           };

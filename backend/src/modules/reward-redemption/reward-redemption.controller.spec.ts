@@ -11,7 +11,9 @@ describe('RewardRedemptionController', () => {
       providers: [RewardRedemptionService],
     }).compile();
 
-    controller = module.get<RewardRedemptionController>(RewardRedemptionController);
+    controller = module.get<RewardRedemptionController>(
+      RewardRedemptionController,
+    );
   });
 
   it('should be defined', () => {

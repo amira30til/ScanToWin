@@ -78,7 +78,7 @@ export class RewardCategoryService {
   ): Promise<ApiResponseInterface<RewardCategory> | ErrorResponseInterface> {
     try {
       const category = await this.rewardCategoryRepository.findOne({
-        where: { id ,},
+        where: { id },
         //relations: ['rewards'],
       });
 
