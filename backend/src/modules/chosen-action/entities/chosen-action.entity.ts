@@ -37,7 +37,9 @@ export class ChosenAction {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Shop, (shop) => shop.chosenActions)
+  @ManyToOne(() => Shop, (shop) => shop.chosenActions, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 
