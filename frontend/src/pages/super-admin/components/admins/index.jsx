@@ -4,7 +4,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useDisclosure } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-import { archiveAdmin, getAdmins } from "@/services/adminService";
+import { archiveAdmin, getAdmins, restoreAdmin } from "@/services/adminService";
 import { DateTime } from "luxon";
 
 import CreateAdminModal from "./CreateAdminModal";
@@ -62,7 +62,24 @@ const Admins = () => {
   });
 
   const archiveAdminHandler = (id) => {
-    archiveAdminMutation.mutate(id);
+    if (!!id) {
+      archiveAdminMutation.mutate(id);
+    }
+  };
+
+  const restoreAdminMutation = useMutation({
+    mutationFn: async (data) => await restoreAdmin(axiosPrivate, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries("admins");
+      toast("Admin restored successfully", "success");
+    },
+    onError: () => toast("Failed to restore admin", "error"),
+  });
+
+  const restoreAdminHandler = (id) => {
+    if (!!id) {
+      restoreAdminMutation.mutate(id);
+    }
   };
 
   const showArchivedHandler = () => {
@@ -138,7 +155,7 @@ const Admins = () => {
                           icon={<ArchiveRestore size={20} />}
                           size="sm"
                           colorScheme="green"
-                          // onClick={() => archiveAdminHandler(admin?.id)}
+                          onClick={() => restoreAdminHandler(admin?.id)}
                         />
                       )}
                     </Flex>

@@ -184,8 +184,6 @@ export class AdminsService {
           await this.cloudinaryService.uploadImageToCloudinary(profilPicture);
         updateAdminDto.profilPicture = result.url;
       }
-      if (profilPicture) {
-      }
 
       await this.adminsRepository.update(id, updateAdminDto);
 
