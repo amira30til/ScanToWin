@@ -146,6 +146,7 @@ const Admins = () => {
                           size="sm"
                           colorScheme="yellow"
                           onClick={() => archiveAdminHandler(admin?.id)}
+                          isLoading={archiveAdminMutation.isPending}
                         />
                       )}
 
@@ -156,6 +157,7 @@ const Admins = () => {
                           size="sm"
                           colorScheme="green"
                           onClick={() => restoreAdminHandler(admin?.id)}
+                          isLoading={restoreAdminMutation.isPending}
                         />
                       )}
                     </Flex>

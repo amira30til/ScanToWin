@@ -355,7 +355,7 @@ export class AdminsController {
     description: 'Forbidden - requires SUPER_ADMIN role',
   })
   restore(@Param('id') id: string) {
-    return this.adminsService.updateStatus(id, AdminStatus.ACTIVE);
+    return this.adminsService.restore(id);
   }
   @Get('by-id/:id')
   @ApiOperation({
