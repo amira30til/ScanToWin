@@ -29,7 +29,8 @@ const AdminDetails = () => {
     queryKey: ["admin-by-id", adminId],
     queryFn: async () => {
       const response = await getAdminById(axiosPrivate, adminId);
-      return response.data.data.admin;
+      console.log(response.data.data);
+      return response.data.data;
     },
     enabled: !!adminId,
   });
