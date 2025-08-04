@@ -76,6 +76,11 @@ const Games = () => {
   const onCreateGameSuccess = () => {
     refetch();
     reset();
+    setPreviewImage(null);
+    setValue("pictureUrl", "");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     toast(SUCCESS_MESSAGES.GAME_CREATE_SUCCESS, "success");
   };
 
