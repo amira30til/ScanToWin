@@ -306,46 +306,32 @@ export class AdminsService {
       return handleServiceError(error);
     }
   }
-  async findAdminsByIdAndStatus(
-    id: string,
-    status: AdminStatus,
-    page = 1,
-    limit = 10,
-  ): Promise<
+  async findAdminsByIdAndStatus(id: string): Promise<
     | ApiResponseInterface<{
-        admins: Admin[];
-        total: number;
-        page: number;
-        limit: number;
+        admins: Admin;
       }>
     | ErrorResponseInterface
   > {
     try {
-      const [admins, total] = await this.adminsRepository.findAndCount({
+      const admin = await this.adminsRepository.findAndCount({
         where: {
           id,
-          adminStatus: status,
           role: Role.ADMIN,
         },
         relations: [
           'shops',
-          'rewards',
-          'users',
-          'chosenAction',
-          'activeGameAssignments',
+          'shops.rewards',
+          'shops.chosenActions',
+          'shops.activeGameAssignments',
         ],
-        skip: (page - 1) * limit,
-        take: limit,
+
         order: {
           createdAt: 'DESC',
         },
       });
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-        admins,
-        total,
-        page,
-        limit,
+        admin,
       });
     } catch (error) {
       return handleServiceError(error);
