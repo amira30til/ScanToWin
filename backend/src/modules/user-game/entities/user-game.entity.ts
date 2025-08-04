@@ -37,7 +37,9 @@ export class UserGame {
   user: User;
   @Column({ nullable: true })
   userId: string;
-  @ManyToOne(() => ActiveGameAssignment, (assignment) => assignment.userGames)
+  @ManyToOne(() => ActiveGameAssignment, (assignment) => assignment.userGames, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'activeGameAssignmentId' })
   activeGameAssignment: ActiveGameAssignment;
   @Column({ nullable: true })
@@ -54,7 +56,7 @@ export class UserGame {
   lastPlayedAt: Date;
   @ManyToOne(() => Reward, {
     nullable: true,
-    onDelete: 'SET NULL', 
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'rewardId' })
   reward: Reward;
@@ -64,7 +66,9 @@ export class UserGame {
   @Column({ nullable: true })
   shopId: string;
 
-  @ManyToOne(() => Shop)
+  @ManyToOne(() => Shop, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 }
