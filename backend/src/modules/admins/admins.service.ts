@@ -21,6 +21,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { AdminStatus } from './enums/admin-status.enum';
 import { Shop } from '../shops/entities/shop.entity';
 import { ShopStatus } from '../shops/enums/shop-status.enum';
+import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AdminsService {
@@ -298,6 +299,37 @@ export class AdminsService {
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         admin: updatedAdmin,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async findAdminsByIdAndStatus(id: string): Promise<
+    | ApiResponseInterface<{
+        admins: Admin;
+      }>
+    | ErrorResponseInterface
+  > {
+    try {
+      const admin = await this.adminsRepository.findAndCount({
+        where: {
+          id,
+          role: Role.ADMIN,
+        },
+        relations: [
+          'shops',
+          'shops.rewards',
+          'shops.chosenActions',
+          'shops.activeGameAssignments',
+        ],
+
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        admin,
       });
     } catch (error) {
       return handleServiceError(error);
