@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 @Module({
   imports: [TypeOrmModule.forFeature([ActionClick, Shop, ChosenAction])],
   controllers: [ActionClickController],
-  providers: [ActionClickService,JwtService],
+  providers: [ActionClickService, JwtService],
   exports: [ActionClickService],
 })
 export class ActionClickModule {}

@@ -8,7 +8,9 @@ import { ActionClick } from '../action-click/entities/action-click.entity';
 import { Shop } from '../shops/entities/shop.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChosenAction, Action, ActionClick, Shop])],
+  imports: [
+    TypeOrmModule.forFeature([ChosenAction, Action, ActionClick, Shop]),
+  ],
   controllers: [ChosenActionController],
   providers: [ChosenActionService],
   exports: [ChosenActionService],

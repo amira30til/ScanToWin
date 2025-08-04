@@ -11,7 +11,12 @@ import {
 import { ActionClickService } from './action-click.service';
 import { CreateActionClickDto } from './dto/create-action-click.dto';
 import { UpdateActionClickDto } from './dto/update-action-click.dto';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { ActionClick } from './entities/action-click.entity';
 import { AdminGuard } from '../auth/guards/admins.guard';
 @ApiBearerAuth()
