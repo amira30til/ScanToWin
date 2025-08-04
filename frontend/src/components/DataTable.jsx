@@ -1,6 +1,6 @@
 import { TableContainer, Thead, Tr, Th, Tbody, Table } from "@chakra-ui/react";
 
-const DataTable = ({ data, headers, rows, ...rest }) => (
+const DataTable = ({ headers, children, ...rest }) => (
   <TableContainer
     border="1px"
     borderColor="gray.300"
@@ -16,13 +16,7 @@ const DataTable = ({ data, headers, rows, ...rest }) => (
           ))}
         </Tr>
       </Thead>
-      <Tbody>
-        {data?.map((item, index) => (
-          <Tr key={index} fontSize="xs">
-            {rows(item, index)}
-          </Tr>
-        ))}
-      </Tbody>
+      <Tbody>{children}</Tbody>
     </Table>
   </TableContainer>
 );

@@ -1,59 +1,37 @@
-import { useLogout } from "@/hooks";
-import { useNavigate } from "react-router-dom";
-
-import Logo from "@/components/Logo";
-import Games from "./components/Games";
+import Games from "./components/games";
 import Actions from "./components/actions";
 import Admins from "./components/admins";
 
-import { Flex, Box, Button, Heading } from "@chakra-ui/react";
+import { Flex, Box, Heading, Alert, AlertIcon } from "@chakra-ui/react";
 
 const SuperAdmin = () => {
-  const navigate = useNavigate();
-  const logout = useLogout();
-
-  const signOut = async () => {
-    await logout();
-    navigate("/login");
-  };
-
   return (
-    <Box w="100%">
-      <Flex
-        justify="space-between"
-        align="center"
-        w="100%"
-        py={2}
-        px={4}
-        bg="surface.navigation"
-        shadow="md"
-      >
-        <Logo h="100px" w="unset" objectFit="unset" />
-        <Button
-          colorScheme="primary"
-          variant="outline"
-          type="button"
-          size="sm"
-          onClick={signOut}
-        >
-          Sign Out
-        </Button>
+    <Box p={4} py={8}>
+      <Heading size="lg">Super Admin Home</Heading>
+
+      <Flex direction="column" gap={8} py={8}>
+        <Heading size="md">Admins List</Heading>
+        <Alert status="info" borderRadius="md">
+          <AlertIcon />
+          Archived admins, won't be able to use their accounts, and the their
+          games will be disabled
+        </Alert>
+        <Admins />
+
+        <Heading size="md">Actions List</Heading>
+        <Alert status="info" borderRadius="md">
+          <AlertIcon />
+          Non active actions, won't be shown to the admins
+        </Alert>
+        <Actions />
+
+        <Heading size="md">Games</Heading>
+        <Alert status="info" borderRadius="md">
+          <AlertIcon />
+          Archived games will be seen as "coming soon" to the admins
+        </Alert>
+        <Games />
       </Flex>
-      <Box p={4} py={8}>
-        <Heading size="lg">Super Admin Home</Heading>
-
-        <Flex direction="column" gap={8} py={8}>
-          <Heading size="md">Admins List</Heading>
-
-          <Admins />
-
-          <Heading size="md">Actions List</Heading>
-
-          <Actions />
-
-          <Games />
-        </Flex>
-      </Box>
     </Box>
   );
 };
