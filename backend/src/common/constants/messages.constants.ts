@@ -9,6 +9,8 @@ export const UserMessages = {
   CANNOT_REPORT_ADMIN: 'Forbidden: cannot report admin',
   USER_UPDATED: 'User udated successfully.',
   USER_DELETED: 'User deleted successfully.',
+   USER_DELETE_SUCCESS: (id: string) =>
+    `User with ID ${id} deleted successfully`,
 };
 
 export const CategoryMessages = {

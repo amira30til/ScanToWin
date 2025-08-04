@@ -227,8 +227,8 @@ export class ShopsController {
     return this.shopsService.updateByAdmin(id, adminId, updateShopDto, logo);
   }
 
-  // @ApiBearerAuth()
-  // @UseGuards(SuperAdminGuard)
+  //@ApiBearerAuth()
+  //@UseGuards(SuperAdminGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a shop by ID (Super Admin only)' })
   @ApiResponse({
