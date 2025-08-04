@@ -28,7 +28,6 @@ const AdminDetails = () => {
   const { data: admin, isLoading } = useQuery({
     queryKey: ["admin-by-id", adminId],
     queryFn: async () => {
-      console.log(adminId);
       const response = await getAdminById(axiosPrivate, adminId);
       return response.data.data.admin;
     },

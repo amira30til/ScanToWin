@@ -69,7 +69,6 @@ const Games = () => {
     );
 
     const response = await createGame(axiosPrivate, formData);
-
     return response.data.game;
   };
 

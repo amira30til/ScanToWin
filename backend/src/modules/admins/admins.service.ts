@@ -294,6 +294,11 @@ export class AdminsService {
         throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
       }
 
+      await this.shopsRepository.update(
+        { adminId: admin.id },
+        { status: ShopStatus.ACTIVE },
+      );
+
       admin.adminStatus = AdminStatus.ACTIVE;
       const updatedAdmin = await this.adminsRepository.save(admin);
 
