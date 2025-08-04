@@ -319,7 +319,7 @@ export class AdminsService {
           'shops',
           'shops.rewards',
           'shops.chosenActions',
-          'shops.activeGameAssignments',
+          'shops.activeGameAssignments.game',
         ],
 
         order: {
