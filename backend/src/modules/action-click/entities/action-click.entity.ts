@@ -19,7 +19,9 @@ export class ActionClick {
   @JoinColumn({ name: 'chosenActionId' })
   chosenAction: ChosenAction;
 
-  @ManyToOne(() => Shop)
+  @ManyToOne(() => Shop,{
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 }
