@@ -11,7 +11,9 @@ describe('GamePlayTrackingController', () => {
       providers: [GamePlayTrackingService],
     }).compile();
 
-    controller = module.get<GamePlayTrackingController>(GamePlayTrackingController);
+    controller = module.get<GamePlayTrackingController>(
+      GamePlayTrackingController,
+    );
   });
 
   it('should be defined', () => {
