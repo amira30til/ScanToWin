@@ -11,7 +11,9 @@ describe('SubscriptionPlanController', () => {
       providers: [SubscriptionPlanService],
     }).compile();
 
-    controller = module.get<SubscriptionPlanController>(SubscriptionPlanController);
+    controller = module.get<SubscriptionPlanController>(
+      SubscriptionPlanController,
+    );
   });
 
   it('should be defined', () => {

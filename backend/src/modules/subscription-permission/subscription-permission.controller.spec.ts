@@ -11,7 +11,9 @@ describe('SubscriptionPermissionController', () => {
       providers: [SubscriptionPermissionService],
     }).compile();
 
-    controller = module.get<SubscriptionPermissionController>(SubscriptionPermissionController);
+    controller = module.get<SubscriptionPermissionController>(
+      SubscriptionPermissionController,
+    );
   });
 
   it('should be defined', () => {
