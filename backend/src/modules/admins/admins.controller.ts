@@ -27,6 +27,8 @@ import {
 import { AdminStatus } from './enums/admin-status.enum';
 import { AdminGuard, SuperAdminGuard } from '../auth/guards/admins.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Admin } from './entities/admin.entity';
+import { ApiResponseInterface, ErrorResponseInterface } from 'src/common/interfaces/response.interface';
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
@@ -351,5 +353,60 @@ export class AdminsController {
   })
   restore(@Param('id') id: string) {
     return this.adminsService.updateStatus(id, AdminStatus.ACTIVE);
+  }
+  @Get('by-id-and-status/:id')
+  @ApiOperation({
+    summary: 'Get Admins by ID and Status (with optional pagination)',
+    description: `Fetch a list of admins by their unique ID and status. Supports optional pagination. Also returns related entities: shops, rewards, users, chosenAction, and activeGameAssignments.`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the admin to fetch',
+    type: String,
+    example: 'a7e5d2e2-9c5e-4c1a-a9b5-fc8b1d5f9b12',
+  })
+  @ApiQuery({
+    name: 'status',
+    enum: AdminStatus,
+    required: true,
+    description: 'Status of the admin (e.g., ACTIVE, INACTIVE, DELETED)',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination (optional)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Number of results per page (optional)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully fetched list of admins',
+    type: Admin,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Admin not found',
+  })
+  async getAdminsByIdAndStatus(
+    @Param('id') id: string,
+    @Query('status') status: AdminStatus,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ): Promise<
+    | ApiResponseInterface<{
+        admins: Admin[];
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    | ErrorResponseInterface
+  > {
+    return this.adminsService.findAdminsByIdAndStatus(id, status, page, limit);
   }
 }
