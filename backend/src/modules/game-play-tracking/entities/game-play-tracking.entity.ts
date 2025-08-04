@@ -24,7 +24,9 @@ export class GamePlayTracking {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Shop)
+  @ManyToOne(() => Shop, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 
@@ -32,7 +34,9 @@ export class GamePlayTracking {
   @JoinColumn({ name: 'gameId' })
   game: Game;
 
-  @ManyToOne(() => ActiveGameAssignment)
+  @ManyToOne(() => ActiveGameAssignment, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'activeGameAssignmentId' })
   activeGameAssignment: ActiveGameAssignment;
 

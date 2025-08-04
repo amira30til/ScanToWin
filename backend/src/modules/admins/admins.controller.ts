@@ -378,12 +378,29 @@ export class AdminsController {
     status: 404,
     description: 'Admin not found',
   })
-  async getAdminsByIdAndStatus(@Param('id') id: string): Promise<
-    | ApiResponseInterface<{
-        admins: Admin;
-      }>
-    | ErrorResponseInterface
-  > {
-    return this.adminsService.findAdminsByIdAndStatus(id);
+  async getAdminsByIdAndStatus(
+    @Param('id') id: string,
+  ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
+    return this.adminsService.findAdminById(id);
+  }
+  //@ApiBearerAuth()
+  //@UseGuards(SuperAdminGuard)
+  @Delete('delete/:id')
+  @ApiOperation({ summary: 'Delete a Admin by ID (Super Admin only)' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Admin deleted successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Admin not found',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID of the Admin to delete',
+    type: String,
+  })
+  removeAdmin(@Param('id') id: string) {
+    return this.adminsService.removeAdmin(id);
   }
 }
