@@ -114,21 +114,23 @@ const Admins = () => {
 
               return (
                 <Tr key={index} fontSize="sm">
-                  <Td>{admin?.email}</Td>
+                  <Td fontWeight="semibold">{admin?.email}</Td>
                   <Td>{admin?.role}</Td>
                   <Td>
                     <Badge colorScheme={statusColor}>{statusText}</Badge>
                   </Td>
                   <Td>{admin?.tel}</Td>
                   <Td>
-                    {DateTime.fromJSDate(new Date(admin?.createdAt)).toFormat(
-                      "dd-MM-yyyy 'à' HH:mm",
-                    )}
+                    {admin?.createdAt &&
+                      DateTime.fromJSDate(new Date(admin?.createdAt)).toFormat(
+                        "dd-MM-yyyy 'à' HH:mm",
+                      )}
                   </Td>
                   <Td>
-                    {DateTime.fromJSDate(new Date(admin?.updatedAt)).toFormat(
-                      "dd-MM-yyyy 'à' HH:mm",
-                    )}
+                    {admin?.updatedAt &&
+                      DateTime.fromJSDate(new Date(admin?.updatedAt)).toFormat(
+                        "dd-MM-yyyy 'à' HH:mm",
+                      )}
                   </Td>
                   <Td>
                     <Flex justify="center" gap={2}>
@@ -149,7 +151,6 @@ const Admins = () => {
                           isLoading={archiveAdminMutation.isPending}
                         />
                       )}
-
                       {admin.adminStatus === "ARCHIVED" && (
                         <IconButton
                           label="restore admin"

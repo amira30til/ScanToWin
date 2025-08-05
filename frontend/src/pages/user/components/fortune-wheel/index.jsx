@@ -132,11 +132,13 @@ const FortuneWheel = ({ shop }) => {
               </Text>
             </VStack>
             <Box position="relative" display="inline-block">
-              <Wheel
-                onReward={rewardHandler}
-                primaryColor={shop?.gameColor1}
-                secondaryColor={shop?.gameColor2}
-              />
+              {shop && (
+                <Wheel
+                  onReward={rewardHandler}
+                  primaryColor={shop?.gameColor1}
+                  secondaryColor={shop?.gameColor2}
+                />
+              )}
 
               {showAction && (
                 <Box

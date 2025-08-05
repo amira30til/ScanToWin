@@ -9,6 +9,7 @@ import NotFound from "./components/NotFound";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Login from "./pages/auth/Login";
 import SuperAdmin from "./pages/super-admin";
+import AdminDetails from "./pages/super-admin/admin-details";
 import Dashboard from "./pages/admin/dashboard";
 import Google from "./pages/admin/dashboard/Google";
 import Facebook from "./pages/admin/dashboard/Facebook";
@@ -21,7 +22,6 @@ import CreateShop from "@/pages/admin/CreateShop";
 import Play from "@/pages/user";
 import Redeem from "@/pages/user/Redeem";
 import ComingSoon from "./components/ComingSoon";
-import AdminDetails from "./pages/super-admin/AdminDetails";
 
 const ADMIN_ROLE = "ADMIN";
 const SUPER_ADMIN_ROLE = "SUPER_ADMIN";

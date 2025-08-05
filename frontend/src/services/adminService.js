@@ -12,7 +12,10 @@ export const restoreAdmin = async (axios, id) => {
   return await axios.patch(`${ADMIN_URL}/${id}/restore`);
 };
 
-// TODO: right now archive admin is "delete", you will create a new delete?
 export const archiveAdmin = async (axios, id) => {
   return await axios.delete(`${ADMIN_URL}/${id}`);
+};
+
+export const deleteAdmin = async (axios, id) => {
+  return await axios.delete(`${ADMIN_URL}/delete/${id}`);
 };
