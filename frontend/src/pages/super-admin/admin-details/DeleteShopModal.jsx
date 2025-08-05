@@ -1,7 +1,7 @@
 import { useAxiosPrivate } from "@/hooks";
 import { useMutation } from "@tanstack/react-query";
 
-import { deleteGame } from "@/services/gameService";
+import { deleteShop } from "@/services/shopService";
 
 import {
   Flex,
@@ -15,20 +15,20 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 
-const DeleteGameModal = ({ isOpen, onClose, gameId, refetch }) => {
+const DeleteShopModal = ({ isOpen, onClose, shopId, refetch }) => {
   const axiosPrivate = useAxiosPrivate();
 
-  const deleteGameMutation = useMutation({
-    mutationFn: async (gameId) => await deleteGame(axiosPrivate, gameId),
+  const deleteShopMutation = useMutation({
+    mutationFn: async (shopId) => await deleteShop(axiosPrivate, shopId),
     onSuccess: () => {
       refetch();
       onClose();
     },
   });
 
-  const deleteGameHandler = () => {
-    if (!!gameId) {
-      deleteGameMutation.mutate(gameId);
+  const deleteShopHandler = () => {
+    if (!!shopId) {
+      deleteShopMutation.mutate(shopId);
     }
   };
 
@@ -36,9 +36,9 @@ const DeleteGameModal = ({ isOpen, onClose, gameId, refetch }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create an Action</ModalHeader>
+        <ModalHeader>Delete a shop</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Are you sure you want to delete this game?</ModalBody>
+        <ModalBody>Are you sure you want to delete this shop?</ModalBody>
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
@@ -46,8 +46,8 @@ const DeleteGameModal = ({ isOpen, onClose, gameId, refetch }) => {
             </Button>
             <Button
               colorScheme="red"
-              onClick={deleteGameHandler}
-              isLoading={deleteGameMutation.isPending}
+              onClick={deleteShopHandler}
+              isLoading={deleteShopMutation.isPending}
             >
               Delete
             </Button>
@@ -58,4 +58,4 @@ const DeleteGameModal = ({ isOpen, onClose, gameId, refetch }) => {
   );
 };
 
-export default DeleteGameModal;
+export default DeleteShopModal;

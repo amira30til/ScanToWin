@@ -1,5 +1,5 @@
 import { useLogout } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 
 import { getActionsByShop } from "@/services/actionService";
@@ -43,6 +43,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaUsers } from "react-icons/fa6";
 import { BiLogOut } from "react-icons/bi";
 import { AddIcon } from "@chakra-ui/icons";
+import { startTransition } from "react";
 
 const actionMap = {
   "Avis Google": { icon: FaGoogle, link: "google" },
@@ -123,6 +124,7 @@ const SidebarContent = ({ shops, ...rest }) => {
   const location = useLocation();
   const queryString = location.search;
   const logout = useLogout();
+  const queryClient = useQueryClient();
 
   const { data: actionsByShop, isLoading: actionsByShopIsLoading } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -149,7 +151,10 @@ const SidebarContent = ({ shops, ...rest }) => {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    await queryClient.cancelQueries();
+    startTransition(() => {
+      navigate("/login");
+    });
   };
 
   return (

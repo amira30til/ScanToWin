@@ -1,6 +1,6 @@
-import Games from "./components/games";
-import Actions from "./components/actions";
-import Admins from "./components/admins";
+import Games from "./_components/games";
+import Actions from "./_components/actions";
+import Admins from "./_components/admins";
 
 import { Flex, Box, Heading, Alert, AlertIcon } from "@chakra-ui/react";
 

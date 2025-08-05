@@ -18,7 +18,6 @@ import {
   Flex,
   Button,
   FormControl,
-  Input,
   Select,
   FormLabel,
   FormErrorMessage,
@@ -212,11 +211,19 @@ const Games = () => {
 
             <FormControl isInvalid={!!formState?.errors?.name}>
               <FormLabel>Name</FormLabel>
-              <Input
-                {...register("name")}
+
+              <Select
+                bg="white"
+                borderRadius="md"
                 focusBorderColor="primary.500"
-                placeholder="Enter game name"
-              />
+                cursor="pointer"
+                {...register("name")}
+              >
+                <option value="Fortune Wheel">Fortune Wheel</option>
+                <option value="Mysterious Box">Mysterious Box</option>
+                <option value="Slot Machine">Slot Machine</option>
+              </Select>
+
               <FormErrorMessage>
                 {formState?.errors?.name?.message}
               </FormErrorMessage>

@@ -55,7 +55,8 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
     }
   }, [rewards, primary500, secondary500]);
 
-  if (isLoadingRewards || isLoadingRandomReward) return <Spinner />;
+  if (isLoadingRewards || isLoadingRandomReward || colors?.length < 1)
+    return <Spinner />;
 
   return (
     <VStack spacing={8}>
