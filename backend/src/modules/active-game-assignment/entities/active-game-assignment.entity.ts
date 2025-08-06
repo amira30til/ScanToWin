@@ -21,9 +21,6 @@ import {
 export class ActiveGameAssignment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  // @ApiProperty()
-  // @Column({ nullable: true })
-  // name: string;
 
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

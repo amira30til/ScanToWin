@@ -22,7 +22,6 @@ import {
 } from 'src/common/interfaces/response.interface';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { ActiveGameAssignmentService } from '../active-game-assignment/active-game-assignment.service';
-//import { differenceInHours } from 'date-fns';
 
 @Injectable()
 export class UserGameService {
@@ -33,7 +32,6 @@ export class UserGameService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
-    private readonly activeGameAssignmentService: ActiveGameAssignmentService,
   ) {}
 
   async create(
@@ -330,145 +328,6 @@ export class UserGameService {
   }
   /////////////////////////////////////////////////////////
 
-  // async registerUserPlay(
-  //   userId: string,
-  //   qrCodeIdentifier: string,
-  // ): Promise<UserGame> {
-  //   // Validate the user exists
-  //   const user = await this.userRepository.findOne({ where: { id: userId } });
-  //   if (!user) {
-  //     throw new NotFoundException(`User with ID ${userId} not found`);
-  //   }
-
-  //   // Get the shop and active game from QR code
-  //   const response =
-  //     await this.activeGameAssignmentService.getShopByQrIdentifier(
-  //       qrCodeIdentifier,
-  //     );
-
-  //   if ('error' in response) {
-  //     throw new NotFoundException(response.error);
-  //   }
-
-  //   const { shop, activeGame } = response.data;
-
-  //   // Check if user has played this game at this shop before
-  //   let userPlay = await this.userGameRepository.findOne({
-  //     where: {
-  //       userId,
-  //       activeGameAssignmentId: activeGame.id,
-  //     },
-  //   });
-
-  //   // If user has played before, check cooldown
-  //   if (userPlay) {
-  //     const hoursSinceLastPlay = differenceInHours(
-  //       new Date(),
-  //       userPlay.lastPlayedAt,
-  //     );
-
-  //     // Enforce 24-hour cooldown
-  //     if (hoursSinceLastPlay < 24) {
-  //       const hoursRemaining = 24 - hoursSinceLastPlay;
-  //       throw new ConflictException(
-  //         `You can play this game again in ${Math.ceil(hoursRemaining)} hours`,
-  //       );
-  //     }
-
-  //     // Update play count and timestamp
-  //     userPlay.playCount += 1;
-  //     userPlay.lastPlayedAt = new Date();
-  //   } else {
-  //     // Create new user play record
-  //     userPlay = this.userGameRepository.create({
-  //       userId,
-  //       activeGameAssignmentId: activeGame.id,
-  //       playCount: 1,
-  //       lastPlayedAt: new Date(),
-  //     });
-  //   }
-
-  //   return this.userGameRepository.save(userPlay);
-  // }
-
-  // async processQrGamePlay(qrCodeIdentifier: string, userId: string) {
-  //   try {
-  //     const user = await this.userRepository.findOne({ where: { id: userId } });
-  //     if (!user) {
-  //       throw new NotFoundException(UserMessages.USER_NOT_FOUND(userId));
-  //     }
-
-  //     const response =
-  //       await this.activeGameAssignmentService.getShopByQrIdentifier(
-  //         qrCodeIdentifier,
-  //       );
-
-  //     if ('error' in response) {
-  //       throw new NotFoundException(response.error);
-  //     }
-
-  //     const { shop, activeGame } = response.data;
-
-  //     const existingUserGame = await this.userGameRepository.findOne({
-  //       where: {
-  //         userId: user.id,
-  //         activeGameAssignmentId: activeGame.id,
-  //       },
-  //     });
-
-  //     if (existingUserGame) {
-  //       const lastPlayedAt = new Date(existingUserGame.lastPlayedAt);
-  //       const currentTime = new Date();
-  //       const hoursSinceLastPlay =
-  //         (currentTime.getTime() - lastPlayedAt.getTime()) / (1000 * 60 * 60);
-
-  //       //TODO:
-  //       //  24hour playing condition
-  //       //or can we handle this in the front better ??
-  //       if (hoursSinceLastPlay < 24) {
-  //         const hoursRemaining = Math.ceil(24 - hoursSinceLastPlay);
-  //         throw new ConflictException(
-  //           `You need to wait ${hoursRemaining} more hour(s) before playing this game again`,
-  //         );
-  //       }
-
-  //       existingUserGame.playCount += 1;
-  //       existingUserGame.lastPlayedAt = currentTime;
-  //       const updatedUserGame =
-  //         await this.userGameRepository.save(existingUserGame);
-
-  //       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-  //         userGame: updatedUserGame,
-  //         game: activeGame.game,
-  //         message: 'Game play recorded successfully',
-  //       });
-  //     } else {
-  //       const newUserGame = this.userGameRepository.create({
-  //         user,
-  //         userId: user.id,
-  //         activeGameAssignment: activeGame,
-  //         activeGameAssignmentId: activeGame.id,
-  //         gameId: activeGame.gameId,
-  //         playCount: 1,
-  //         lastPlayedAt: new Date(),
-  //       });
-
-  //       const savedUserGame = await this.userGameRepository.save(newUserGame);
-
-  //       user.totalPlayedGames = (user.totalPlayedGames || 0) + 1;
-  //       await this.userRepository.save(user);
-
-  //       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-  //         userGame: savedUserGame,
-  //         game: activeGame.game,
-  //         message: 'First game play recorded successfully',
-  //       });
-  //     }
-  //   } catch (error) {
-  //     return handleServiceError(error);
-  //   }
-  // }
-
   async getUserPlayHistoryForShop(userId: number, shopId: number) {
     try {
       const userGames = await this.userGameRepository
@@ -487,52 +346,6 @@ export class UserGameService {
       return handleServiceError(error);
     }
   }
-
-  // async canUserPlay(userId: string, qrCodeIdentifier: string) {
-  //   try {
-  //     const response =
-  //       await this.activeGameAssignmentService.getShopByQrIdentifier(
-  //         qrCodeIdentifier,
-  //       );
-
-  //     if ('error' in response) {
-  //       throw new NotFoundException(response.error);
-  //     }
-
-  //     const { shop, activeGame } = response.data;
-
-  //     const existingUserGame = await this.userGameRepository.findOne({
-  //       where: {
-  //         userId,
-  //         activeGameAssignmentId: activeGame.id,
-  //       },
-  //     });
-
-  //     if (!existingUserGame) {
-  //       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-  //         canPlay: true,
-  //         message: 'User can play this game',
-  //       });
-  //     }
-
-  //     const lastPlayedAt = new Date(existingUserGame.lastPlayedAt);
-  //     const currentTime = new Date();
-  //     const hoursSinceLastPlay =
-  //       (currentTime.getTime() - lastPlayedAt.getTime()) / (1000 * 60 * 60);
-
-  //     return ApiResponse.success(HttpStatusCodes.SUCCESS, {
-  //       canPlay: hoursSinceLastPlay >= 24,
-  //       hoursRemaining:
-  //         hoursSinceLastPlay < 24 ? Math.ceil(24 - hoursSinceLastPlay) : 0,
-  //       message:
-  //         hoursSinceLastPlay >= 24
-  //           ? 'User can play this game'
-  //           : 'User must wait before playing again',
-  //     });
-  //   } catch (error) {
-  //     return handleServiceError(error);
-  //   }
-  // }
 
   //////////////////////////////////////////////////
   async verifyUserCooldown(

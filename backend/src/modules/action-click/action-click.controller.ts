@@ -1,14 +1,5 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Body, Param, UseGuards } from '@nestjs/common';
 import { ActionClickService } from './action-click.service';
-import { UpdateActionClickDto } from './dto/update-action-click.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -49,27 +40,5 @@ export class ActionClickController {
   })
   findByAction(@Param('chosenActionId') chosenActionId: string) {
     return this.actionClickService.findAllByChosenActionId(chosenActionId);
-  }
-  @Get()
-  findAll() {
-    return this.actionClickService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.actionClickService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateActionClickDto: UpdateActionClickDto,
-  ) {
-    return this.actionClickService.update(+id, updateActionClickDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.actionClickService.remove(+id);
   }
 }

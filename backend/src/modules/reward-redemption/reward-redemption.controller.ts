@@ -1,16 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { RewardRedemptionService } from './reward-redemption.service';
-import { CreateRewardRedemptionDto } from './dto/create-reward-redemption.dto';
-import { UpdateRewardRedemptionDto } from './dto/update-reward-redemption.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -65,28 +54,5 @@ export class RewardRedemptionController {
     ApiResponseInterface<RewardRedemption[]> | ErrorResponseInterface
   > {
     return this.rewardRedemptionService.findAllByChosenActionId(chosenActionId);
-  }
-
-  @Get()
-  findAll() {
-    return this.rewardRedemptionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.rewardRedemptionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateRewardRedemptionDto: UpdateRewardRedemptionDto,
-  ) {
-    return this.rewardRedemptionService.update(+id, updateRewardRedemptionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rewardRedemptionService.remove(+id);
   }
 }

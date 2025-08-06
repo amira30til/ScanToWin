@@ -38,10 +38,6 @@ export class ShopsService {
     private shopsRepository: Repository<Shop>,
     @InjectRepository(Admin)
     private adminsRepository: Repository<Admin>,
-    @InjectRepository(Game)
-    private readonly gameRepository: Repository<Game>,
-    @InjectRepository(ActiveGameAssignment)
-    private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
     private cloudinaryService: CloudinaryService,
     @InjectRepository(ChosenAction)
     private readonly chosenActionRepository: Repository<ChosenAction>,

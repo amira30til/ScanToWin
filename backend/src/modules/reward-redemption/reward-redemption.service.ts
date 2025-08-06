@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateRewardRedemptionDto } from './dto/create-reward-redemption.dto';
 import { UpdateRewardRedemptionDto } from './dto/update-reward-redemption.dto';
 import { RewardRedemption } from './entities/reward-redemption.entity';
 import { Repository } from 'typeorm';
@@ -91,20 +90,5 @@ export class RewardRedemptionService {
     } catch (error) {
       return handleServiceError(error);
     }
-  }
-  findAll() {
-    return `This action returns all rewardRedemption`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} rewardRedemption`;
-  }
-
-  update(id: number, updateRewardRedemptionDto: UpdateRewardRedemptionDto) {
-    return `This action updates a #${id} rewardRedemption`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} rewardRedemption`;
   }
 }

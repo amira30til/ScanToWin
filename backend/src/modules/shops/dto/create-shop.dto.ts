@@ -12,7 +12,7 @@ import { ShopStatus } from '../enums/shop-status.enum';
 export class CreateShopDto {
   @ApiProperty({
     description: 'Name of the shop',
-    example: 'ZVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+    example: 'Shop1',
   })
   @IsNotEmpty()
   @IsString()
