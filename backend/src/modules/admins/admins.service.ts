@@ -21,6 +21,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { AdminStatus } from './enums/admin-status.enum';
 import { Shop } from '../shops/entities/shop.entity';
 import { ShopStatus } from '../shops/enums/shop-status.enum';
+import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AdminsService {
@@ -300,6 +301,56 @@ export class AdminsService {
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         admin: updatedAdmin,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+  async findAdminById(
+    id: string,
+  ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
+    try {
+      const admin = await this.adminsRepository.findOne({
+        where: {
+          id,
+          role: Role.ADMIN,
+        },
+        relations: [
+          'shops',
+          'shops.rewards',
+          'shops.chosenActions',
+          'shops.activeGameAssignments.game',
+        ],
+
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, admin);
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }
+
+  async removeAdmin(
+    id: string,
+  ): Promise<
+    ApiResponseInterface<{ message: string }> | ErrorResponseInterface
+  > {
+    try {
+      const admin = await this.adminsRepository.findOne({
+        where: { id, adminStatus: AdminStatus.ACTIVE },
+      });
+
+      if (!admin) {
+        throw new NotFoundException(UserMessages.USER_NOT_FOUND(id));
+      }
+
+      await this.adminsRepository.remove(admin);
+
+      return ApiResponse.success(HttpStatusCodes.SUCCESS, {
+        message: UserMessages.USER_DELETE_SUCCESS(id),
       });
     } catch (error) {
       return handleServiceError(error);
