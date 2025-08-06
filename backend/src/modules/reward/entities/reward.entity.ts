@@ -53,7 +53,9 @@ export class Reward {
   // @Column({ nullable: true })
   // categoryId: string;
 
-  @ManyToOne(() => Shop, (shop) => shop.rewards)
+  @ManyToOne(() => Shop, (shop) => shop.rewards, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 

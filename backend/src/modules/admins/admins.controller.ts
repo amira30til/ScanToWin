@@ -27,6 +27,11 @@ import {
 import { AdminStatus } from './enums/admin-status.enum';
 import { AdminGuard, SuperAdminGuard } from '../auth/guards/admins.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Admin } from './entities/admin.entity';
+import {
+  ApiResponseInterface,
+  ErrorResponseInterface,
+} from 'src/common/interfaces/response.interface';
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
@@ -351,5 +356,51 @@ export class AdminsController {
   })
   restore(@Param('id') id: string) {
     return this.adminsService.updateStatus(id, AdminStatus.ACTIVE);
+  }
+  @Get('by-id/:id')
+  @ApiOperation({
+    summary: 'Get Admins by ID and Status (with optional pagination)',
+    description: `Fetch a list of admins by their unique ID and status. Supports optional pagination. Also returns related entities: shops, rewards, users, chosenAction, and activeGameAssignments.`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the admin to fetch',
+    type: String,
+    example: 'a7e5d2e2-9c5e-4c1a-a9b5-fc8b1d5f9b12',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully fetched list of admins',
+    type: Admin,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Admin not found',
+  })
+  async getAdminsByIdAndStatus(
+    @Param('id') id: string,
+  ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
+    return this.adminsService.findAdminById(id);
+  }
+  //@ApiBearerAuth()
+  //@UseGuards(SuperAdminGuard)
+  @Delete('delete/:id')
+  @ApiOperation({ summary: 'Delete a Admin by ID (Super Admin only)' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Admin deleted successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Admin not found',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID of the Admin to delete',
+    type: String,
+  })
+  removeAdmin(@Param('id') id: string) {
+    return this.adminsService.removeAdmin(id);
   }
 }

@@ -8,9 +8,9 @@ import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RewardRedemption, Shop, ChosenAction,])],
+  imports: [TypeOrmModule.forFeature([RewardRedemption, Shop, ChosenAction])],
   controllers: [RewardRedemptionController],
-  providers: [RewardRedemptionService,JwtService],
+  providers: [RewardRedemptionService, JwtService],
   exports: [RewardRedemptionService],
 })
 export class RewardRedemptionModule {}

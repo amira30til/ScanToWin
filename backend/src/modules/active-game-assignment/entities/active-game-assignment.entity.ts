@@ -36,7 +36,9 @@ export class ActiveGameAssignment {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  @ManyToOne(() => Admin, (admin) => admin.activeGameAssignments)
+  @ManyToOne(() => Admin, (admin) => admin.activeGameAssignments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'adminId' })
   admin: Admin;
 
@@ -49,10 +51,14 @@ export class ActiveGameAssignment {
 
   @Column({ nullable: true })
   gameId: string;
-  @OneToMany(() => UserGame, (userGame) => userGame.activeGameAssignment)
+  @OneToMany(() => UserGame, (userGame) => userGame.activeGameAssignment, {
+    onDelete: 'CASCADE',
+  })
   userGames: UserGame[];
 
-  @ManyToOne(() => Shop, (shop) => shop.activeGameAssignments)
+  @ManyToOne(() => Shop, (shop) => shop.activeGameAssignments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'shopId' })
   shop: Shop;
 
