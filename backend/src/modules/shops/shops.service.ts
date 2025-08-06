@@ -284,7 +284,7 @@ export class ShopsService {
         },
       });
 
-      if (!shop) {
+      if (!shop || !id || !adminId) {
         throw new NotFoundException(
           ShopMessages.SHOP_NOT_FOUND_FOR_ADMIN(id, adminId),
         );
@@ -330,10 +330,10 @@ export class ShopsService {
   > {
     try {
       const shop = await this.shopsRepository.findOne({
-        where: { id, status: ShopStatus.ACTIVE },
+        where: { id },
       });
 
-      if (!shop) {
+      if (!shop || !id) {
         throw new NotFoundException(ShopMessages.SHOP_NOT_FOUND(id));
       }
 

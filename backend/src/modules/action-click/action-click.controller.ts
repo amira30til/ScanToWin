@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -9,7 +8,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ActionClickService } from './action-click.service';
-import { CreateActionClickDto } from './dto/create-action-click.dto';
 import { UpdateActionClickDto } from './dto/update-action-click.dto';
 import {
   ApiBearerAuth,
