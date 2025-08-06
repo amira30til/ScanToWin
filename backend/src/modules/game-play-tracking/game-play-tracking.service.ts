@@ -92,24 +92,4 @@ export class GamePlayTrackingService {
       return handleServiceError(error);
     }
   }
-
-  create(createGamePlayTrackingDto: CreateGamePlayTrackingDto) {
-    return 'This action adds a new gamePlayTracking';
-  }
-
-  findAll() {
-    return `This action returns all gamePlayTracking`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} gamePlayTracking`;
-  }
-
-  update(id: number, updateGamePlayTrackingDto: UpdateGamePlayTrackingDto) {
-    return `This action updates a #${id} gamePlayTracking`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} gamePlayTracking`;
-  }
 }

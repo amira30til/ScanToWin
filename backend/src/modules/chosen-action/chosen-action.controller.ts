@@ -11,10 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ChosenActionService } from './chosen-action.service';
-import {
-  CreateOrUpdateChosenActionItemDto,
-  UpsertChosenActionsDto,
-} from './dto/create-chosen-action.dto';
+import { UpsertChosenActionsDto } from './dto/create-chosen-action.dto';
 import { UpdateChosenActionDto } from './dto/update-chosen-action.dto';
 import {
   ApiBody,

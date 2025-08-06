@@ -6,7 +6,7 @@ import { ShopStatus } from '../enums/shop-status.enum';
 export class UpdateShopDto {
   @ApiProperty({
     description: 'Name of the shop',
-    example: 'ZVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+    example: 'Shop1',
     required: false,
   })
   @IsOptional()

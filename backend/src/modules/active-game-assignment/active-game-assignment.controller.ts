@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Body,
   Param,
   Delete,
   Post,
@@ -13,7 +12,6 @@ import {
   ApiResponseInterface,
   ErrorResponseInterface,
 } from 'src/common/interfaces/response.interface';
-//import { Shop } from '../shops/entities/shop.entity';
 import { ActiveGameAssignment } from './entities/active-game-assignment.entity';
 @ApiTags('Active Game Assignment')
 @Controller('active-game-assignment')
@@ -156,41 +154,4 @@ export class ActiveGameAssignmentController {
       shopId,
     );
   }
-
-  // // @Get('by-qr/:qrCodeIdentifier')
-  // // @ApiOperation({
-  // //   summary: 'Get shop by QR identifier',
-  // //   description:
-  // //     'Retrieves shop details and active game using the QR code identifier.',
-  // // })
-  // // @ApiParam({
-  // //   name: 'qrCodeIdentifier',
-  // //   description: 'QR code identifier of the shop',
-  // //   type: String,
-  // // })
-  // // @ApiResponse({
-  // //   status: HttpStatus.OK,
-  // //   description: 'Shop and active game details',
-  // //   schema: {
-  // //     type: 'object',
-  // //     properties: {
-  // //       shop: { $ref: '#/components/schemas/Shop' },
-  // //       activeGame: { $ref: '#/components/schemas/ActiveGameAssignment' },
-  // //     },
-  // //   },
-  // // })
-  // // @ApiResponse({
-  // //   status: HttpStatus.NOT_FOUND,
-  // //   description: 'Shop not found for the given QR identifier',
-  // // })
-  // // async getShopByQrIdentifier(
-  // //   @Param('qrCodeIdentifier') qrCodeIdentifier: string,
-  // // ): Promise<
-  // //   | ApiResponseInterface<{ shop: Shop; activeGame: ActiveGameAssignment }>
-  // //   | ErrorResponseInterface
-  // // > {
-  // //   return await this.activeGameAssignmentService.getShopByQrIdentifier(
-  // //     qrCodeIdentifier,
-  // //   );
-  // // }
 }
