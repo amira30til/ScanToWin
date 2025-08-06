@@ -52,11 +52,6 @@ export class Shop {
   @Column({ nullable: true })
   tel: string;
 
-  /////////should we keep same email of the first shop or allow them to change the credns
-  //   @ApiProperty()
-  //   @Column({ nullable: true })
-  //   email: string;
-
   @ApiProperty()
   @Column({ default: ShopStatus.ACTIVE })
   status: string;

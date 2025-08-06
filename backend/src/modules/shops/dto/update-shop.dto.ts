@@ -5,7 +5,7 @@ import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 export class UpdateShopDto {
   @ApiProperty({
     description: 'Name of the shop',
-    example: 'ZVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+    example: 'Shop1',
     required: false,
   })
   @IsOptional()

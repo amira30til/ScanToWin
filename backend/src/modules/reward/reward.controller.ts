@@ -7,12 +7,11 @@ import {
   Param,
   Delete,
   HttpStatus,
-  Req,
   UseGuards,
   Query,
 } from '@nestjs/common';
 import { RewardService } from './reward.service';
-import { CreateRewardDto, UpsertRewardsDto } from './dto/create-reward.dto';
+import { UpsertRewardsDto } from './dto/create-reward.dto';
 import { UpdateRewardDto } from './dto/update-reward.dto';
 import {
   ApiBearerAuth,
@@ -24,11 +23,6 @@ import {
 } from '@nestjs/swagger';
 import { AdminGuard } from '../auth/guards/admins.guard';
 import { RewardStatus } from './enums/reward-status.enums';
-import {
-  ApiResponseInterface,
-  ErrorResponseInterface,
-} from 'src/common/interfaces/response.interface';
-import { Reward } from './entities/reward.entity';
 
 @Controller('reward')
 export class RewardController {
