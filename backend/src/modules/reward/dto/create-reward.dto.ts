@@ -59,14 +59,6 @@ export class CreateRewardDto {
   @IsOptional()
   status?: RewardStatus;
 
-  // @ApiProperty({
-  //   description: 'Category ID for the reward',
-  //   example: 'uuid-string',
-  //   required: false,
-  // })
-  // @IsString()
-  // @IsOptional()
-  // categoryId?: string;
   @ApiProperty({
     description: 'shop ID for the reward',
     example: 'uuid-string',

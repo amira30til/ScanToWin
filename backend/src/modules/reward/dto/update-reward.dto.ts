@@ -49,13 +49,4 @@ export class UpdateRewardDto {
   status?: RewardStatus;
   @IsOptional()
   id?: string;
-
-  // @ApiProperty({
-  //   description: 'Category ID for the reward',
-  //   example: 'uuid-string',
-  //   required: false,
-  // })
-  // @IsString()
-  // @IsOptional()
-  // categoryId?: string;
 }
