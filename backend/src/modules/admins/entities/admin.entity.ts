@@ -66,8 +66,12 @@ export class Admin {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.admin)
+  @OneToMany(() => ActiveGameAssignment, (assignment) => assignment.admin, {
+    onDelete: 'CASCADE',
+  })
   activeGameAssignments: ActiveGameAssignment[];
-  @OneToMany(() => Shop, (shop) => shop.admin)
+  @OneToMany(() => Shop, (shop) => shop.admin, {
+    onDelete: 'CASCADE',
+  })
   shops: Shop[];
 }

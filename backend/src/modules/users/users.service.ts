@@ -24,6 +24,8 @@ import { UserGame } from '../user-game/entities/user-game.entity';
 import { Reward } from '../reward/entities/reward.entity';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { MailService } from '../mail/mail.service';
+import { GamePlayTracking } from '../game-play-tracking/entities/game-play-tracking.entity';
+import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +39,11 @@ export class UsersService {
     @InjectRepository(ActiveGameAssignment)
     private readonly activeGameAssignmentRepository: Repository<ActiveGameAssignment>,
     private readonly mailService: MailService,
+    @InjectRepository(GamePlayTracking)
+    private readonly gamePlayTrackingRepository: Repository<GamePlayTracking>,
+
+    @InjectRepository(ChosenAction)
+    private readonly chosenActionRepository: Repository<ChosenAction>,
   ) {}
 
   async create(
@@ -53,6 +60,16 @@ export class UsersService {
 
       if (!dto.shopId || !dto.rewardId) {
         throw new BadRequestException('Shop ID and Reward ID are required');
+      }
+      let chosenAction: ChosenAction | null = null;
+      chosenAction = await this.chosenActionRepository.findOne({
+        where: { id: dto.actionId },
+      });
+
+      if (!chosenAction) {
+        throw new NotFoundException(
+          `Chosen action with ID ${dto.actionId} not found`,
+        );
       }
 
       const reward = await this.rewardRepository.findOne({
@@ -120,7 +137,6 @@ export class UsersService {
             currentTime.getTime() - lastPlayedTime.getTime();
           const hoursDifference = timeDifference / (1000 * 60 * 60);
 
-
           if (hoursDifference < 24) {
             const remainingMs = 24 * 60 * 60 * 1000 - timeDifference;
             const nextPlayTime = new Date(
@@ -173,14 +189,22 @@ export class UsersService {
         userToNotify = await this.userRepository.save(existingUser);
       }
 
+      // ✅ Save game play tracking log only once using userToNotify
+      await this.gamePlayTrackingRepository.save({
+        user: userToNotify,
+        shop: reward.shop,
+        game: activeGameAssignment.game,
+        activeGameAssignment,
+        reward,
+        chosenAction,
+      });
+
       try {
         const validFromDate = new Date().toLocaleDateString();
         const validUntilDate = new Date(
           Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toLocaleDateString();
-        const emailCode = `REWARD-${dto.rewardId}-${Date.now()
-          .toString()
-          .slice(-6)}`;
+        const emailCode = `REWARD-${dto.rewardId}-${Date.now().toString().slice(-6)}`;
 
         await this.mailService.sendGiftEmail(
           `${userToNotify.firstName} ${userToNotify.lastName}`,
@@ -213,6 +237,7 @@ export class UsersService {
       return handleServiceError(error);
     }
   }
+
   async findAll(): Promise<
     ApiResponseInterface<User[]> | ErrorResponseInterface
   > {
