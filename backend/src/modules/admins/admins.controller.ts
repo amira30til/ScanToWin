@@ -383,8 +383,8 @@ export class AdminsController {
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     return this.adminsService.findAdminById(id);
   }
-  //@ApiBearerAuth()
-  //@UseGuards(SuperAdminGuard)
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @Delete('delete/:id')
   @ApiOperation({ summary: 'Delete a Admin by ID (Super Admin only)' })
   @ApiResponse({

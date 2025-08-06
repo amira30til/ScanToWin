@@ -18,13 +18,12 @@ import {
 } from 'src/common/interfaces/response.interface';
 import { ApiResponse } from 'src/common/utils/response.util';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, MoreThan, Not, Repository } from 'typeorm';
+import { MoreThan, Not, Repository } from 'typeorm';
 import { RewardCategory } from '../reward-category/entities/reward-category.entity';
 import { Shop } from '../shops/entities/shop.entity';
 import { Reward } from './entities/reward.entity';
 import { RewardStatus } from './enums/reward-status.enums';
 import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
-import { log } from 'console';
 
 @Injectable()
 export class RewardService {
@@ -291,17 +290,6 @@ export class RewardService {
         }
       }
 
-      // if (dto.categoryId) {
-      //   const category = await this.rewardCategoryRepository.findOne({
-      //     where: { id: dto.categoryId },
-      //   });
-      //   if (!category) {
-      //     throw new NotFoundException(
-      //       RewardMessages.CATEGORY_NOT_FOUND(dto.categoryId),
-      //     );
-      //   }
-      // }
-
       if (dto.name && dto.name !== reward.name) {
         const existingReward = await this.rewardRepository.findOne({
           where: { name: dto.name, shop: { id: shopId } },
@@ -317,7 +305,7 @@ export class RewardService {
 
       const updatedReward = await this.rewardRepository.findOne({
         where: { id },
-        relations: [/*'category'*/ 'shop'],
+        relations: ['shop'],
       });
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
@@ -363,7 +351,7 @@ export class RewardService {
       const skip = (page - 1) * limit;
 
       const queryOptions: any = {
-        relations: [/*'category'*/ 'shop'],
+        relations: ['shop'],
         order: { createdAt: 'ASC' },
         skip,
         take: limit,
@@ -391,7 +379,7 @@ export class RewardService {
   ): Promise<ApiResponseInterface<Reward> | ErrorResponseInterface> {
     const reward = await this.rewardRepository.findOne({
       where: { id },
-      relations: [/*/*'category'*/ 'shop'],
+      relations: ['shop'],
     });
 
     if (!reward) {
@@ -415,7 +403,7 @@ export class RewardService {
           status: RewardStatus.ACTIVE,
           shopId,
         },
-        relations: [/*'category'*/ 'shop'],
+        relations: ['shop'],
       });
 
       if (!reward) {
@@ -462,7 +450,7 @@ export class RewardService {
 
       const [rewards, total] = await this.rewardRepository.findAndCount({
         where: { status },
-        relations: [/*'category'*/ 'shop'],
+        relations: ['shop'],
         order: { createdAt: 'DESC' },
         skip,
         take: limit,

@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RewardCategory } from '../../reward-category/entities/reward-category.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -42,16 +41,6 @@ export class Reward {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  // @ManyToOne(() => RewardCategory, (category) => category.rewards, {
-  //   onDelete: 'SET NULL',
-  //   nullable: true,
-  // })
-  // @JoinColumn({ name: 'categoryId' })
-  // category: RewardCategory;
-
-  // @ApiProperty()
-  // @Column({ nullable: true })
-  // categoryId: string;
 
   @ManyToOne(() => Shop, (shop) => shop.rewards, {
     onDelete: 'CASCADE',
