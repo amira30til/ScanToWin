@@ -11,7 +11,6 @@ import { Repository } from 'typeorm';
 import { RewardCategory } from './entities/reward-category.entity';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
 import {
-  GameMessages,
   RewardMessages,
 } from 'src/common/constants/messages.constants';
 import { HttpStatusCodes } from 'src/common/constants/http.constants';
@@ -79,7 +78,6 @@ export class RewardCategoryService {
     try {
       const category = await this.rewardCategoryRepository.findOne({
         where: { id },
-        //relations: ['rewards'],
       });
 
       if (!category) {
@@ -123,7 +121,6 @@ export class RewardCategoryService {
       await this.rewardCategoryRepository.update(id, dto);
       const updatedCategory = await this.rewardCategoryRepository.findOne({
         where: { id },
-        //relations: ['rewards'],
       });
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
@@ -142,7 +139,6 @@ export class RewardCategoryService {
     try {
       const category = await this.rewardCategoryRepository.findOne({
         where: { id },
-        //relations: ['rewards'],
       });
 
       if (!category) {
