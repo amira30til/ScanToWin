@@ -42,7 +42,7 @@ import {
   CopyIcon,
   AlertIcon,
 } from "@chakra-ui/icons";
-import { FaLock, FaQrcode } from "react-icons/fa";
+import { Lock, QrCode } from "lucide-react";
 
 const HeaderAdmin = ({ title }) => {
   const svgRef = useRef(null);
@@ -108,7 +108,7 @@ const HeaderAdmin = ({ title }) => {
           <Heading size="lg">{title}</Heading>
           <Flex direction={{ sm: "column", md: "row" }} gap={2}>
             <Button
-              leftIcon={<FaLock />}
+              leftIcon={<Lock size={20} />}
               size="sm"
               colorScheme="secondary"
               variant="outline"
@@ -120,7 +120,7 @@ const HeaderAdmin = ({ title }) => {
             <Menu>
               <MenuButton
                 as={Button}
-                leftIcon={<FaQrcode />}
+                leftIcon={<QrCode size={20} />}
                 rightIcon={<ChevronDownIcon />}
                 size="sm"
                 colorScheme="secondary"
@@ -241,7 +241,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
                 PIN code to be validated by your team (cash register, counter,
                 reception, etc.).
               </Alert>
-              <Alert status="info" variant="left-accent">
+              <Alert status="info" variant="left-accent" borderRadius="md">
                 <AlertIcon />
                 Specify your pin code
               </Alert>

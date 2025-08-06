@@ -37,7 +37,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
 
 @ApiTags('shops')
-//@ApiBearerAuth()
+@ApiBearerAuth()
 @Controller('shops')
 export class ShopsController {
   constructor(private readonly shopsService: ShopsService) {}
@@ -227,8 +227,8 @@ export class ShopsController {
     return this.shopsService.updateByAdmin(id, adminId, updateShopDto, logo);
   }
 
-  //@ApiBearerAuth()
-  //@UseGuards(SuperAdminGuard)
+  @ApiBearerAuth()
+  @UseGuards(SuperAdminGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a shop by ID (Super Admin only)' })
   @ApiResponse({

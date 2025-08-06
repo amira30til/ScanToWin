@@ -1,13 +1,15 @@
 import { useLogout } from "@/hooks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
 
 import { getActionsByShop } from "@/services/actionService";
+import { startTransition } from "react";
 
 import Logo from "../Logo";
 
+import { Link } from "react-router-dom";
 import {
-  useDisclosure,
   Box,
   Flex,
   Icon,
@@ -24,26 +26,16 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 
+import { FaGoogle, FaInstagram, FaTiktok, FaFacebook } from "react-icons/fa";
 import {
-  MdKeyboardArrowRight,
-  MdOutlineSpaceDashboard,
-  // MdMessage,
-  MdAccountCircle,
-} from "react-icons/md";
-import {
-  FaFolderOpen,
-  // FaStar,
-  FaGoogle,
-  FaInstagram,
-  FaTiktok,
-  FaFacebook,
-} from "react-icons/fa";
-import { FiMenu } from "react-icons/fi";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { FaUsers } from "react-icons/fa6";
-import { BiLogOut } from "react-icons/bi";
-import { AddIcon } from "@chakra-ui/icons";
-import { startTransition } from "react";
+  Menu,
+  Users,
+  LogOut,
+  FolderOpen,
+  CircleUser,
+  LayoutDashboard,
+} from "lucide-react";
+import { AddIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
 const actionMap = {
   "Avis Google": { icon: FaGoogle, link: "google" },
@@ -96,7 +88,7 @@ const DrawerElement = () => {
           md: "none",
         }}
         onClick={sidebar.onOpen}
-        icon={<FiMenu />}
+        icon={<Menu />}
         size="sm"
         my={4}
         mx={8}
@@ -217,7 +209,7 @@ const SidebarContent = ({ shops, ...rest }) => {
         aria-label="Main Navigation"
       >
         <NavItem
-          icon={MdOutlineSpaceDashboard}
+          icon={LayoutDashboard}
           href={`${shopId}/dashboard/${queryString}`}
           boxSize={5}
         >
@@ -230,8 +222,8 @@ const SidebarContent = ({ shops, ...rest }) => {
             onClick={handleDropdown}
             icon={
               <Icon
-                as={MdKeyboardArrowRight}
-                transform={integrations.isOpen && "rotate(90deg)"}
+                as={ChevronDownIcon}
+                transform={integrations.isOpen && "rotate(-180deg)"}
               />
             }
           ></IconButton>
@@ -259,26 +251,20 @@ const SidebarContent = ({ shops, ...rest }) => {
             );
           })}
         </Collapse>
-        <NavItem icon={FaFolderOpen} href={`${shopId}/campaign`} boxSize={4}>
+        <NavItem icon={FolderOpen} href={`${shopId}/campaign`} boxSize={4}>
           My Campaign
         </NavItem>
-        {/* <NavItem icon={MdMessage} href={`${shopId}/sms`} boxSize={4}>
-          SMS Campaign
-        </NavItem>
-        <NavItem icon={FaStar} href={`${shopId}/review`} boxSize={4}>
-          Manage Reviews
-        </NavItem> */}
-        <NavItem icon={FaUsers} href={`${shopId}/users`} boxSize={5}>
+        <NavItem icon={Users} href={`${shopId}/users`} boxSize={5}>
           My Users
         </NavItem>
-        <NavItem icon={MdAccountCircle} href={`${shopId}/account`} boxSize={5}>
+        <NavItem icon={CircleUser} href={`${shopId}/account`} boxSize={5}>
           Account
         </NavItem>
       </Flex>
       <Flex justify="center">
         <Divider w="80%" my={4} h="1px" bg="gray.300" />
       </Flex>
-      <NavItem icon={BiLogOut} onClick={handleLogout} boxSize={5}>
+      <NavItem icon={LogOut} onClick={handleLogout} boxSize={5}>
         Logout
       </NavItem>
     </Box>
