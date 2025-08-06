@@ -355,7 +355,7 @@ export class AdminsController {
     description: 'Forbidden - requires SUPER_ADMIN role',
   })
   restore(@Param('id') id: string) {
-    return this.adminsService.updateStatus(id, AdminStatus.ACTIVE);
+    return this.adminsService.restore(id);
   }
   @Get('by-id/:id')
   @ApiOperation({
@@ -381,8 +381,9 @@ export class AdminsController {
   async getAdminsByIdAndStatus(
     @Param('id') id: string,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
-    return this.adminsService.findAdminById(id);
+    return await this.adminsService.findAdminById(id);
   }
+
   @ApiBearerAuth()
   @UseGuards(SuperAdminGuard)
   @Delete('delete/:id')

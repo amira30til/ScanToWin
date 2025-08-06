@@ -10,7 +10,7 @@ import Error from "@/components/Error";
 import UserCooldownModal from "./components/UserCooldownModal";
 import Spinner from "@/components/Spinner";
 
-const FORTUNE_WHEEL_ID = "c7fac82a-24e7-4a44-b1a0-b337faf37bd5";
+const FORTUNE_WHEEL_NAME = "Fortune Wheel";
 
 const Play = () => {
   const { shopId } = useParams();
@@ -47,14 +47,17 @@ const Play = () => {
   });
 
   useEffect(() => {
-    if (activeGame !== undefined && activeGame.gameId !== FORTUNE_WHEEL_ID) {
-      navigate(`/play/${shopId}/coming-soon`);
+    if (
+      activeGame !== undefined &&
+      activeGame.game.name !== FORTUNE_WHEEL_NAME
+    ) {
+      navigate(`/user/${shopId}/coming-soon`);
     }
   }, [activeGame]);
 
   if (shopIsLoading || activeGameIsLoading) return <Spinner />;
 
-  if (shopError || activeGameError) return <Error link={`/play/${shopId}`} />;
+  if (shopError || activeGameError) return <Error link={`/user/${shopId}`} />;
 
   return (
     <>

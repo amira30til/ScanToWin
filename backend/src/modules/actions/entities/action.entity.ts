@@ -29,6 +29,7 @@ export class Action {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
   @OneToMany(() => ChosenAction, (chosenAction) => chosenAction.action)
   chosenActions: ChosenAction[];
 }
