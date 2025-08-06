@@ -5,8 +5,8 @@ import { useAxiosPrivate, useToast } from "@/hooks";
 
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createActionSchema } from "@/schemas/action/createAction";
-import { createAction } from "@/services/actionService";
+import { createAdminSchema } from "@/schemas/createAdmin";
+import { createAdmin } from "@/services/adminService";
 
 // STYLE
 import {
@@ -25,67 +25,82 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
+import PasswordInput from "@/components/common/PasswordInput";
 
-const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
+const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState, reset } = useForm({
-    resolver: yupResolver(createActionSchema),
+    resolver: yupResolver(createAdminSchema),
   });
 
-  const onCreateActionSuccess = () => {
-    queryClient.invalidateQueries("actions");
+  const onCreateAdminSuccess = () => {
+    queryClient.invalidateQueries("admins");
     reset();
     onClose();
-    toast(SUCCESS_MESSAGES.ACTION_CREATE_SUCCESS, "success");
+    toast(SUCCESS_MESSAGES.ADMIN_CREATE_SUCCESS, "success");
   };
 
-  const onCreateActionError = (error) => {
+  const onCreateAdminError = (error) => {
     const errorMessages = {
-      409: ERROR_MESSAGES.ACTION_ALREADY_EXISTS,
+      409: ERROR_MESSAGES.ADMIN_ALREADY_EXISTS,
     };
 
     const message = !error?.response
       ? ERROR_MESSAGES.NO_SERVER_RESPONSE
       : errorMessages[error.response?.status] ||
-        ERROR_MESSAGES.ACTION_CREATE_FAILED;
+        ERROR_MESSAGES.ADMIN_CREATE_FAILED;
 
     toast(message, "error");
   };
 
-  const createActionMutation = useMutation({
-    mutationFn: async (data) => await createAction(axiosPrivate, data),
-    onSuccess: onCreateActionSuccess,
-    onError: onCreateActionError,
+  const createAdminMutation = useMutation({
+    mutationFn: async (data) => await createAdmin(axiosPrivate, data),
+    onSuccess: onCreateAdminSuccess,
+    onError: onCreateAdminError,
   });
 
   const onSubmit = async (values) => {
-    createActionMutation.mutate({ ...values, isActive: true });
+    createAdminMutation.mutate(values);
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Create an Action</ModalHeader>
+        <ModalHeader>Create an Admin</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex direction="column" gap={2}>
             <FormControl>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Email</FormLabel>
               <Input
                 focusBorderColor="primary.500"
-                placeholder="name"
+                type="email"
+                placeholder="email"
                 autoFocus
                 size="md"
                 mt={2}
-                {...register("name")}
+                {...register("email")}
               />
 
               <FormHelperText color="red.500">
-                {formState.errors.name?.message}
+                {formState.errors.email?.message}
+              </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+
+              <PasswordInput
+                focusBorderColor="primary.500"
+                placeholder="password"
+                {...register("password")}
+              />
+
+              <FormHelperText color="red.500">
+                {formState.errors.password?.message}
               </FormHelperText>
             </FormControl>
           </Flex>
@@ -105,4 +120,4 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
   );
 };
 
-export default CreateActionModal;
+export default CreateAdminModal;

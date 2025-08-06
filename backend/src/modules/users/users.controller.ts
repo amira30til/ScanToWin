@@ -88,6 +88,7 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
+
   @Get('by-date')
   @ApiOperation({ summary: 'Get users by creation date' })
   @ApiQuery({

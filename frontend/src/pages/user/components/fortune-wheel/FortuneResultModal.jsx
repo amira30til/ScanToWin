@@ -244,7 +244,7 @@ function CooldownTimer({ targetTimestamp }) {
   if (expired) return <span>You can now play 🎉</span>;
 
   return (
-    <Alert status="info" mb={2}>
+    <Alert status="info" mb={2} borderRadius="md">
       <AlertIcon />
       <Box w="full" textAlign="start">
         <AlertTitle>Your have already played!</AlertTitle>

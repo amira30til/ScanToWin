@@ -1,4 +1,17 @@
 import { useForm } from "react-hook-form";
+import { useToast, useAxiosPrivate, useLogout } from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "@/store";
+
+import { createShopSchema } from "@/schemas/shop/createShop";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { createShop } from "@/services/shopService";
+import { decodeToken } from "@/utils/auth";
+import { queryClient } from "@/index";
+
+import Logo from "@/components/Logo";
+
 import {
   Box,
   Container,
@@ -12,22 +25,18 @@ import {
   VStack,
   Flex,
 } from "@chakra-ui/react";
-import Logo from "@/components/Logo";
-import { createShopSchema } from "@/schemas/shop/createShop";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useToast, useAxiosPrivate } from "@/hooks";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import useAuthStore from "@/store";
-import { createShop } from "@/services/shopService";
-import { decodeToken } from "@/utils/auth";
-import { queryClient } from "@/index";
 
 const CreateShop = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const auth = useAuthStore((state) => state.auth);
   const axiosPrivate = useAxiosPrivate();
+  const logout = useLogout();
+
+  const signOut = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   let adminId = decodeToken(auth?.accessToken);
 
@@ -49,7 +58,11 @@ const CreateShop = () => {
 
   const onCreateShopError = (error) => {
     console.log(error);
-    toast("There was an error creating your shop.", "error");
+    if (error?.status === 409) {
+      toast("You already have a shop with this name.", "error");
+    } else {
+      toast("There was an error creating your shop.", "error");
+    }
   };
 
   const createShopMutation = useMutation({
@@ -74,9 +87,12 @@ const CreateShop = () => {
         align="center"
         justify="space-between"
       >
-        <Flex align="center">
+        <Flex align="center" justify="space-between">
           <Logo w="150px" />
         </Flex>
+        <Button colorScheme="primary" type="button" size="sm" onClick={signOut}>
+          Sign Out
+        </Button>
       </Flex>
       <Container maxW="container.lg">
         <Box textAlign="center" mb={10}>

@@ -4,6 +4,7 @@ const ACTION_URL = "/actions";
 const CHOSEN_ACTION_URL = "/chosen-action";
 const ACITON_CLICK_URL = "/action-click";
 const REWARD_REDEMPTION_URL = "/reward-redemption";
+const GAME_PLAY_URL = "game-play-tracking";
 
 export const createAction = async (axios, body) =>
   await axios.post(ACTION_URL, body);
@@ -27,11 +28,17 @@ export const getChosenActionClickedAt = async (axios, chosenActionId) =>
 export const getChosenActionRedeemedAt = async (axios, chosenActionId) =>
   await axios.get(`${REWARD_REDEMPTION_URL}/chosen-action/${chosenActionId}`);
 
+export const getChosenActionPlayedAt = async (axios, chosenActionId) =>
+  await axios.get(`${GAME_PLAY_URL}/by-chosen-action/${chosenActionId}`);
+
 export const getShopActionClick = async (axios, shopId) =>
   await axios.get(`${ACITON_CLICK_URL}/shop/${shopId}`);
 
 export const getShopActionRedeem = async (axios, shopId) =>
   await axios.get(`${REWARD_REDEMPTION_URL}/shop/${shopId}`);
+
+export const getShopActionPlay = async (axios, shopId) =>
+  await axios.get(`${GAME_PLAY_URL}/by-shop/${shopId}`);
 
 export const deleteAction = async (axios, id) =>
   await axios.delete(`${ACTION_URL}/${id}`);

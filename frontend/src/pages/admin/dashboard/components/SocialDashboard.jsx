@@ -1,18 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useCombinedChartData } from "../hooks/useCombinedChartData";
+import { useChartData } from "../hooks/useChartData";
+import { useSelectStat } from "../hooks/useSelectStat";
+import { useAxiosPrivate } from "@/hooks";
+import { useDisclosure } from "@chakra-ui/react";
 
 import {
   getActionsByShop,
   getChosenActionClickedAt,
   getChosenActionRedeemedAt,
+  getChosenActionPlayedAt,
 } from "@/services/actionService";
 
 import HeaderAdmin from "@/components/nav/HeaderAdmin";
 import StatBox from "./StatBox";
 
-import { Box, Flex, Select, Spinner, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Select,
+  Spinner,
+  Input,
+  Alert,
+  AlertIcon,
+  CloseButton,
+  Text,
+} from "@chakra-ui/react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,9 +38,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-import { IoLogoGameControllerB } from "react-icons/io";
-import { FaGift } from "react-icons/fa";
-import { useAxiosPrivate } from "@/hooks";
+import { UserPlus, Gamepad2, Gift } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,
@@ -60,12 +72,14 @@ const options = {
 const SocialDashboard = ({ title, social }) => {
   const { shopId } = useParams();
   const [actionId, setActionId] = useState(null);
+  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultRange = searchParams.get("range") || "today";
-  const [range, setRange] = useState(defaultRange);
-  const [customFrom, setCustomFrom] = useState("");
-  const [customTo, setCustomTo] = useState("");
+  const today = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const from = searchParams.get("from") || today;
+  const to = searchParams.get("to") || today;
+
   const axiosPrivate = useAxiosPrivate();
 
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
@@ -104,16 +118,37 @@ const SocialDashboard = ({ title, social }) => {
   });
 
   const {
-    combinedChartData,
-    clickedFilteredTimestamps,
-    redeemedFilteredTimestamps,
-  } = useCombinedChartData({
-    clicked: actionClickedTimestamps,
-    redeemed: actionRedeemedTimestamps,
-    range,
-    customFrom,
-    customTo,
+    data: actionPlayedTimestamps,
+    isLoading: actionPlayedTimestampsLoading,
+  } = useQuery({
+    queryKey: ["game-played-timestamps", actionId],
+    queryFn: async () => {
+      const response = await getChosenActionPlayedAt(axiosPrivate, actionId);
+      const data = response.data.data.data;
+      return data.map((action) => action.playedAt);
+    },
+    enabled: !!actionId,
   });
+
+  const clickedSelected = useSelectStat(actionClickedTimestamps);
+  const redeemedSelected = useSelectStat(actionRedeemedTimestamps);
+  const gamePlayedSelected = useSelectStat(actionPlayedTimestamps);
+
+  const combinedChartData = useChartData(
+    clickedSelected,
+    redeemedSelected,
+    gamePlayedSelected,
+  );
+
+  const rangeHandler = (event, key) => {
+    const value = event.target.value;
+
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set(key, value);
+      return newParams;
+    });
+  };
 
   useEffect(() => {
     if (actionsByShop) {
@@ -129,14 +164,6 @@ const SocialDashboard = ({ title, social }) => {
     }
   }, [actionsByShop, social]);
 
-  useEffect(() => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set("range", range);
-      return newParams;
-    });
-  }, [range, setSearchParams]);
-
   return (
     <Box pos="relative">
       <HeaderAdmin title={title} />
@@ -149,8 +176,8 @@ const SocialDashboard = ({ title, social }) => {
             fontWeight="bold"
             focusBorderColor="primary.500"
             cursor="pointer"
-            onChange={(e) => setRange(e.target.value)}
-            value={range}
+            onChange={(event) => rangeHandler(event, "range")}
+            value={defaultRange}
           >
             <option value="today">Today</option>
             <option value="1">Yesterday</option>
@@ -160,19 +187,19 @@ const SocialDashboard = ({ title, social }) => {
             <option value="year">This year</option>
             <option value="custom">Custom date</option>
           </Select>
-          {range === "custom" && (
+          {defaultRange === "custom" && (
             <Flex>
               <Flex gap={2} mt={2}>
                 <Input
                   type="date"
-                  value={customFrom}
-                  onChange={(e) => setCustomFrom(e.target.value)}
+                  value={from}
+                  onChange={(event) => rangeHandler(event, "from")}
                   bg="surface.popover"
                 />
                 <Input
                   type="date"
-                  value={customTo}
-                  onChange={(e) => setCustomTo(e.target.value)}
+                  value={to}
+                  onChange={(event) => rangeHandler(event, "to")}
                   bg="surface.popover"
                 />
               </Flex>
@@ -182,6 +209,7 @@ const SocialDashboard = ({ title, social }) => {
 
         {isLoadingActions ||
         actionClickedTimestampsLoading ||
+        actionPlayedTimestampsLoading ||
         actionRedeemedTimestampsLoading ? (
           <Flex minH="100%" w="100%" align="center" justify="center">
             <Spinner display="flex" align="center" color="secondary.500" />
@@ -190,22 +218,48 @@ const SocialDashboard = ({ title, social }) => {
           <Box>
             <Flex gap={4} justify="start">
               <StatBox
-                title="Jeux Lancées"
-                value={clickedFilteredTimestamps}
+                title="Nombre d'abonnées"
+                value={clickedSelected}
                 total={actionClickedTimestamps}
-                icon={IoLogoGameControllerB}
+                icon={UserPlus}
               />
 
               <StatBox
                 title="Cadeaux Gagnés"
-                value={redeemedFilteredTimestamps}
+                value={redeemedSelected}
                 total={actionRedeemedTimestamps}
-                icon={FaGift}
+                icon={Gamepad2}
+              />
+
+              <StatBox
+                title="Jeux Lancées"
+                value={gamePlayedSelected}
+                total={actionPlayedTimestamps}
+                icon={Gift}
               />
             </Flex>
             <Box bg="surface.popover" borderRadius="md" px={6} py={4} mt={6}>
               <Bar options={options} data={combinedChartData} />
             </Box>
+            {isOpen && (
+              <Alert
+                status="info"
+                variant="left-accent"
+                my={4}
+                borderRadius="md"
+                display="flex"
+                justifyContent="space-between"
+              >
+                <Flex align="center">
+                  <AlertIcon />
+                  <Text>
+                    Click on the legend items to toggle the visibility of each
+                    statistic on the chart.
+                  </Text>
+                </Flex>
+                <CloseButton alignSelf="flex-start" onClick={onClose} />
+              </Alert>
+            )}
           </Box>
         )}
       </Flex>

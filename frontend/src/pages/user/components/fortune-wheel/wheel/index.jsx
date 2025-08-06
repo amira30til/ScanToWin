@@ -22,12 +22,8 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
   const { data: rewards, isLoading: isLoadingRewards } = useQuery({
     queryKey: ["rewards-by-shop", shopId],
     queryFn: async () => {
-      let primColor = primaryColor || primary500;
-      let seconColor = secondaryColor || secondary500;
       const response = await getRewardsByShop(shopId);
-      const fetchedRewards = response.data.data.rewards;
-      setColors(extractColors(fetchedRewards, primColor, seconColor));
-      return fetchedRewards;
+      return response.data.data.rewards;
     },
     enabled: !!shopId,
   });
@@ -47,11 +43,20 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
 
   useEffect(() => {
     if (rewards !== undefined && rewards.length < 1) {
-      navigate(`/play/${shopId}/coming-soon`);
+      navigate(`/user/${shopId}/coming-soon`);
     }
   }, [rewards]);
 
-  if (isLoadingRewards || isLoadingRandomReward) return <Spinner />;
+  useEffect(() => {
+    if (rewards !== undefined) {
+      let primColor = primaryColor || primary500;
+      let seconColor = secondaryColor || secondary500;
+      setColors([...extractColors(rewards, primColor, seconColor)]);
+    }
+  }, [rewards, primary500, secondary500]);
+
+  if (isLoadingRewards || isLoadingRandomReward || colors?.length < 1)
+    return <Spinner />;
 
   return (
     <VStack spacing={8}>

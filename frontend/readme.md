@@ -10,7 +10,7 @@ docker-compose up
 
 ## Hard coded Values
 
-- FORTUNE_WHEEL_ID - used in
+- FORTUNE_WHEEL_NAME - used in
 
   - pages/user/index.jsx
 

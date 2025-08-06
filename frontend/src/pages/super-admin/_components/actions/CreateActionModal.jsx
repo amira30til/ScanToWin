@@ -1,14 +1,11 @@
-// HOOKS
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosPrivate, useToast } from "@/hooks";
 
-// FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createAdminSchema } from "@/schemas/createAdmin";
-import { createAdmin } from "@/services/adminService";
+import { createActionSchema } from "@/schemas/action/createAction";
+import { createAction } from "@/services/actionService";
 
-// STYLE
 import {
   Modal,
   ModalOverlay,
@@ -19,89 +16,81 @@ import {
   ModalFooter,
   Button,
   Flex,
-  Input,
+  Select,
   FormControl,
   FormHelperText,
   FormLabel,
 } from "@chakra-ui/react";
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
 
-const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
+const ACTIONS = ["Facebook", "Instagram", "Tiktok", "Avis Google"];
+
+const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState, reset } = useForm({
-    resolver: yupResolver(createAdminSchema),
+    resolver: yupResolver(createActionSchema),
   });
 
-  const onCreateAdminSuccess = () => {
-    queryClient.invalidateQueries("admins");
+  const onCreateActionSuccess = () => {
+    queryClient.invalidateQueries("actions");
     reset();
     onClose();
-    toast(SUCCESS_MESSAGES.ADMIN_CREATE_SUCCESS, "success");
+    toast(SUCCESS_MESSAGES.ACTION_CREATE_SUCCESS, "success");
   };
 
-  const onCreateAdminError = (error) => {
+  const onCreateActionError = (error) => {
     const errorMessages = {
-      409: ERROR_MESSAGES.ADMIN_ALREADY_EXISTS,
+      409: ERROR_MESSAGES.ACTION_ALREADY_EXISTS,
     };
 
     const message = !error?.response
       ? ERROR_MESSAGES.NO_SERVER_RESPONSE
       : errorMessages[error.response?.status] ||
-        ERROR_MESSAGES.ADMIN_CREATE_FAILED;
+        ERROR_MESSAGES.ACTION_CREATE_FAILED;
 
     toast(message, "error");
   };
 
-  const createAdminMutation = useMutation({
-    mutationFn: async (data) => await createAdmin(axiosPrivate, data),
-    onSuccess: onCreateAdminSuccess,
-    onError: onCreateAdminError,
+  const createActionMutation = useMutation({
+    mutationFn: async (data) => await createAction(axiosPrivate, data),
+    onSuccess: onCreateActionSuccess,
+    onError: onCreateActionError,
   });
 
   const onSubmit = async (values) => {
-    createAdminMutation.mutate(values);
+    createActionMutation.mutate({ ...values, isActive: true });
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Create an Admin</ModalHeader>
+        <ModalHeader>Create an Action</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex direction="column" gap={2}>
             <FormControl>
-              <FormLabel>Email</FormLabel>
-              <Input
+              <FormLabel>Name</FormLabel>
+              <Select
+                bg="white"
+                borderRadius="md"
+                fontWeight="bold"
                 focusBorderColor="primary.500"
-                type="email"
-                placeholder="email"
-                autoFocus
-                size="md"
-                mt={2}
-                {...register("email")}
-              />
+                cursor="pointer"
+                {...register("name")}
+              >
+                {ACTIONS?.map((action) => (
+                  <option key={action} value={action}>
+                    {action}
+                  </option>
+                ))}
+              </Select>
 
               <FormHelperText color="red.500">
-                {formState.errors.email?.message}
-              </FormHelperText>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Password</FormLabel>
-
-              <Input
-                focusBorderColor="primary.500"
-                type="password"
-                placeholder="password"
-                size="md"
-                {...register("password")}
-              />
-
-              <FormHelperText color="red.500">
-                {formState.errors.password?.message}
+                {formState.errors.name?.message}
               </FormHelperText>
             </FormControl>
           </Flex>
@@ -121,4 +110,4 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
   );
 };
 
-export default CreateAdminModal;
+export default CreateActionModal;

@@ -5,7 +5,7 @@ import {
   InputRightElement,
   IconButton,
 } from "@chakra-ui/react";
-import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { Eye, EyeOff } from "lucide-react";
 
 const PasswordInput = forwardRef((props, ref) => {
   const [show, setShow] = useState(false);
@@ -27,7 +27,7 @@ const PasswordInput = forwardRef((props, ref) => {
         <IconButton
           variant="link"
           aria-label={show ? "Hide password" : "Show password"}
-          icon={show ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+          icon={show ? <EyeOff size={20} /> : <Eye size={20} />}
           onClick={handleClick}
           color="#000"
         />

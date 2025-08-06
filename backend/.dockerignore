@@ -1,0 +1,49 @@
+# Dependencies
+
+node_modules
+.pnpm-store
+.npm
+
+# Build directories
+
+dist
+build
+coverage
+
+# Development files
+
+.git
+.github
+.gitignore
+.vscode
+.idea
+\*.log
+
+# Environment files
+
+.env
+.env.production
+.env.\*
+!.env.example
+
+# Testing
+
+**tests**
+test
+tests
+_.test.js
+_.spec.js
+
+# Documentation
+
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+docs
+
+# Misc
+
+.DS_Store
+Thumbs.db
+_.swp
+_.swo

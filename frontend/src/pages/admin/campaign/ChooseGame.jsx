@@ -4,9 +4,9 @@ import { useForm, Controller } from "react-hook-form";
 import { useAxiosPrivate, useToast } from "@/hooks";
 
 import {
-  getActiveGames,
   selectGame,
   getShopGameAssignement,
+  getGames,
 } from "@/services/gameService";
 
 // COMPONENTS
@@ -26,8 +26,8 @@ const ChooseGame = ({ shop }) => {
   const { data: games = [] } = useQuery({
     queryKey: ["active-games"],
     queryFn: async () => {
-      const response = await getActiveGames();
-      return response.data.data.data;
+      const response = await getGames();
+      return response.data.data.games;
     },
   });
 
@@ -116,9 +116,12 @@ const ChooseGame = ({ shop }) => {
   );
 };
 
-const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
+const SelectableGameCard = ({ game, isSelected, onSelect }) => {
   const borderColor = isSelected ? "primary.500" : "gray.300";
   const border = isSelected ? "2px" : "1px";
+
+  const activeGame = game.status === "active";
+  const archivedGame = game.status === "archived";
 
   return (
     <Flex
@@ -143,8 +146,8 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
       }}
       onClick={onSelect}
       bg={isSelected ? "white" : "inherit"}
-      pointerEvents={index > 0 ? "none" : "auto"}
-      cursor={index > 0 ? "not-allowed" : "pointer"}
+      pointerEvents={archivedGame ? "none" : activeGame ? "auto" : ""}
+      cursor={archivedGame ? "not-allowed" : activeGame ? "pointer" : ""}
     >
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
@@ -164,7 +167,7 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
           borderColor="gray.200"
         />
       </Box>
-      {index > 0 && (
+      {archivedGame && (
         <Box
           position="absolute"
           top={0}

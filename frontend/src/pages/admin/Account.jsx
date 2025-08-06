@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
 
 import { getShop } from "@/services/shopService";
 
@@ -48,11 +47,11 @@ const Account = () => {
               { label: "Telephone", value: shop.tel },
               { label: "SIRET Number", value: shop.nbSiret },
               { label: "Country", value: shop.country },
-            ].map((input) => (
-              <FormControl p={6}>
+            ].map((input, index) => (
+              <FormControl key={index} p={6}>
                 <FormLabel>{input.label}</FormLabel>
                 <Input
-                  readoOnly
+                  readOnly
                   defaultValue={input.value}
                   size="lg"
                   mt={2}

@@ -53,7 +53,7 @@ const Redeem = () => {
         toast("Invalid code pin!", "error");
       } else {
         toast("You won congrats!", "success");
-        navigate(`/play/${shopId}`);
+        navigate(`/user/${shopId}`);
       }
     },
     onError: () => {},
