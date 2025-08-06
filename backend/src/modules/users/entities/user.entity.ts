@@ -46,6 +46,8 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-  @OneToMany(() => UserGame, (userGame) => userGame.user)
+  @OneToMany(() => UserGame, (userGame) => userGame.user, {
+    onDelete: 'CASCADE',
+  })
   userGames: UserGame[];
 }

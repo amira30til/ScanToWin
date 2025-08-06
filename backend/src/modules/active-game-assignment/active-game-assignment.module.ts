@@ -14,7 +14,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
     TypeOrmModule.forFeature([ActiveGameAssignment, Game, Admin, Shop]),
   ],
   controllers: [ActiveGameAssignmentController],
-  providers: [ActiveGameAssignmentService, AdminsService,CloudinaryService],
+  providers: [ActiveGameAssignmentService, AdminsService, CloudinaryService],
   exports: [ActiveGameAssignmentService],
 })
 export class ActiveGameAssignmentModule {}

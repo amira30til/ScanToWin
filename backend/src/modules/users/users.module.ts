@@ -12,7 +12,14 @@ import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserGame, Reward, ActiveGameAssignment, GamePlayTracking, ChosenAction]),
+    TypeOrmModule.forFeature([
+      User,
+      UserGame,
+      Reward,
+      ActiveGameAssignment,
+      GamePlayTracking,
+      ChosenAction,
+    ]),
   ],
   controllers: [UsersController],
   providers: [UsersService, MailService],
