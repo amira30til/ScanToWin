@@ -433,7 +433,7 @@ export class ShopsController {
         tel: { type: 'string', example: '+1234567890' },
         gameColor1: { type: 'string', example: '#FF5733' },
         gameColor2: { type: 'string', example: '#33FFBD' },
-        gameCodePin: { type: 'number', example: 1234 },
+        gameCodePin: { type: 'string', example: 1234 },
         isGuaranteedWin: { type: 'boolean', example: false },
         logo: {
           type: 'string',

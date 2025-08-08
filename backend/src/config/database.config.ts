@@ -9,5 +9,5 @@ export default registerAs('database', () => ({
   database: process.env.DB_DATABASE,
   autoLoadEntities: true,
   // TODO: remove for production
-  synchronize: true,
+  synchronize: process.env.NODE_ENV === 'development' && true,
 }));

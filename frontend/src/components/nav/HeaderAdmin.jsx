@@ -181,7 +181,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { data: shop } = useQuery({
+  const { data: shop, refetch } = useQuery({
     queryKey: ["shop-by-id", shopId],
     queryFn: async () => {
       const response = await getShop(shopId);
@@ -199,6 +199,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
 
   const onUpdateShopSuccess = async () => {
     await queryClient.invalidateQueries(["shop-by-id", shopId]);
+    refetch();
     toast("Code PIN updated!", "success");
     reset();
     onClose();
@@ -267,6 +268,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
                     autoFocus
                     size="lg"
                     mt={2}
+                    maxLength="4"
                     {...register("newPin")}
                   />
 
@@ -283,6 +285,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
                     size="lg"
                     mt={2}
                     {...register("confirmPin")}
+                    maxLength="4"
                   />
 
                   <FormHelperText color="red.500">
