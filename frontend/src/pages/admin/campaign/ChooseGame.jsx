@@ -1,7 +1,8 @@
-// HOOKS
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { useAxiosPrivate, useToast } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 import {
   getActiveGames,
@@ -14,12 +15,12 @@ import AdminSection from "@/components/common/AdminSection";
 
 // STYLE
 import { Flex, Text, Image, Button, Box, SimpleGrid } from "@chakra-ui/react";
-import { useEffect } from "react";
 
 const ChooseGame = ({ shop }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { control, watch, reset } = useForm();
 
@@ -48,12 +49,12 @@ const ChooseGame = ({ shop }) => {
 
   const onSelectGameSuccess = async () => {
     await queryClient.refetchQueries(["adminGames"]);
-    toast("Game selected successfully!", "success");
+    toast(t("choose_game.success"), "success");
   };
 
   const onSelectGameError = (error) => {
     console.log(error);
-    toast("There was an error selecting your game.", "error");
+    toast(t("choose_game.error"), "error");
   };
 
   const selectGameMutation = useMutation({
@@ -83,8 +84,8 @@ const ChooseGame = ({ shop }) => {
 
   return (
     <AdminSection
-      title="Game selection"
-      description="Choose from 3 interactive games to engage your users and create a unique experience."
+      title={t("choose_game.title")}
+      description={t("choose_game.description")}
     >
       <SimpleGrid columns={{ md: 1, lg: 3 }} gap={6}>
         {games?.map((game, index) => (
@@ -98,6 +99,7 @@ const ChooseGame = ({ shop }) => {
                 game={game}
                 isSelected={value === game.id}
                 onSelect={() => onChange(game.id)}
+                t={t}
               />
             )}
           />
@@ -109,14 +111,14 @@ const ChooseGame = ({ shop }) => {
           isLoading={selectGameMutation.isPending}
           onClick={onSubmit}
         >
-          Save
+          {t("choose_game.save_button")}
         </Button>
       </Flex>
     </AdminSection>
   );
 };
 
-const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
+const SelectableGameCard = ({ game, isSelected, onSelect, index, t }) => {
   const borderColor = isSelected ? "primary.500" : "gray.300";
   const border = isSelected ? "2px" : "1px";
 
@@ -149,7 +151,7 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
         <Text fontSize="sm" color="gray" maxW="300px" textAlign="center">
-          {game.description || "No description available."}
+          {game.description || t("choose_game.no_description")}
         </Text>
       </Flex>
       <Box display="flex" justifyContent="center" alignItems="center" mt={4}>
@@ -182,7 +184,7 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index }) => {
           fontSize="lg"
           pointerEvents="none"
         >
-          Coming Soon
+          {t("choose_game.coming_soon")}
         </Box>
       )}
     </Flex>

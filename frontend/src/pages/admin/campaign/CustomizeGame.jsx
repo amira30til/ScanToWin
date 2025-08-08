@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { decodeToken } from "@/utils/auth";
 import useAuthStore from "@/store";
+import { useTranslation } from "react-i18next";
 
 // FUNCTIONS
 import { updateShopColorSchema } from "@/schemas/shop/updateShopColor";
@@ -41,6 +42,7 @@ const CustomizeGame = ({ shop }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [imageValue, setImageValue] = useState();
   const [primary500] = useToken("colors", ["primary.500"]);
+  const { t } = useTranslation();
 
   const defaultValues = {
     gameColor1: "#0000ff",
@@ -128,9 +130,8 @@ const CustomizeGame = ({ shop }) => {
 
   return (
     <AdminSection
-      title="Customize your game"
-      description="Upload your logo and choose your colors to create a game that reflects your brand.
-  Offer your customers a unique, fully customized experience."
+      title={t("customize_game.title")}
+      description={t("customize_game.description")}
     >
       <Flex
         direction={{ base: "column", md: "column" }}
@@ -149,7 +150,7 @@ const CustomizeGame = ({ shop }) => {
           w="100%"
           h="100%"
         >
-          <Heading size="sm">Your Logo</Heading>
+          <Heading size="sm">{t("customize_game.your_logo")}</Heading>
 
           <Box>
             <input
@@ -169,7 +170,7 @@ const CustomizeGame = ({ shop }) => {
                   borderRadius="md"
                 />
                 <IconButton
-                  aria-label="Remove pictureUrl"
+                  aria-label={t("customize_game.remove_picture")}
                   icon={<LuX size={16} />}
                   size="sm"
                   position="absolute"
@@ -197,7 +198,7 @@ const CustomizeGame = ({ shop }) => {
               >
                 <LuUpload size={24} color={primary500} />
                 <Text mt={2} fontSize="sm">
-                  Upload a logo
+                  {t("customize_game.upload_logo")}
                 </Text>
               </Flex>
             )}
@@ -209,7 +210,7 @@ const CustomizeGame = ({ shop }) => {
               onClick={onSaveImage}
               isDisabled={!imageValue}
             >
-              Save
+              {t("customize_game.save")}{" "}
             </Button>
           </Flex>
         </Flex>
@@ -226,7 +227,7 @@ const CustomizeGame = ({ shop }) => {
             align="center"
             w="100%"
           >
-            <Heading size="sm">Choose your colors</Heading>
+            <Heading size="sm">{t("customize_game.choose_colors")}</Heading>
             <Flex direction={{ base: "column", lg: "row" }}>
               <TwoColorPicker />
 
@@ -250,7 +251,7 @@ const CustomizeGame = ({ shop }) => {
                       boxShadow="md"
                     />
                     <Text fontWeight="medium" color="gray.600">
-                      Primary
+                      {t("customize_game.primary")}
                     </Text>
                   </Flex>
 
@@ -265,7 +266,7 @@ const CustomizeGame = ({ shop }) => {
                       boxShadow="md"
                     />
                     <Text fontWeight="medium" color="gray.600">
-                      Secondary
+                      {t("customize_game.secondary")}
                     </Text>
                   </Flex>
                 </Flex>

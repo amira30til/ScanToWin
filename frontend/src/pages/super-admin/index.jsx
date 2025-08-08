@@ -8,9 +8,12 @@ import Admins from "./components/admins";
 
 import { Flex, Box, Button, Heading } from "@chakra-ui/react";
 
+import { useTranslation } from "react-i18next";
+
 const SuperAdmin = () => {
   const navigate = useNavigate();
   const logout = useLogout();
+  const { t } = useTranslation();
 
   const signOut = async () => {
     await logout();
@@ -36,18 +39,18 @@ const SuperAdmin = () => {
           size="sm"
           onClick={signOut}
         >
-          Sign Out
+          {t("superAdmin.signOut")}
         </Button>
       </Flex>
       <Box p={4} py={8}>
-        <Heading size="lg">Super Admin Home</Heading>
+        <Heading size="lg">{t("superAdmin.homeTitle")}</Heading>
 
         <Flex direction="column" gap={8} py={8}>
-          <Heading size="md">Admins List</Heading>
+          <Heading size="md">{t("superAdmin.adminsList")}</Heading>
 
           <Admins />
 
-          <Heading size="md">Actions List</Heading>
+          <Heading size="md">{t("superAdmin.actionsList")}</Heading>
 
           <Actions />
 

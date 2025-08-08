@@ -4,7 +4,7 @@ import { useToast } from "@/hooks";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-
+import { useTranslation } from "react-i18next";
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
 import { resetPasswordSchema } from "@/schemas/auth/resetPassword";
@@ -41,6 +41,7 @@ import { LuShield } from "react-icons/lu";
 import { ERROR_MESSAGES } from "@/constants";
 
 const ResetPassword = () => {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -107,14 +108,14 @@ const ResetPassword = () => {
             gap={{ base: 2, md: 6 }}
           >
             <Heading size={{ base: "lg", md: "xl" }} textAlign="center">
-              Reset password
+              {t("reset_password.title")}
             </Heading>
             <Text
               color="darkgray"
               textAlign="center"
               fontSize={{ base: "md", md: "lg" }}
             >
-              Enter the code you recieved by email
+              {t("reset_password.subtitle")}
             </Text>
           </Flex>
 
@@ -128,7 +129,7 @@ const ResetPassword = () => {
                     <Input
                       focusBorderColor="primary.500"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder={t("reset_password.email_placeholder")}
                       size="lg"
                       {...register("email")}
                       _placeholder={{
@@ -148,7 +149,7 @@ const ResetPassword = () => {
                   <InputGroup>
                     <Input
                       focusBorderColor="primary.500"
-                      placeholder="Enter the verification code"
+                      placeholder={t("reset_password.code_placeholder")}
                       autoFocus
                       size="lg"
                       {...register("verificationCode")}
@@ -169,7 +170,7 @@ const ResetPassword = () => {
                   <PasswordInput
                     size="lg"
                     focusBorderColor="primary.500"
-                    placeholder="Enter your new password"
+                    placeholder={t("reset_password.password_placeholder")}
                     {...register("newPassword")}
                   />
 
@@ -186,7 +187,7 @@ const ResetPassword = () => {
                   colorScheme="primary"
                   size="lg"
                 >
-                  Reset Password
+                  {t("reset_password.submit")}
                 </Button>
               </Flex>
               <Flex
@@ -195,7 +196,7 @@ const ResetPassword = () => {
                 justifyContent="center"
               >
                 <Text color="gray" mr={1}>
-                  Remember your password?
+                  {t("reset_password.remember_password")}
                 </Text>
                 <Button
                   as={NavLink}
@@ -203,7 +204,7 @@ const ResetPassword = () => {
                   variant="link"
                   colorScheme="primary"
                 >
-                  Login
+                  {t("reset_password.login")}
                 </Button>
               </Flex>
             </>
@@ -228,7 +229,7 @@ const PasswordResetSuccessAlert = ({ setShowAlert }) => {
       <AlertIcon />
       <Flex direction="column">
         <AlertTitle fontWeight="semibold">
-          Password reset successful!
+          {t("reset_password.success_title")}
         </AlertTitle>
         <AlertDescription>
           <Button
@@ -239,7 +240,7 @@ const PasswordResetSuccessAlert = ({ setShowAlert }) => {
             color="primary.700"
             size="sm"
           >
-            log in with your new password.
+            {t("reset_password.success_button")}
           </Button>
         </AlertDescription>
       </Flex>

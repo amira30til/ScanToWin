@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { format, parseISO, isAfter, subDays } from "date-fns";
 import { useToken } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 const filterTimestampsByRange = (timestamps, range, customFrom, customTo) => {
   if (!timestamps) return [];
@@ -97,6 +98,7 @@ export const useCombinedChartData = ({
 }) => {
   const [primary300] = useToken("colors", ["primary.300"]);
   const [secondary300] = useToken("colors", ["secondary.300"]);
+  const { t } = useTranslation();
 
   const clickedFilteredTimestamps = useMemo(() => {
     return filterTimestampsByRange(clicked, range, customFrom, customTo);
@@ -120,12 +122,12 @@ export const useCombinedChartData = ({
     return prepareChartData([
       {
         data: clickedGrouped,
-        label: "Jeux lancés",
+        label: t("chart.launched_games"),
         color: primary300,
       },
       {
         data: redeemedGrouped,
-        label: "Cadeaux gagnés",
+        label: t("chart.redeemed_rewards"),
         color: secondary300,
       },
     ]);

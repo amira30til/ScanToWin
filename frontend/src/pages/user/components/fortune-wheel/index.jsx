@@ -8,7 +8,7 @@ import tinycolor from "tinycolor2";
 
 import Wheel from "./wheel";
 import FortuneResultModal from "./FortuneResultModal";
-
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Container,
@@ -36,6 +36,7 @@ import TiktokSvg from "@/assets/components/TiktokSvg";
 import logo from "@/assets/logo.png";
 
 const FortuneWheel = ({ shop }) => {
+  const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const {
@@ -103,7 +104,7 @@ const FortuneWheel = ({ shop }) => {
                 w="80px"
               />
               <Heading as="h1" fontSize="3xl" letterSpacing="tight">
-                Welcome!
+                {t("fortuneWheel.welcome")}
               </Heading>
 
               <Heading
@@ -112,11 +113,10 @@ const FortuneWheel = ({ shop }) => {
                 color={getAdjustedColor(shop?.gameColor1)}
                 mb={4}
               >
-                Fortune Wheel
+                {t("fortuneWheel.title")}
               </Heading>
               <Text fontSize="sm" color="gray.600" maxW="md">
-                Tournez la roue pour découvrir votre gain ! Cliquez sur 'Lancer'
-                et attendez que la roue s'arrête.
+                {t("fortuneWheel.instructions")}
               </Text>
             </VStack>
             <Box position="relative" display="inline-block">
@@ -184,37 +184,38 @@ const ActionModal = ({
 
     onClose();
   };
-
   const getActionContent = (name) => {
+    const { t } = useTranslation();
     switch (name) {
       case "Avis Google":
         return {
-          description: "Leave a review on google!",
-          buttonText: "Review",
+          description: t("fortuneWheel.actions.googleReview.description"),
+          buttonText: t("fortuneWheel.actions.googleReview.button"),
           icon: <GoogleSvg />,
         };
       case "Facebook":
         return {
-          description: "Like our Facebook page!",
-          buttonText: "Like",
+          description: t("fortuneWheel.actions.facebook.description"),
+          buttonText: t("fortuneWheel.actions.facebook.button"),
           icon: <FacebookSvg />,
         };
       case "Instagram":
         return {
-          description: "Follow us on Instagram",
-          buttonText: "Follow",
+          description: t("fortuneWheel.actions.instagram.description"),
+          buttonText: t("fortuneWheel.actions.instagram.button"),
+          icon: <InstagramSvg />,
           icon: <InstagramSvg />,
         };
       case "Tiktok":
         return {
-          description: "Follow us on Tiktok!",
-          buttonText: "Follow",
+          description: t("fortuneWheel.actions.tiktok.description"),
+          buttonText: t("fortuneWheel.actions.tiktok.button"),
           icon: <TiktokSvg />,
         };
       default:
         return {
-          description: "Action content goes here",
-          buttonText: "Follow",
+          description: t("fortuneWheel.actions.default.description"),
+          buttonText: t("fortuneWheel.actions.default.button"),
           icon: null,
         };
     }

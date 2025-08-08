@@ -1,0 +1,368 @@
+{
+  "table": {
+    "headers": {
+      "order": "Order",
+      "action": "Action",
+      "link": "Link",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "up": "Up",
+      "down": "Down",
+      "delete": "Delete action"
+    }
+  },
+  "actions": {
+    "add_button": "Add an action",
+    "popover": {
+      "title": "Add an action",
+      "description": "Choose an action to add to engage your customers",
+      "confirm": "Confirm"
+    },
+    "page": {
+      "title": "Choose actions",
+      "description": "Define the order and actions your customers need to take to maximize engagement.",
+      "save": "Save"
+    },
+    "headers": {
+      "name": "Name",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "isActive": "Is Active",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "create": "Create an action",
+      "delete": "Delete action"
+    },
+    "messages": {
+      "fetchError": "Failed to fetch actions",
+      "deleteSuccess": "Action deleted successfully",
+      "deleteError": "Failed to delete action"
+    }
+  },
+  "rewards": {
+    "page": {
+      "title": "Choose rewards",
+      "description": "Choose the rewards your customers can win by playing. Customize your prizes to offer a unique and engaging experience.",
+      "addReward": "Add a reward",
+      "save": "Save",
+      "namePlaceholder": "name of the reward",
+      "delete": "Delete reward",
+      "headers": [
+        "icon",
+        "name",
+        "number of rewards",
+        "percentage %",
+        "is unlimited",
+        "actions"
+      ]
+    }
+  },
+  "iconPicker": {
+    "searchPlaceholder": "Search icons..."
+  },
+  "update_icon_modal": {
+    "title": "Pick an Icon"
+  },
+  "choose_game": {
+    "title": "Game selection",
+    "description": "Choose from 3 interactive games to engage your users and create a unique experience.",
+    "success": "Game selected successfully!",
+    "error": "There was an error selecting your game.",
+    "save_button": "Save",
+    "coming_soon": "Coming Soon",
+    "no_description": "No description available."
+  },
+  "customize_game": {
+    "title": "Customize your game",
+    "description": "Upload your logo and choose your colors to create a game that reflects your brand.\nOffer your customers a unique, fully customized experience.",
+    "your_logo": "Your Logo",
+    "upload_logo": "Upload a logo",
+    "remove_picture": "Remove picture",
+    "save": "Save",
+    "choose_colors": "Choose your colors",
+    "primary": "Primary",
+    "secondary": "Secondary"
+  },
+  "admin_campaign": {
+    "title": "My Campaign"
+  },
+  "social_dashboard": {
+    "filters": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last_7_days": "Last 7 days",
+      "last_30_days": "Last 30 days",
+      "this_month": "This month",
+      "this_year": "This year",
+      "custom": "Custom date"
+    },
+    "stats": {
+      "games_launched": "Games Launched",
+      "gifts_won": "Gifts Won"
+    }
+  },
+  "stat_box": {
+    "total": "Total"
+  },
+  "chart": {
+    "launched_games": "Launched Games",
+    "redeemed_rewards": "Redeemed Rewards"
+  },
+  "facebook_dashboard": "Facebook Dashboard",
+  "google_dashboard": "Google Dashboard",
+  "google_reviews": "Google Reviews",
+  "dashboard_title": "Dashboard",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "last_7_days": "Last 7 days",
+  "last_30_days": "Last 30 days",
+  "this_month": "This month",
+  "this_year": "This year",
+  "custom": "Custom",
+  "games_launched": "Games Launched",
+  "gifts_won": "Gifts Won",
+  "instagram_dashboard_title": "Instagram Dashboard",
+  "tiktok_dashboard_title": "Tiktok Dashboard",
+  "accountTitle": "Account",
+  "email": "Email",
+  "name": "Name",
+  "address": "Address",
+  "zipCode": "Zip Code",
+  "telephone": "Telephone",
+  "siret": "SIRET Number",
+  "country": "Country",
+  "create_shop": "Create New Shop",
+  "create_shop_description": "Fill in the details below to create your shop profile",
+  "shop_name": "Shop Name",
+  "enter_shop_name": "Enter shop name",
+  "phone_number": "Phone Number",
+  "enter_phone_number": "Enter phone number",
+  "enter_address": "Enter street address",
+  "city": "City",
+  "enter_city": "Enter city",
+  "enter_country": "Enter country",
+  "zip_code": "Zip Code",
+  "enter_zip_code": "Enter zip code",
+  "create_shop_button": "Create Shop",
+  "create_shop_success": "Shop created!",
+  "create_shop_error": "There was an error creating your shop.",
+  "users": "Users",
+  "phone": "Phone",
+  "last_played_at": "Last played at",
+  "favorite_game": "Favorite game",
+  "times_played": "Times played",
+  "login": {
+    "title": "Welcome Back!",
+    "subtitle": "Login to access the platform",
+    "email_placeholder": "Enter your email",
+    "password_placeholder": "Enter your password",
+    "forgot_password": "Forgot your password?",
+    "submit": "Login",
+    "invalid_email": "Invalid email",
+    "forgot_password_error": "Failed to send forgot password email"
+  },
+  "reset_password": {
+    "title": "Reset password",
+    "subtitle": "Enter the code you received by email",
+    "email_placeholder": "Enter your email",
+    "code_placeholder": "Enter the verification code",
+    "password_placeholder": "Enter your new password",
+    "submit": "Reset Password",
+    "success_title": "Password reset successful!",
+    "success_button": "Log in with your new password.",
+    "remember_password": "Remember your password?",
+    "login": "Login",
+    "error_reset_failed": "Failed to reset password"
+  },
+  "create_action": {
+    "title": "Create an Action",
+    "name_label": "Name",
+    "name_placeholder": "name",
+    "confirm": "Confirm",
+    "close": "Close",
+    "success": "Action created successfully.",
+    "error_already_exists": "Action already exists.",
+    "error_create_failed": "Failed to create action."
+  },
+  "errors": {
+    "AUTH_EMAIL_PASSWORD_MISSING": "Missing Email or Password",
+    "AUTH_UNAUTHORIZED": "Unauthorized",
+    "AUTH_EMAIL_NOT_FOUND": "Admin with this email not found",
+    "AUTH_LOGIN_FAILED": "Login failed",
+    "AUTH_RESET_FAILED": "Reset Password Failed",
+    "ADMIN_ALREADY_EXISTS": "Admin with this email already exists",
+    "ADMIN_CREATE_FAILED": "Failed to create admin",
+    "ACTION_ALREADY_EXISTS": "Action with this name already exists",
+    "ACTION_CREATE_FAILED": "Failed to create action",
+    "ACTION_UPDATE_FAILED": "Failed to update actions",
+    "GAME_CREATE_FAILED": "Failed to create game",
+    "GAME_ALREADY_EXISTS": "Game with this name already exists",
+    "REWARD_UPDATE_FAILED": "Failed to update rewards",
+    "REWARD_AT_LEAST_UNLIMITED": "Create at least one unlimited reward",
+    "REWARD_DUPLICATE_NAME": "Reward with this name already exists",
+    "REWARD_TOTAL_PERCENTAGE": "Total percentage of all rewards must equal 100%",
+    "NO_SERVER_RESPONSE": "No server response"
+  },
+  "success": {
+    "ADMIN_CREATE_SUCCESS": "Admin created successfully",
+    "ADMIN_DELETE_SUCCESS": "Admin deleted successfully",
+    "ACTION_CREATE_SUCCESS": "Action created successfully",
+    "ACTION_DELETE_SUCCESS": "Action deleted successfully",
+    "ACTION_UPDATE_SUCCESS": "Actions updated successfully",
+    "GAME_CREATE_SUCCESS": "Game created successfully",
+    "GAME_UPDATE_SUCCESS": "Game updated successfully",
+    "GAME_DELETE_SUCCESS": "Game deleted successfully",
+    "REWARD_UPDATE_SUCCESS": "Rewards updated successfully"
+  },
+  "admin": {
+    "modal": {
+      "title": "Create an Admin",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "buttons": {
+        "close": "Close",
+        "confirm": "Confirm"
+      },
+      "messages": {
+        "success": "Admin created successfully",
+        "alreadyExists": "Admin with this email already exists",
+        "createFailed": "Failed to create admin",
+        "noServer": "No server response"
+      }
+    }
+  },
+  "admins": {
+    "table": {
+      "headers": {
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "phone": "Phone",
+        "createdAt": "Created at",
+        "updatedAt": "Updated at",
+        "actions": "Actions"
+      },
+      "button": "Create an admin",
+      "messages": {
+        "fetchFailed": "Failed to fetch admins",
+        "deleteSuccess": "Admin deleted successfully",
+        "deleteFailed": "Failed to delete admin"
+      }
+    }
+  },
+  "games": {
+    "form": {
+      "name": "Name",
+      "nameRequired": "Name is required",
+      "description": "Description",
+      "descriptionRequired": "Description is required",
+      "isActive": "Is Active",
+      "picture": "Game Picture",
+      "uploadPicture": "Upload picture image",
+      "createGame": "Create Game"
+    },
+    "status": {
+      "active": "Active",
+      "disabled": "Disabled"
+    },
+    "messages": {
+      "fetchFailed": "Failed to fetch games",
+      "invalidImage": "Invalid image format",
+      "createSuccess": "Game created successfully",
+      "createFailed": "Failed to create game"
+    },
+    "buttons": {
+      "delete": "Delete"
+    }
+  },
+  "superAdmin": {
+    "signOut": "Sign Out",
+    "homeTitle": "Super Admin Home",
+    "adminsList": "Admins List",
+    "actionsList": "Actions List"
+  },
+  "wheel": {
+    "spinButton": "Spin"
+  },
+  "modals": {
+    "youWonReward": "You Won a {{rewardName}}!",
+    "enterEmailForReward": "Please enter your email so you can have the reward!"
+  },
+  "form": {
+    "firstName": "First Name",
+    "yourFirstName": "your first name",
+    "lastName": "Last Name",
+    "yourLastName": "your last name",
+    "email": "Email",
+    "phone": "Phone",
+    "yourPhone": "your phone number",
+    "agreePromotions": "I agree to receive personalised communications about promotions and new products and from the store."
+  },
+  "buttons": {
+    "confirm": "Confirm"
+  },
+  "error": {
+    "failedCreateUser": "Failed to create user",
+    "alreadyPlayed": "You have already played!"
+  },
+  "succes": {
+    "rewardSentEmail": "We have sent you the gift by email!"
+  },
+  "cooldown": {
+    "nowCanPlay": "You can now play 🎉",
+    "alreadyPlayedTitle": "You have already played!",
+    "canPlayAgainIn": "You can play again in:"
+  },
+  "fortuneWheel": {
+    "welcome": "Welcome!",
+    "title": "Fortune Wheel",
+    "instructions": "Spin the wheel to discover your prize! Click 'Spin' and wait for the wheel to stop.",
+    "actions": {
+      "googleReview": {
+        "description": "Leave a review on Google!",
+        "button": "Review"
+      },
+      "facebook": {
+        "description": "Like our Facebook page!",
+        "button": "Like"
+      },
+      "instagram": {
+        "description": "Follow us on Instagram",
+        "button": "Follow"
+      },
+      "tiktok": {
+        "description": "Follow us on TikTok!",
+        "button": "Follow"
+      },
+      "default": {
+        "description": "Action content goes here",
+        "button": "Follow"
+      }
+    }
+  },
+  "modal": {
+    "cooldown_title": "Please wait",
+    "cooldown_description": "You need to wait before trying again."
+  },
+  "cooldownModal": {
+    "title": "You have already played today!",
+    "description": "you can play again in"
+  },
+  "redeem": {
+    "title": "Your reward is waiting for you!",
+    "subtitle": "Show this page to the staff and enter the code given to you.",
+    "submit": "Submit",
+    "toast": {
+      "invalid": "Invalid code pin!",
+      "success": "You won congrats!"
+    },
+    "cooldown": {
+      "title": "24h haven't passed yet!",
+      "description": "you can get your gift in:"
+    }
+  }
+}

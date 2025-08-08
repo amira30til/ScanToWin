@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next"; // <-- Add this line
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { redeemCodeSchema } from "@/schemas/reward/redeemCode";
@@ -25,6 +26,7 @@ import {
 import logo from "@/assets/logo.png";
 
 const Redeem = () => {
+  const { t } = useTranslation(); // <-- Add this
   const { shopId, actionId, userId } = useParams();
   const navigate = useNavigate();
 
@@ -50,9 +52,9 @@ const Redeem = () => {
     mutationFn: async (values) => await verifyShopCodePin(values),
     onSuccess: (data) => {
       if (data.data.data.isValid === false) {
-        toast("Invalid code pin!", "error");
+        toast(t("redeem.toast.invalid"), "error");
       } else {
-        toast("You won congrats!", "success");
+        toast(t("redeem.toast.success"), "success");
         navigate(`/play/${shopId}`);
       }
     },
@@ -91,10 +93,10 @@ const Redeem = () => {
             />
           </Box>
           <Heading as="h1" fontSize="xl" letterSpacing="tight">
-            You reward is waiting for you!
+            {t("redeem.title")}
           </Heading>
           <Text fontSize="sm" color="gray.600">
-            Show this page to the staff and enter the code given to you.
+            {t("redeem.subtitle")}
           </Text>
           <HStack>
             <PinInput
@@ -128,13 +130,13 @@ const Redeem = () => {
             }}
             isLoading={verifyShopCodePinMutation.isLoading}
           >
-            Submit
+            {t("redeem.submit")}
           </Button>
         </VStack>
       </Flex>
       <UserCooldownModal
-        title="24h haven't passed yet!"
-        description="you can get your gift in:"
+        title={t("redeem.cooldown.title")}
+        description={t("redeem.cooldown.description")}
       />
     </>
   );

@@ -2,7 +2,7 @@ import { useAxiosPrivate, useToast } from "@/hooks";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getActions, deleteAction } from "@/services/actionService";
 import { DateTime } from "luxon";
-
+import { useTranslation } from "react-i18next";
 import DataTable from "@/components/DataTable";
 import CreateActionModal from "./CreateActionModal";
 
@@ -17,10 +17,16 @@ import {
 
 import IconButton from "@/components/common/IconButton";
 import { DeleteIcon } from "@chakra-ui/icons";
-
-const HEADERS = ["Name", "Created at", "Updated at", "Is Active", "Actions"];
-
+const { t } = useTranslation();
+const HEADERS = [
+  t("actions.headers.name"),
+  t("actions.headers.createdAt"),
+  t("actions.headers.updatedAt"),
+  t("actions.headers.isActive"),
+  t("actions.headers.actions"),
+];
 const Actions = () => {
+  const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const axiosPrivate = useAxiosPrivate();
@@ -37,16 +43,16 @@ const Actions = () => {
       const response = await getActions();
       return response.data.data.actions;
     },
-    onError: () => toast("Failed to fetch actions", "error"),
+    onError: () => toast(t("actions.messages.fetchError"), "error"),
   });
 
   const deleteActionMutation = useMutation({
     mutationFn: async (data) => await deleteAction(axiosPrivate, data),
     onSuccess: () => {
       queryClient.invalidateQueries("actions");
-      toast("Action deleted successfully", "success");
+      toast(t("actions.messages.deleteSuccess"), "success");
     },
-    onError: () => toast("Failed to delete action", "error"),
+    onError: () => toast(t("actions.messages.deleteError"), "error"),
   });
 
   const deleteActionHandler = (id) => {
@@ -76,7 +82,7 @@ const Actions = () => {
       <Td>
         <Flex justify="center">
           <IconButton
-            label="Delete action"
+            label={t("actions.buttons.delete")}
             icon={<DeleteIcon />}
             size="sm"
             variant="ghost"
@@ -97,7 +103,7 @@ const Actions = () => {
             colorScheme="primary"
             onClick={createActionHandler}
           >
-            Create an action
+            {t("actions.buttons.create")}
           </Button>
         </Flex>
 

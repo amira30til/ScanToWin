@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCombinedChartData } from "./hooks/useCombinedChartData";
 import { useAxiosPrivate } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 import {
   getShopActionClick,
@@ -57,6 +58,8 @@ const options = {
 };
 
 const Dashboard = () => {
+  const { t } = useTranslation();
+
   const { shopId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultRange = searchParams.get("range") || "today";
@@ -109,7 +112,7 @@ const Dashboard = () => {
 
   return (
     <Box pos="relative">
-      <HeaderAdmin title="Dashboard" />
+      <HeaderAdmin title={t("dashboard_title")} />
       <Flex direction="column" gap={10} px={8} py={10} overflowX="hidden">
         <Flex direction="column" gap={2}>
           <Select
@@ -124,13 +127,13 @@ const Dashboard = () => {
             }}
             value={range}
           >
-            <option value="today">Today</option>
-            <option value="1">Yesterday</option>
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="month">This month</option>
-            <option value="year">This year</option>
-            <option value="custom">Custom</option>
+            <option value="today">{t("today")}</option>
+            <option value="1">{t("yesterday")}</option>
+            <option value="7">{t("last_7_days")}</option>
+            <option value="30">{t("last_30_days")}</option>
+            <option value="month">{t("this_month")}</option>
+            <option value="year">{t("this_year")}</option>
+            <option value="custom">{t("custom")}</option>
           </Select>
           {range === "custom" && (
             <Flex>
@@ -160,13 +163,13 @@ const Dashboard = () => {
           <Box>
             <Flex gap={4} justify="start">
               <StatBox
-                title="Jeux Lancées"
+                title={t("games_launched")}
                 value={clickedFilteredTimestamps}
                 total={shopActionClick}
                 icon={IoLogoGameControllerB}
               />
               <StatBox
-                title="Cadeaux Gagnés"
+                title={t("gifts_won")}
                 value={redeemedFilteredTimestamps}
                 total={shopActionRedeem}
                 icon={FaGift}
