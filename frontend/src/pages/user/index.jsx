@@ -49,11 +49,12 @@ const Play = () => {
   useEffect(() => {
     if (
       activeGame !== undefined &&
-      activeGame.game.name !== FORTUNE_WHEEL_NAME
+      shop &&
+      (activeGame.game.name !== FORTUNE_WHEEL_NAME || !shop.gameCodePin)
     ) {
       navigate(`/user/${shopId}/coming-soon`);
     }
-  }, [activeGame]);
+  }, [shop, activeGame]);
 
   if (shopIsLoading || activeGameIsLoading) return <Spinner />;
 

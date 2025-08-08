@@ -107,9 +107,8 @@ export class CreateShopDto {
     example: 1234,
   })
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  gameCodePin?: number;
+  @IsString()
+  gameCodePin?: string;
 
   @ApiProperty({
     description: 'Whether the shop guarantees a win',
