@@ -1,6 +1,7 @@
 import { upsertActionsSchema } from "@/schemas/action/upsertActions";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFormContext } from "react-hook-form";
+import { useTranslation } from "react-i18next"; // 🟡 i18n hook
 
 import IconButton from "@/components/common/IconButton";
 import GoogleSvg from "@/assets/components/GoogleSvg";
@@ -26,22 +27,29 @@ import {
 
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from "@chakra-ui/icons";
 
-const HEADERS = ["Order", "Action", "link", "actions"];
-
-const actionIconMap = {
-  "Avis Google": GoogleSvg,
-  Facebook: FacebookSvg,
-  Instagram: InstagramSvg,
-  Tiktok: TiktokSvg,
-};
-
 const ActionsTable = ({ fields, move, remove }) => {
+  const { t } = useTranslation(); 
+
   const {
     register,
     formState: { errors },
   } = useFormContext({
     resolver: yupResolver(upsertActionsSchema),
   });
+
+  const HEADERS = [
+    t("table.headers.order"),
+    t("table.headers.action"),
+    t("table.headers.link"),
+    t("table.headers.actions"),
+  ];
+
+  const actionIconMap = {
+    "Avis Google": GoogleSvg,
+    Facebook: FacebookSvg,
+    Instagram: InstagramSvg,
+    Tiktok: TiktokSvg,
+  };
 
   return (
     <TableContainer
@@ -54,7 +62,7 @@ const ActionsTable = ({ fields, move, remove }) => {
       <Table variant="simple">
         <Thead bg="primary.100">
           <Tr>
-            {HEADERS?.map((header, index) => (
+            {HEADERS.map((header, index) => (
               <Th key={index}>{header}</Th>
             ))}
           </Tr>
@@ -73,26 +81,24 @@ const ActionsTable = ({ fields, move, remove }) => {
                         <IconButton
                           variant="outline"
                           size="xs"
-                          onClick={() => {
-                            move(index, index - 1);
-                          }}
+                          onClick={() => move(index, index - 1)}
                           icon={<ArrowUpIcon />}
                         >
-                          Up
+                          {t("table.buttons.up")}
                         </IconButton>
                       )}
+
                       {index < fields.length - 1 && (
                         <IconButton
                           variant="outline"
                           size="xs"
-                          onClick={() => {
-                            move(index, index + 1);
-                          }}
+                          onClick={() => move(index, index + 1)}
                           icon={<ArrowDownIcon />}
                         >
-                          Down
+                          {t("table.buttons.down")}
                         </IconButton>
                       )}
+
                       <FormErrorMessage>
                         {errors.actionsByShop?.[index]?.position?.message}
                       </FormErrorMessage>
@@ -126,7 +132,7 @@ const ActionsTable = ({ fields, move, remove }) => {
 
                   <Td>
                     <IconButton
-                      label="Delete action"
+                      label={t("table.buttons.delete")}
                       icon={<DeleteIcon />}
                       size="sm"
                       variant="ghost"

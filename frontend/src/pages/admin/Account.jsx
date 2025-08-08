@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 import { getShop } from "@/services/shopService";
-
+import { useTranslation } from "react-i18next";
 import HeaderAdmin from "@/components/nav/HeaderAdmin";
 
 import {
@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 const Account = () => {
+  const { t } = useTranslation();
   const { shopId } = useParams();
 
   const { data: shop } = useQuery({
@@ -41,13 +42,13 @@ const Account = () => {
             gap={0}
           >
             {[
-              { label: "Email", value: shop.admin.email },
-              { label: "Name", value: shop.name },
-              { label: "Address", value: shop.address },
-              { label: "Zip Code", value: shop.zipCode },
-              { label: "Telephone", value: shop.tel },
-              { label: "SIRET Number", value: shop.nbSiret },
-              { label: "Country", value: shop.country },
+              { label: t("email"), value: shop.admin.email },
+              { label: t("name"), value: shop.name },
+              { label: t("address"), value: shop.address },
+              { label: t("zipCode"), value: shop.zipCode },
+              { label: t("telephone"), value: shop.tel },
+              { label: t("siret"), value: shop.nbSiret },
+              { label: t("country"), value: shop.country },
             ].map((input) => (
               <FormControl p={6}>
                 <FormLabel>{input.label}</FormLabel>

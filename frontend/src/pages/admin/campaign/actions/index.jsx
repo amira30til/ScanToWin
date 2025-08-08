@@ -11,7 +11,7 @@ import {
   getActions,
   upsertActions,
 } from "@/services/actionService";
-
+import { useTranslation } from "react-i18next";
 import AdminSection from "@/components/common/AdminSection";
 import ActionsTable from "./ActionsTable";
 import AddAction from "./AddAction";
@@ -25,7 +25,7 @@ const Actions = () => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
-
+  const { t } = useTranslation();
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
     queryKey: ["actions-by-shop", shopId],
     queryFn: async () => {
@@ -113,8 +113,8 @@ const Actions = () => {
 
   return (
     <AdminSection
-      title="Choose actions"
-      description="Define the order and actions your customers need to take to maximize engagement."
+      title={t("actions.page.title")}
+      description={t("actions.page.description")}
     >
       <FormProvider {...methods}>
         <Flex
@@ -136,7 +136,7 @@ const Actions = () => {
               colorScheme="primary"
               isLoading={upsertActionsMutation.isPending}
             >
-              Save
+              {t("actions.page.save")}
             </Button>
           </Flex>
         </Flex>

@@ -3,15 +3,16 @@ import { Grid, Input, VStack } from "@chakra-ui/react";
 import * as LucideIcons from "lucide-react";
 import { useEffect, useState } from "react";
 import { pascalToKebab } from "@/utils/helpers";
+import { useTranslation } from "react-i18next";
 
 const iconList = Object.keys(LucideIcons).filter(
   (key) => /^[A-Z]/.test(key) && !key.endsWith("Icon"),
 );
-
+const { t } = useTranslation();
 export const LucideIconPicker = ({ onSelect }) => {
   const [search, setSearch] = useState("");
   const [filteredIcons, setFilteredIcons] = useState([]);
-
+  const { t } = useTranslation();
   useEffect(() => {
     const allIcons = iconList.filter((icon) =>
       icon.toLowerCase().includes(search.toLowerCase()),
@@ -32,7 +33,7 @@ export const LucideIconPicker = ({ onSelect }) => {
           size="sm"
           colorScheme="primary"
           focusBorderColor="primary.500"
-          placeholder="Search icons..."
+          placeholder={t("iconPicker.searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

@@ -28,16 +28,20 @@ import {
 } from "@chakra-ui/react";
 import { LuUpload, LuX } from "react-icons/lu";
 
-const schema = yup
-  .object({
-    name: yup.string().required("name is required"),
-    description: yup.string().required("description is required"),
-    isActive: yup.boolean().required("isActive is required"),
-    pictureUrl: yup.string().required("picture is required"),
-  })
-  .required();
+import { useTranslation } from "react-i18next";
 
 const Games = () => {
+  const { t } = useTranslation();
+
+  const schema = yup
+    .object({
+      name: yup.string().required(t("games.form.nameRequired")),
+      description: yup.string().required(t("games.form.descriptionRequired")),
+      isActive: yup.boolean().required(),
+      pictureUrl: yup.string().required(t("games.form.picture")),
+    })
+    .required();
+
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const fileInputRef = useRef(null);
@@ -54,13 +58,13 @@ const Games = () => {
       const response = await getGames(axiosPrivate);
       return response.data.data.games;
     },
-    onError: () => toast("Failed to fetch games", "error"),
+    onError: () => toast(t("games.messages.fetchFailed"), "error"),
   });
 
   const createGameMutationFn = async (values) => {
     const formData = new FormData();
     const onError = () => {
-      toast("Invalid image format", "error");
+      toast(t("games.messages.invalidImage"), "error");
     };
 
     formData.append("name", values.name);
@@ -79,18 +83,18 @@ const Games = () => {
   const onCreateGameSuccess = () => {
     refetch();
     reset();
-    toast(SUCCESS_MESSAGES.GAME_CREATE_SUCCESS, "success");
+    toast(t(SUCCESS_MESSAGES.GAME_CREATE_SUCCESS), "success");
   };
 
   const onCreateGameError = (error) => {
     const errorMessages = {
-      409: ERROR_MESSAGES.GAME_ALREADY_EXISTS,
+      409: t(ERROR_MESSAGES.GAME_ALREADY_EXISTS),
     };
 
     const message = !error?.response
-      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      ? t(ERROR_MESSAGES.NO_SERVER_RESPONSE)
       : errorMessages[error.response?.status] ||
-        ERROR_MESSAGES.GAME_CREATE_FAILED;
+        t(ERROR_MESSAGES.GAME_CREATE_FAILED);
 
     toast(message, "error");
   };
@@ -137,7 +141,7 @@ const Games = () => {
   return (
     <Flex direction={{ base: "column", md: "row" }} gap={10}>
       <Box minW="400px">
-        <Heading size="md">Games</Heading>
+        <Heading size="md">{t("games.form.createGame")}</Heading>
         <Flex
           mt={4}
           as="form"
@@ -147,29 +151,29 @@ const Games = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <FormControl pt={4} isInvalid={!!formState?.errors?.name}>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>{t("games.form.name")}</FormLabel>
             <Input
               {...register("name")}
               focusBorderColor="primary.500"
-              placeholder="Enter game name"
+              placeholder={t("games.form.name")}
             />
             <FormErrorMessage>
               {formState?.errors?.name?.message}
             </FormErrorMessage>
           </FormControl>
-          <FormControl pt={4} isInvalid={!!formState?.errors?.name}>
-            <FormLabel>Description</FormLabel>
+          <FormControl pt={4} isInvalid={!!formState?.errors?.description}>
+            <FormLabel>{t("games.form.description")}</FormLabel>
             <Textarea
               {...register("description")}
               focusBorderColor="primary.500"
-              placeholder="Enter game description"
+              placeholder={t("games.form.description")}
             />
             <FormErrorMessage>
               {formState?.errors?.description?.message}
             </FormErrorMessage>
           </FormControl>
           <FormControl pt={4} isInvalid={!!formState?.errors?.isActive}>
-            <FormLabel>Is Active</FormLabel>
+            <FormLabel>{t("games.form.isActive")}</FormLabel>
             <Switch colorScheme="primary" {...register("isActive")} />
             <FormErrorMessage>
               {formState?.errors?.isActive?.message}
@@ -177,7 +181,7 @@ const Games = () => {
           </FormControl>
 
           <FormControl>
-            <FormLabel>Game Picture</FormLabel>
+            <FormLabel>{t("games.form.picture")}</FormLabel>
             <input
               type="file"
               ref={fileInputRef}
@@ -190,12 +194,12 @@ const Games = () => {
               <Box position="relative" width="fit-content">
                 <Image
                   src={previewImage}
-                  alt="Picture Preview"
+                  alt={t("games.form.picture")}
                   maxHeight="100px"
                   borderRadius="md"
                 />
                 <IconButton
-                  aria-label="Remove pictureUrl"
+                  aria-label={t("games.form.picture")}
                   icon={<LuX size={16} />}
                   size="sm"
                   position="absolute"
@@ -222,7 +226,7 @@ const Games = () => {
               >
                 <LuUpload size={24} color={primary500} />
                 <Text mt={2} fontSize="sm">
-                  Upload pictureUrl image
+                  {t("games.form.uploadPicture")}
                 </Text>
               </Flex>
             )}
@@ -233,7 +237,7 @@ const Games = () => {
             mt={4}
             isLoading={createGameMutation.isPending}
           >
-            Create Game
+            {t("games.form.createGame")}
           </Button>
         </Flex>
       </Box>
@@ -251,14 +255,16 @@ const Games = () => {
                 variant="outline"
                 onClick={() => deleteGameHandler(game.id)}
               >
-                Delete
+                {t("games.buttons.delete")}
               </Button>
             </Flex>
             <Flex direction="column" gap={4}>
               <Text fontWeight="bold">{game.name}</Text>
               <Flex>
                 <Badge colorScheme={game.status === "active" ? "green" : "red"}>
-                  {game.status === "active" ? "Active" : "Disabled"}
+                  {game.status === "active"
+                    ? t("games.status.active")
+                    : t("games.status.disabled")}
                 </Badge>
               </Flex>
               <Text>{game.description}</Text>

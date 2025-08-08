@@ -10,23 +10,25 @@ import DataTable from "@/components/DataTable";
 import IconButton from "@/components/common/IconButton";
 
 import { Flex, Button, Td, Spinner } from "@chakra-ui/react";
-
 import { DeleteIcon } from "@chakra-ui/icons";
 
-const HEADERS = [
-  "Email",
-  "Role",
-  "Status",
-  "Phone",
-  "Created at",
-  "Updated at",
-  "Actions",
-];
+import { useTranslation } from "react-i18next";
 
 const Admins = () => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
+
+  const HEADERS = [
+    t("admins.table.headers.email"),
+    t("admins.table.headers.role"),
+    t("admins.table.headers.status"),
+    t("admins.table.headers.phone"),
+    t("admins.table.headers.createdAt"),
+    t("admins.table.headers.updatedAt"),
+    t("admins.table.headers.actions"),
+  ];
 
   const { data: admins, isLoading } = useQuery({
     queryKey: ["admins"],
@@ -37,16 +39,16 @@ const Admins = () => {
       );
       return data;
     },
-    onError: () => toast("Failed to fetch admins", "error"),
+    onError: () => toast(t("admins.table.messages.fetchFailed"), "error"),
   });
 
   const deleteAdminMutation = useMutation({
     mutationFn: async (data) => await deleteAdmin(axiosPrivate, data),
     onSuccess: () => {
       queryClient.invalidateQueries("admins");
-      toast("Admin deleted successfully", "success");
+      toast(t("admins.table.messages.deleteSuccess"), "success");
     },
-    onError: () => toast("Failed to delete admin", "error"),
+    onError: () => toast(t("admins.table.messages.deleteFailed"), "error"),
   });
 
   const deleteAdminHandler = (id) => {
@@ -72,7 +74,7 @@ const Admins = () => {
       <Td>
         <Flex justify="center">
           <IconButton
-            label="Delete admin"
+            label={t("admins.table.headers.actions")}
             icon={<DeleteIcon />}
             size="sm"
             variant="ghost"
@@ -98,22 +100,15 @@ const Admins = () => {
 };
 
 const AdminsTable = ({ data, headers, rows }) => {
+  const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const createAdminHandler = () => {
-    onOpen();
-  };
 
   return (
     <>
       <Flex direction="column" gap={4}>
         <Flex>
-          <Button
-            variant="solid"
-            colorScheme="primary"
-            onClick={createAdminHandler}
-          >
-            Create an admin
+          <Button variant="solid" colorScheme="primary" onClick={onOpen}>
+            {t("admins.table.button")}
           </Button>
         </Flex>
 

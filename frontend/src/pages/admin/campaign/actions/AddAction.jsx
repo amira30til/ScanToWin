@@ -4,6 +4,7 @@ import { useFormContext } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { upsertActionsSchema } from "@/schemas/action/upsertActions";
+import { useTranslation } from "react-i18next";
 
 import {
   Flex,
@@ -41,7 +42,7 @@ const AddAction = ({ actions, append }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedAction, setSelectedAction] = useState("");
   const [availableActions, setAvailableActions] = useState([]);
-
+  const { t } = useTranslation();
   const { watch } = useFormContext({
     resolver: yupResolver(upsertActionsSchema),
   });
@@ -87,17 +88,17 @@ const AddAction = ({ actions, append }) => {
             onClick={onOpen}
             isDisabled={availableActions?.length < 1}
           >
-            Add an action
+            {t("actions.add_button")}
           </Button>
         </PopoverTrigger>
         <PopoverContent>
-          <PopoverHeader fontWeight="semibold">Add an action</PopoverHeader>
+          <PopoverHeader fontWeight="semibold">
+            {t("actions.popover.title")}
+          </PopoverHeader>
           <PopoverArrow />
           <PopoverCloseButton />
           <PopoverBody>
-            <Text fontSize="sm">
-              Choose an action to add to engage your customers
-            </Text>
+            <Text fontSize="sm">{t("actions.popover.description")}</Text>
 
             <Divider my={2} />
 
@@ -130,7 +131,7 @@ const AddAction = ({ actions, append }) => {
                 onClick={handleConfirm}
                 isDisabled={!selectedAction}
               >
-                Confirm
+                {t("actions.popover.confirm")}{" "}
               </Button>
             </ButtonGroup>
           </PopoverFooter>

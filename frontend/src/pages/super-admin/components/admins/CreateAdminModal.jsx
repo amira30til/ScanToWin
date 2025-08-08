@@ -1,14 +1,11 @@
-// HOOKS
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosPrivate, useToast } from "@/hooks";
 
-// FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createAdminSchema } from "@/schemas/createAdmin";
 import { createAdmin } from "@/services/adminService";
 
-// STYLE
 import {
   Modal,
   ModalOverlay,
@@ -24,9 +21,11 @@ import {
   FormHelperText,
   FormLabel,
 } from "@chakra-ui/react";
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
+
+import { useTranslation } from "react-i18next";
 
 const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
+  const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -39,18 +38,18 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
     queryClient.invalidateQueries("admins");
     reset();
     onClose();
-    toast(SUCCESS_MESSAGES.ADMIN_CREATE_SUCCESS, "success");
+    toast(t("admin.modal.messages.success"), "success");
   };
 
   const onCreateAdminError = (error) => {
     const errorMessages = {
-      409: ERROR_MESSAGES.ADMIN_ALREADY_EXISTS,
+      409: t("admin.modal.messages.alreadyExists"),
     };
 
     const message = !error?.response
-      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      ? t("admin.modal.messages.noServer")
       : errorMessages[error.response?.status] ||
-        ERROR_MESSAGES.ADMIN_CREATE_FAILED;
+        t("admin.modal.messages.createFailed");
 
     toast(message, "error");
   };
@@ -69,12 +68,12 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Create an Admin</ModalHeader>
+        <ModalHeader>{t("admin.modal.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex direction="column" gap={2}>
             <FormControl>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("admin.modal.fields.email")}</FormLabel>
               <Input
                 focusBorderColor="primary.500"
                 type="email"
@@ -84,14 +83,12 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
                 mt={2}
                 {...register("email")}
               />
-
               <FormHelperText color="red.500">
                 {formState.errors.email?.message}
               </FormHelperText>
             </FormControl>
             <FormControl>
-              <FormLabel>Password</FormLabel>
-
+              <FormLabel>{t("admin.modal.fields.password")}</FormLabel>
               <Input
                 focusBorderColor="primary.500"
                 type="password"
@@ -99,7 +96,6 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
                 size="md"
                 {...register("password")}
               />
-
               <FormHelperText color="red.500">
                 {formState.errors.password?.message}
               </FormHelperText>
@@ -109,10 +105,10 @@ const CreateAdminModal = ({ isOpen, onClose, size = "md" }) => {
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("admin.modal.buttons.close")}
             </Button>
             <Button type="submit" colorScheme="primary">
-              Confirm
+              {t("admin.modal.buttons.confirm")}
             </Button>
           </Flex>
         </ModalFooter>

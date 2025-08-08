@@ -22,8 +22,10 @@ import useAuthStore from "@/store";
 import { createShop } from "@/services/shopService";
 import { decodeToken } from "@/utils/auth";
 import { queryClient } from "@/index";
+import { useTranslation } from "react-i18next";
 
 const CreateShop = () => {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const auth = useAuthStore((state) => state.auth);
@@ -43,13 +45,13 @@ const CreateShop = () => {
   const onCreateShopSuccess = async () => {
     await queryClient.refetchQueries(["adminShops"]);
     navigate("/admin");
-    toast("Shop created!", "success");
+    toast(t("create_shop_success"), "success");
     reset();
   };
 
   const onCreateShopError = (error) => {
     console.log(error);
-    toast("There was an error creating your shop.", "error");
+    toast(t("create_shop_error"), "error");
   };
 
   const createShopMutation = useMutation({
@@ -81,11 +83,9 @@ const CreateShop = () => {
       <Container maxW="container.lg">
         <Box textAlign="center" mb={10}>
           <Heading as="h1" size="xl" mb={4}>
-            Create New Shop
+            {t("create_shop")}
           </Heading>
-          <Text color="gray.600">
-            Fill in the details below to create your shop profile
-          </Text>
+          <Text color="gray.600">{t("create_shop_description")} </Text>
         </Box>
         <Box
           as="form"
@@ -101,10 +101,10 @@ const CreateShop = () => {
         >
           <VStack spacing={6} align="stretch">
             <FormControl isInvalid={!!errors.name} isRequired>
-              <FormLabel htmlFor="name">Shop Name</FormLabel>
+              <FormLabel htmlFor="name">{t("shop_name")}</FormLabel>
               <Input
                 id="name"
-                placeholder="Enter shop name"
+                placeholder={t("enter_shop_name")}
                 {...register("name")}
                 focusBorderColor="primary.500"
               />
@@ -112,10 +112,10 @@ const CreateShop = () => {
             </FormControl>
 
             <FormControl isRequired isInvalid={errors.tel}>
-              <FormLabel htmlFor="tel">Phone Number</FormLabel>
+              <FormLabel htmlFor="tel">{t("phone_number")}</FormLabel>
               <Input
                 id="tel"
-                placeholder="Enter phone number"
+                placeholder={t("enter_phone_number")}
                 {...register("tel")}
                 focusBorderColor="primary.500"
               />
@@ -125,10 +125,10 @@ const CreateShop = () => {
             </FormControl>
 
             <FormControl isRequired isInvalid={errors.address}>
-              <FormLabel htmlFor="address">Address</FormLabel>
+              <FormLabel htmlFor="address">{t("address")}</FormLabel>
               <Input
                 id="address"
-                placeholder="Enter street address"
+                placeholder={t("enter_address")}
                 {...register("address")}
                 focusBorderColor="primary.500"
               />
@@ -138,10 +138,10 @@ const CreateShop = () => {
             </FormControl>
 
             <FormControl isRequired isInvalid={errors.city}>
-              <FormLabel htmlFor="city">City</FormLabel>
+              <FormLabel htmlFor="city">{t("city")}</FormLabel>
               <Input
                 id="city"
-                placeholder="Enter city"
+                placeholder={t("enter_city")}
                 {...register("city")}
                 focusBorderColor="primary.500"
               />
@@ -151,10 +151,10 @@ const CreateShop = () => {
             </FormControl>
 
             <FormControl isRequired isInvalid={errors.country}>
-              <FormLabel htmlFor="country">Country</FormLabel>
+              <FormLabel htmlFor="country">{t("country")}</FormLabel>
               <Input
                 id="country"
-                placeholder="Enter country"
+                placeholder={t("enter_country")}
                 {...register("country")}
                 focusBorderColor="primary.500"
               />
@@ -164,10 +164,10 @@ const CreateShop = () => {
             </FormControl>
 
             <FormControl isRequired isInvalid={errors.zipCode}>
-              <FormLabel htmlFor="zipCode">Zip Code</FormLabel>
+              <FormLabel htmlFor="zipCode">{t("zip_code")}</FormLabel>
               <Input
                 id="zipCode"
-                placeholder="Enter zip code"
+                placeholder={t("enter_zip_code")}
                 {...register("zipCode")}
                 focusBorderColor="primary.500"
               />
@@ -184,7 +184,7 @@ const CreateShop = () => {
               size="lg"
               width="full"
             >
-              Create Shop
+              {t("create_shop_button")}{" "}
             </Button>
           </VStack>
         </Box>

@@ -2,6 +2,7 @@
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosPrivate, useToast } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 // FUNCTIONS
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -39,21 +40,19 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
     queryClient.invalidateQueries("actions");
     reset();
     onClose();
-    toast(SUCCESS_MESSAGES.ACTION_CREATE_SUCCESS, "success");
+    toast(t("create_action.success"), "success");
   };
 
-  const onCreateActionError = (error) => {
-    const errorMessages = {
-      409: ERROR_MESSAGES.ACTION_ALREADY_EXISTS,
-    };
-
-    const message = !error?.response
-      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
-      : errorMessages[error.response?.status] ||
-        ERROR_MESSAGES.ACTION_CREATE_FAILED;
-
-    toast(message, "error");
+  const errorMessages = {
+    409: t("create_action.error_already_exists"),
   };
+
+  const message = !error?.response
+    ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+    : errorMessages[error.response?.status] ||
+      t("create_action.error_create_failed");
+
+  toast(message, "error");
 
   const createActionMutation = useMutation({
     mutationFn: async (data) => await createAction(axiosPrivate, data),
@@ -69,15 +68,15 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Create an Action</ModalHeader>
+        <ModalHeader>{t("create_action.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex direction="column" gap={2}>
             <FormControl>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t("create_action.name_label")}</FormLabel>
               <Input
                 focusBorderColor="primary.500"
-                placeholder="name"
+                placeholder={t("create_action.name_placeholder")}
                 autoFocus
                 size="md"
                 mt={2}
@@ -93,10 +92,10 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("create_action.close")}
             </Button>
             <Button type="submit" colorScheme="primary">
-              Confirm
+              {t("create_action.confirm")}
             </Button>
           </Flex>
         </ModalFooter>
