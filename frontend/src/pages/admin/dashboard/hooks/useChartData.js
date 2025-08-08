@@ -19,6 +19,7 @@ const prepareChartData = (groupedDataList) => {
     label,
     data: allDates.map((date) => data[date] || 0),
     backgroundColor: color,
+    borderColor: color,
   }));
 
   return {
@@ -27,7 +28,7 @@ const prepareChartData = (groupedDataList) => {
   };
 };
 
-export const useChartData = (clicked, redeemed, gamePlayed) => {
+export const useChartData = (clicked = [], redeemed = [], gamePlayed = []) => {
   const [primary300] = useToken("colors", ["primary.300"]);
   const [secondary300] = useToken("colors", ["secondary.300"]);
   const [tertiary300] = useToken("colors", ["tertiary.300"]);
@@ -35,11 +36,11 @@ export const useChartData = (clicked, redeemed, gamePlayed) => {
   const combinedChartData = useMemo(() => {
     const clickedGrouped = rewardsGroupBy(clicked);
     const redeemedGrouped = rewardsGroupBy(redeemed);
-    const socialDataGrouped = rewardsGroupBy(gamePlayed);
+    const playedGrouped = rewardsGroupBy(gamePlayed);
 
-    return prepareChartData([
+    const chartData = [
       {
-        data: clickedGrouped || [],
+        data: playedGrouped || [],
         label: "Jeux lancés",
         color: primary300,
       },
@@ -49,11 +50,17 @@ export const useChartData = (clicked, redeemed, gamePlayed) => {
         color: secondary300,
       },
       {
-        data: socialDataGrouped || [],
+        data: clickedGrouped || [],
         label: "Nombre d'abonnées",
         color: tertiary300,
       },
-    ]);
+    ];
+
+    const filteredChartData = chartData.filter(
+      (item) => Object.keys(item.data).length > 0,
+    );
+
+    return prepareChartData(filteredChartData);
   }, [clicked, redeemed, gamePlayed]);
 
   return combinedChartData;
