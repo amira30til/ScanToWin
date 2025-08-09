@@ -49,7 +49,7 @@ const float = keyframes`
 `;
 
 const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
-  const { t } = useTranslation(); // Initialize translation hook
+  const { t } = useTranslation();
 
   const { shopId } = useParams();
   const toast = useToast();

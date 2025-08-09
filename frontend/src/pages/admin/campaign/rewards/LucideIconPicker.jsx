@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 const iconList = Object.keys(LucideIcons).filter(
   (key) => /^[A-Z]/.test(key) && !key.endsWith("Icon"),
 );
-const { t } = useTranslation();
 export const LucideIconPicker = ({ onSelect }) => {
   const [search, setSearch] = useState("");
   const [filteredIcons, setFilteredIcons] = useState([]);

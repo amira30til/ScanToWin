@@ -224,6 +224,7 @@ const ResetPassword = () => {
 };
 
 const PasswordResetSuccessAlert = ({ setShowAlert }) => {
+    const { t } = useTranslation();
   return (
     <Alert status="success" borderRadius="md">
       <AlertIcon />

@@ -22,7 +22,10 @@ import {
 } from "@chakra-ui/react";
 import Error from "@/components/Error";
 
-const { t } = useTranslation();
+
+
+const Users = () => {
+  const { t } = useTranslation();
 
 const HEADERS = [
   t("name"),
@@ -32,8 +35,6 @@ const HEADERS = [
   t("favorite_game"),
   t("times_played"),
 ];
-
-const Users = () => {
   const { shopId } = useParams();
 
   const {
