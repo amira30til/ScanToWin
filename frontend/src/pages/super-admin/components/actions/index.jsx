@@ -17,6 +17,8 @@ import {
 
 import IconButton from "@/components/common/IconButton";
 import { DeleteIcon } from "@chakra-ui/icons";
+
+const Actions = () => {
 const { t } = useTranslation();
 const HEADERS = [
   t("actions.headers.name"),
@@ -24,10 +26,7 @@ const HEADERS = [
   t("actions.headers.updatedAt"),
   t("actions.headers.isActive"),
   t("actions.headers.actions"),
-];
-const Actions = () => {
-  const { t } = useTranslation();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+];  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();

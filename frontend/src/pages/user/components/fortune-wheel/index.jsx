@@ -170,7 +170,7 @@ const ActionModal = ({
   const chosenActionClickMutation = useMutation({
     mutationFn: async (values) => await chosenActionClick(values.id),
   });
-
+  const { t } = useTranslation();
   const onActionLinkHandler = () => {
     const current = +actionPosition || 1;
 
@@ -185,7 +185,6 @@ const ActionModal = ({
     onClose();
   };
   const getActionContent = (name) => {
-    const { t } = useTranslation();
     switch (name) {
       case "Avis Google":
         return {

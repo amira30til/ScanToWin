@@ -26,7 +26,7 @@ import {
 import logo from "@/assets/logo.png";
 
 const Redeem = () => {
-  const { t } = useTranslation(); // <-- Add this
+  const { t } = useTranslation(); 
   const { shopId, actionId, userId } = useParams();
   const navigate = useNavigate();
 

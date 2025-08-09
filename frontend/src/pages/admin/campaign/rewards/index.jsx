@@ -41,8 +41,7 @@ import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/constants";
 
-const { t } = useTranslation();
-const HEADERS = t("rewards.page.headers", { returnObjects: true });
+
 
 const Rewards = () => {
   const { shopId } = useParams();
@@ -52,8 +51,8 @@ const Rewards = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
-
+const { t } = useTranslation();
+const HEADERS = t("rewards.page.headers", { returnObjects: true });
   const { data: rewards, isLoading: isLoadingRewards } = useQuery({
     queryKey: ["rewards-by-shop", shopId],
     queryFn: async () => {
