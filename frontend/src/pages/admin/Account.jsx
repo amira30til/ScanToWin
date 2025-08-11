@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
 
 import { getShop } from "@/services/shopService";
 import { useTranslation } from "react-i18next";
