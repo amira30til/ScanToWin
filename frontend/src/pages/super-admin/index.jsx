@@ -4,13 +4,17 @@ import Admins from "./_components/admins";
 
 import { Flex, Box, Heading, Alert, AlertIcon } from "@chakra-ui/react";
 
+import { useTranslation } from "react-i18next";
+
 const SuperAdmin = () => {
+  const { t } = useTranslation();
+
   return (
     <Box p={4} py={8}>
-      <Heading size="lg">Super Admin Home</Heading>
+      <Heading size="lg">{t("superAdmin.homeTitle")}</Heading>
 
       <Flex direction="column" gap={8} py={8}>
-        <Heading size="md">Admins List</Heading>
+        <Heading size="md">{t("superAdmin.adminsList")}</Heading>
         <Alert status="info" borderRadius="md">
           <AlertIcon />
           Archived admins, won't be able to use their accounts, and the their
@@ -18,7 +22,7 @@ const SuperAdmin = () => {
         </Alert>
         <Admins />
 
-        <Heading size="md">Actions List</Heading>
+        <Heading size="md">{t("superAdmin.actionsList")}</Heading>
         <Alert status="info" borderRadius="md">
           <AlertIcon />
           Non active actions, won't be shown to the admins

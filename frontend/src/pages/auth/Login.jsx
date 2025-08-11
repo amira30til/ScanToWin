@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { loginUser, forgotPassword } from "@/services/authService";
 import { loginSchema } from "@/schemas/auth/login";
@@ -31,6 +32,7 @@ import { ERROR_MESSAGES } from "@/constants";
 import { Mail } from "lucide-react";
 
 const Login = () => {
+  const { t } = useTranslation();
   const setAuth = useAuthStore((state) => state.setAuth);
   const auth = useAuthStore((state) => state.auth);
 
@@ -91,14 +93,14 @@ const Login = () => {
     if (isValidEmail) {
       forgotPasswordMutation.mutate(email);
     } else {
-      toast("Invalid email", "error");
+      toast(t("login.invalid_email"), "error");
     }
   };
 
   const forgotPasswordMutation = useMutation({
     mutationFn: async (data) => await forgotPassword(data),
     onSuccess: () => navigate("/reset-password", { state: { email } }),
-    onError: () => toast("Failed to send forgot password email", "error"),
+    onError: () => toast(t("login.forgot_password_error"), "error"),
   });
 
   useEffect(() => {
@@ -135,14 +137,14 @@ const Login = () => {
             gap={{ base: 2, md: 6 }}
           >
             <Heading size={{ base: "lg", md: "xl" }} textAlign="center">
-              Welcome Back!
+              {t("login.title")}
             </Heading>
             <Text
               color="darkgray"
               textAlign="center"
               fontSize={{ base: "md", md: "lg" }}
             >
-              Login to access the platform
+              {t("login.subtitle")}
             </Text>
           </Flex>
 
@@ -152,7 +154,7 @@ const Login = () => {
                 <Input
                   focusBorderColor="primary.500"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t("login.email_placeholder")}
                   autoFocus
                   size="lg"
                   {...register("email")}
@@ -173,7 +175,7 @@ const Login = () => {
               <PasswordInput
                 size="lg"
                 focusBorderColor="primary.500"
-                placeholder="Enter your password"
+                placeholder={t("login.password_placeholder")}
                 {...register("password")}
               />
               <FormErrorMessage>
@@ -188,7 +190,7 @@ const Login = () => {
               pt={2}
               pb={4}
             >
-              Forgot your password?
+              {t("login.forgot_password")}
             </Button>
 
             <Button
@@ -200,7 +202,7 @@ const Login = () => {
               colorScheme="primary"
               size="lg"
             >
-              Login
+              {t("login.submit")}
             </Button>
           </Flex>
         </Flex>

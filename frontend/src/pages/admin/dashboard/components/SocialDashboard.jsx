@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useChartData } from "../hooks/useChartData";
 import { useSelectStat } from "../hooks/useSelectStat";
 import { useAxiosPrivate } from "@/hooks";
@@ -99,6 +100,7 @@ const SocialDashboard = ({ title, social }) => {
   const to = searchParams.get("to") || today;
 
   const axiosPrivate = useAxiosPrivate();
+  const { t } = useTranslation();
 
   const { data: actionsByShop, isLoading: isLoadingActions } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -218,13 +220,23 @@ const SocialDashboard = ({ title, social }) => {
             onChange={(event) => rangeHandler(event, "range")}
             value={defaultRange}
           >
-            <option value="today">Today</option>
-            <option value="1">Yesterday</option>
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="month">This month</option>
-            <option value="year">This year</option>
-            <option value="custom">Custom date</option>
+            <option value="today">{t("social_dashboard.filters.today")}</option>
+            <option value="1">{t("social_dashboard.filters.yesterday")}</option>
+            <option value="7">
+              {t("social_dashboard.filters.last_7_days")}
+            </option>
+            <option value="30">
+              {t("social_dashboard.filters.last_30_days")}
+            </option>
+            <option value="month">
+              {t("social_dashboard.filters.this_month")}
+            </option>
+            <option value="year">
+              {t("social_dashboard.filters.this_year")}
+            </option>
+            <option value="custom">
+              {t("social_dashboard.filters.custom")}
+            </option>
           </Select>
           {defaultRange === "custom" && (
             <Flex>
@@ -258,14 +270,14 @@ const SocialDashboard = ({ title, social }) => {
             <Box w="50%">
               <Flex gap={4} justify="start">
                 <StatBox
-                  title="Cadeaux Gagnés"
+                  title={t("social_dashboard.stats.gifts_won")}
                   value={redeemedSelected}
                   total={actionRedeemedTimestamps}
                   icon={Gamepad2}
                 />
 
                 <StatBox
-                  title="Jeux Lancées"
+                  title={t("social_dashboard.stats.games_launched")}
                   value={gamePlayedSelected}
                   total={actionPlayedTimestamps}
                   icon={Gift}

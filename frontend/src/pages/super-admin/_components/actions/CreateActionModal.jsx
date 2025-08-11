@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosPrivate, useToast } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createActionSchema } from "@/schemas/action/createAction";
@@ -21,14 +22,15 @@ import {
   FormHelperText,
   FormLabel,
 } from "@chakra-ui/react";
+import { ERROR_MESSAGES } from "@/constants";
 
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
 const ACTIONS = ["Facebook", "Instagram", "Tiktok", "Avis Google"];
 
 const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { register, handleSubmit, formState, reset } = useForm({
     resolver: yupResolver(createActionSchema),
@@ -38,18 +40,18 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
     queryClient.invalidateQueries("actions");
     reset();
     onClose();
-    toast(SUCCESS_MESSAGES.ACTION_CREATE_SUCCESS, "success");
+    toast(t("create_action.success"), "success");
   };
 
   const onCreateActionError = (error) => {
     const errorMessages = {
-      409: ERROR_MESSAGES.ACTION_ALREADY_EXISTS,
+      409: t("create_action.error_already_exists"),
     };
 
     const message = !error?.response
       ? ERROR_MESSAGES.NO_SERVER_RESPONSE
       : errorMessages[error.response?.status] ||
-        ERROR_MESSAGES.ACTION_CREATE_FAILED;
+        t("create_action.error_create_failed");
 
     toast(message, "error");
   };
@@ -68,12 +70,12 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Create an Action</ModalHeader>
+        <ModalHeader>{t("create_action.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex direction="column" gap={2}>
             <FormControl>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t("create_action.name_label")}</FormLabel>
               <Select
                 bg="white"
                 borderRadius="md"
@@ -98,10 +100,10 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("create_action.close")}
             </Button>
             <Button type="submit" colorScheme="primary">
-              Confirm
+              {t("create_action.confirm")}
             </Button>
           </Flex>
         </ModalFooter>
