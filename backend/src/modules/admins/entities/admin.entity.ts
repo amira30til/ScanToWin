@@ -10,55 +10,74 @@ import {
 } from 'typeorm';
 import { Role } from '../enums/role.enum';
 import { AdminStatus } from '../enums/admin-status.enum';
-import { Shop } from 'src/modules/shops/entities/shop.entity';
-import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
+import { Shop } from '../../shops/entities/shop.entity';
+import { ActiveGameAssignment } from '../../active-game-assignment/entities/active-game-assignment.entity';
 
 @Entity()
 @Unique(['email'])
 export class Admin {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   firstName: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   lastName: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   email: string;
+
   @ApiProperty()
   @Column({ select: false })
   password: string;
+
   @Column({ default: Role.ADMIN })
   role: string;
+
   @ApiProperty()
   @Column({ type: 'varchar', length: 64, nullable: true, default: null })
   verificationCode: string | null;
+
   @ApiProperty()
   @Column({ nullable: true })
   tel: number;
+
   @ApiProperty()
   @Column({ nullable: true, type: 'text' })
   refreshToken: string | null;
+
   @ApiProperty()
   @Column({ nullable: true })
   resetToken: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   resetTokenExp: Date;
+
   @ApiProperty()
-  @Column({ default: AdminStatus.ACTIVE })
-  adminStatus: string;
+  @Column({
+    type: 'enum',
+    enum: AdminStatus,
+    default: AdminStatus.ACTIVE,
+  })
+  adminStatus: AdminStatus;
+
   @ApiProperty()
   @Column({ nullable: true })
   profilPicture?: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   mailStatus: boolean;
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
   @ApiProperty()
   @UpdateDateColumn({
     type: 'timestamp',

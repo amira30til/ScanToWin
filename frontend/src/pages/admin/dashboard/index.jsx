@@ -73,7 +73,7 @@ const barOptions = {
   },
 };
 
-export const lineOptions = {
+const lineOptions = {
   responsive: true,
   plugins: {
     legend: {

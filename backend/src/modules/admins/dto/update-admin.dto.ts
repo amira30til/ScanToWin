@@ -78,7 +78,7 @@ export class UpdateAdminDto implements Partial<CreateAdminDto> {
   })
   @IsEnum(AdminStatus)
   @IsOptional()
-  adminStatus?: string;
+  adminStatus?: AdminStatus;
 
   @ApiPropertyOptional({
     description: 'Admin mail status',

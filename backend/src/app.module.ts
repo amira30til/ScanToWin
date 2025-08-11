@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import databaseConfig from './config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
@@ -23,26 +22,24 @@ import { ActionClickModule } from './modules/action-click/action-click.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { GamePlayTrackingModule } from './modules/game-play-tracking/game-play-tracking.module';
 import { APP_GUARD } from '@nestjs/core';
+import { SuperAdminSeed } from './seeds/super-admin.seed';
+import {
+  AppConfig,
+  DatabaseConfig,
+  JwtConfig,
+  RefreshJwtConfig,
+} from './config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
+      load: [DatabaseConfig, AppConfig, JwtConfig, RefreshJwtConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: configService.get<'postgres'>('database.type'),
-        host: configService.get<string>('database.host'),
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.database'),
-        synchronize: configService.get<boolean>('database.synchronize'),
-        autoLoadEntities: configService.get<boolean>(
-          'database.autoLoadEntities',
-        ),
+      useFactory: async (configService: ConfigService) => ({
+        ...(await configService.get('database')),
       }),
       inject: [ConfigService],
     }),
@@ -75,6 +72,7 @@ import { APP_GUARD } from '@nestjs/core';
   controllers: [AppController],
   providers: [
     AppService,
+    SuperAdminSeed,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

@@ -67,7 +67,7 @@ export class RewardService {
        * 2.  Per‑item validation (percentage, nbRewardTowin, …)
        * --------------------------------------------------------- */
       for (const dto of dtoArr) {
-        /** percentage 1 – 100 */
+        /** percentage 1 – 100 */
         if (!dto.percentage || dto.percentage <= 0 || dto.percentage > 100) {
           throw new BadRequestException(
             `Invalid percentage for "${dto.name}": must be between 1 and 100`,
@@ -118,7 +118,7 @@ export class RewardService {
 
       if (outgoingActiveDtos.length > 0 && totalPct !== 100) {
         throw new BadRequestException(
-          `Total percentage of ACTIVE rewards must equal 100 %. Current sum: ${totalPct} %`,
+          `Total percentage of ACTIVE rewards must equal 100 %. Current sum: ${totalPct} %`,
         );
       }
 
@@ -126,8 +126,8 @@ export class RewardService {
       const hasUnlimited = outgoingActiveDtos.some((d) => d.isUnlimited);
       if (shop.isGuaranteedWin && !hasUnlimited) {
         throw new ConflictException(
-          `Pour un jeu 100 % gagnant, vous devez définir au moins un gain illimité ` +
-            `(isUnlimited = true). Sinon, désactivez l’option 100 % gagnant.`,
+          `Pour un jeu 100 % gagnant, vous devez définir au moins un gain illimité ` +
+            `(isUnlimited = true). Sinon, désactivez l'option 100 % gagnant.`,
         );
       }
 

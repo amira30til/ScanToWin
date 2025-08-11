@@ -307,7 +307,7 @@ export class AdminsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Forbidden - requires SUPER_ADMIN role',
   })
-  updateStatus(@Param('id') id: string, @Body('status') status: string) {
+  updateStatus(@Param('id') id: string, @Body('status') status: AdminStatus) {
     return this.adminsService.updateStatus(id, status);
   }
   @Patch(':id/restore')

@@ -6,37 +6,11 @@ import { SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import * as cookieParser from 'cookie-parser';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Admin } from './modules/admins/entities/admin.entity';
-import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
-
-  const adminRepo = app.get<Repository<Admin>>(getRepositoryToken(Admin));
-  const superAdmin = await adminRepo.findOne({
-    where: { role: 'SUPER_ADMIN' },
-  });
-
-  if (!superAdmin) {
-    const email = process.env.SUPER_ADMIN_EMAIL;
-    const password = process.env.SUPER_ADMIN_PASSWORD;
-
-    if (!email || !password) {
-      throw new Error('Missing SUPER_ADMIN_EMAIL env variable');
-    }
-    const salt = await bcrypt.genSalt();
-    const cryptedPassword = await bcrypt.hash(password, salt);
-
-    const newAdmin = adminRepo.create({
-      email,
-      password: cryptedPassword,
-      role: 'SUPER_ADMIN',
-    });
-    await adminRepo.save(newAdmin);
-  }
 
   app.enableCors({
     origin: (
@@ -82,7 +56,10 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(3000);
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('PORT') ?? 3000;
+
+  await app.listen(port);
 }
 
 void bootstrap();

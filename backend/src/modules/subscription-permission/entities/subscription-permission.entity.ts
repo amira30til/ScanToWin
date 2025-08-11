@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Permission } from 'src/modules/permission/entities/permession.entity';
-import { SubscriptionPlan } from 'src/modules/subscription-plan/entities/subscription-plan.entity';
+import { Permission } from '../../permission/entities/permession.entity';
+import { SubscriptionPlan } from '../../subscription-plan/entities/subscription-plan.entity';
 import {
   Column,
   CreateDateColumn,
