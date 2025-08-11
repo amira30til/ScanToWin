@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { SubscriptionStatus } from '../enums/subscription-plan-staus';
 import { SubscriptionType } from '../enums/subscription-type-enum';
-import { SubscriptionPermission } from 'src/modules/subscription-permission/entities/subscription-permission.entity';
+import { SubscriptionPermission } from '../../subscription-permission/entities/subscription-permission.entity';
 
 @Entity()
 export class SubscriptionPlan {

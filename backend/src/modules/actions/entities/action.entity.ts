@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ChosenAction } from 'src/modules/chosen-action/entities/chosen-action.entity';
+import { ChosenAction } from '../../chosen-action/entities/chosen-action.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

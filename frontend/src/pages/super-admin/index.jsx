@@ -22,6 +22,7 @@ const SuperAdmin = () => {
         </Alert>
         <Admins />
 
+
         <Heading size="md">{t("superAdmin.actionsList")}</Heading>
         <Alert status="info" borderRadius="md">
           <AlertIcon />

@@ -1,5 +1,5 @@
-import { ChosenAction } from 'src/modules/chosen-action/entities/chosen-action.entity';
-import { Shop } from 'src/modules/shops/entities/shop.entity';
+import { ChosenAction } from '../../chosen-action/entities/chosen-action.entity';
+import { Shop } from '../../shops/entities/shop.entity';
 import {
   CreateDateColumn,
   Entity,

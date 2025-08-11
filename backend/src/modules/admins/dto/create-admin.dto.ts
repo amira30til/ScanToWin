@@ -75,7 +75,7 @@ export class CreateAdminDto {
   })
   @IsEnum(AdminStatus)
   @IsOptional()
-  adminStatus?: string;
+  adminStatus?: AdminStatus;
 
   @ApiPropertyOptional({
     description: 'Admin mail status',

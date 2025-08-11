@@ -15,7 +15,7 @@ const useAdminRedirect = (adminId) => {
     error,
     isFetching,
   } = useQuery({
-    queryKey: ["adminShops"],
+    queryKey: ["adminShops", adminId],
     queryFn: async () => {
       const response = await getAdminShops(axiosPrivate, adminId);
       return response.data.data.shops;

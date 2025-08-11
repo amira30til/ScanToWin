@@ -8,22 +8,18 @@ import { Admin } from '../admins/entities/admin.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import jwtConfig from 'src/config/jwt.config';
-import refreshJwtConfig from 'src/config/refresh-jwt.config';
+import { JwtConfig, RefreshJwtConfig } from '../../config';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRED'),
-        },
+      useFactory: async (configService: ConfigService) => ({
+        ...(await configService.get('jwt')),
       }),
       inject: [ConfigService],
     }),
-    ConfigModule.forFeature(jwtConfig),
-    ConfigModule.forFeature(refreshJwtConfig),
+    ConfigModule.forFeature(JwtConfig),
+    ConfigModule.forFeature(RefreshJwtConfig),
     PassportModule,
     TypeOrmModule.forFeature([Admin]),
   ],

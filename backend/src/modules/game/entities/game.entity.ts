@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
+import { ActiveGameAssignment } from '../../active-game-assignment/entities/active-game-assignment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

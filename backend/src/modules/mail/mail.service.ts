@@ -37,7 +37,7 @@ export class MailService {
       this.logger.debug('Email sent successfully to:', receiverEmail);
     } catch (error) {
       this.logger.error('Error sending email:', error);
-      throw new BadRequestException(`Failed to send email: ${error.message}`);
+      throw new BadRequestException(`Failed to send email: ${error}`);
     }
   }
 
@@ -48,7 +48,6 @@ export class MailService {
     receiverEmail: string,
     validFromDate: string,
     validUntilDate: string,
-    emailCode?: string,
     rewardId?: string,
     shopId?: string,
     userId?: string,
@@ -156,9 +155,7 @@ export class MailService {
       return { success: true, message: 'Gift email sent successfully' };
     } catch (error) {
       this.logger.error('Error sending gift email:', error);
-      throw new BadRequestException(
-        `Failed to send gift email: ${error.message}`,
-      );
+      throw new BadRequestException(`Failed to send gift email: ${error}`);
     }
   }
 }

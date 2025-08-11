@@ -52,7 +52,7 @@ const CreateShop = () => {
   });
 
   const onCreateShopSuccess = async () => {
-    await queryClient.refetchQueries(["adminShops"]);
+    await queryClient.refetchQueries(["adminShops", adminId]);
     navigate("/admin");
     toast(t("create_shop_success"), "success");
     reset();

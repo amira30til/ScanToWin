@@ -14,7 +14,7 @@ export const dataURLtoFile = (dataUrl, filename, onError = () => {}) => {
 
   const [meta, base64] = dataUrl.split(",");
   const mimeMatch = meta.match(
-    /data:(image\/(png|jpeg|jpg|webp|svg\+xml));base64/,
+    /data:(image\/(png|jpeg|avif|jpg|webp|svg\+xml));base64/,
   );
 
   if (!mimeMatch) {
