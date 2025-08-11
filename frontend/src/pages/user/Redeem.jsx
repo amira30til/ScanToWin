@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useToast } from "@/hooks";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useToast, useLocalStorage } from "@/hooks";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; // <-- Add this line
 
@@ -26,9 +26,11 @@ import {
 import logo from "@/assets/logo.png";
 
 const Redeem = () => {
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   const { shopId, actionId, userId } = useParams();
   const navigate = useNavigate();
+  const [_, setUserId] = useLocalStorage("s2w_user_id", "");
+  const queryClient = useQueryClient();
 
   const toast = useToast();
   const {
@@ -51,11 +53,17 @@ const Redeem = () => {
   const verifyShopCodePinMutation = useMutation({
     mutationFn: async (values) => await verifyShopCodePin(values),
     onSuccess: (data) => {
+      if (data.data.error.code === "USER_COOLDOWN") {
+        toast("You have to wait 24h before getting the reward!", "error");
+        setUserId(data.data.error.userId);
+        queryClient.refetchQueries("verify-user-cooldown", shopId, userId);
+        return;
+      }
       if (data.data.data.isValid === false) {
         toast(t("redeem.toast.invalid"), "error");
       } else {
         toast(t("redeem.toast.success"), "success");
-        navigate(`/play/${shopId}`);
+        navigate(`/user/${shopId}`);
       }
     },
     onError: () => {},
@@ -65,7 +73,7 @@ const Redeem = () => {
     const fullCode = `${values.digitOne}${values.digitTwo}${values.digitThree}${values.digitFour}`;
     if (!!shopId && !!userId && !!actionId) {
       verifyShopCodePinMutation.mutate({
-        gameCodePin: +fullCode,
+        gameCodePin: fullCode,
         shopId,
         actionId,
         userId,

@@ -1,10 +1,10 @@
 {
-  "short_name": "Galactic Footwear",
-  "name": "Celestial Sole Spacewear Emporium",
+  "short_name": "Scan 2 Win",
+  "name": "Gain customers loyatly, by providing games and gifts!",
   "icons": [
     {
-      "src": "favicon.png",
-      "type": "image/png",
+      "src": "favicon.ico",
+      "type": "image/ico",
       "sizes": "512x512"
     }
   ],

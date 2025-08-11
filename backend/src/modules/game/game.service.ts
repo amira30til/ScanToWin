@@ -53,7 +53,6 @@ export class GameService {
       // Create new game
       const newGame = this.gameRepository.create({
         ...createGameDto,
-        status: GameStatus.ACTIVE,
         pictureUrl: pictureUrl,
       });
 
@@ -71,10 +70,9 @@ export class GameService {
   async findAll(): Promise<
     ApiResponseInterface<Game> | ErrorResponseInterface
   > {
+    // TODO: temporary fix (make this endpoint get's all games)
     try {
-      const games = await this.gameRepository.find({
-        where: { status: GameStatus.ACTIVE },
-      });
+      const games = await this.gameRepository.find();
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         games,
         message: GameMessages.GAMES_FETCHED,

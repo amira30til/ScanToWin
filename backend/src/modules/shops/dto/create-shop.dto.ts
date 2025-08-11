@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { ShopStatus } from '../enums/shop-status.enum';
 
 export class CreateShopDto {
   @ApiProperty({
@@ -25,6 +26,15 @@ export class CreateShopDto {
   @IsOptional()
   @IsString()
   address?: string;
+
+  @ApiProperty({
+    required: false,
+    example: true,
+    default: ShopStatus.ACTIVE,
+  })
+  @IsOptional()
+  @IsString()
+  status: string;
 
   @ApiProperty({
     description: 'City where the shop is located',
@@ -97,9 +107,8 @@ export class CreateShopDto {
     example: 1234,
   })
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  gameCodePin?: number;
+  @IsString()
+  gameCodePin?: string;
 
   @ApiProperty({
     description: 'Whether the shop guarantees a win',

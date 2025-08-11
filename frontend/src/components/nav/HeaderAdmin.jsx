@@ -42,7 +42,7 @@ import {
   CopyIcon,
   AlertIcon,
 } from "@chakra-ui/icons";
-import { FaLock, FaQrcode } from "react-icons/fa";
+import { Lock, QrCode } from "lucide-react";
 
 const HeaderAdmin = ({ title }) => {
   const svgRef = useRef(null);
@@ -52,7 +52,7 @@ const HeaderAdmin = ({ title }) => {
   const [sidebarWidth] = useToken("sizes", ["sidebar"]);
 
   const copyQrLinkHandler = () => {
-    const qrCodeLink = `${import.meta.env.VITE_FRONTEND_URL}/play/${shopId}`;
+    const qrCodeLink = `${import.meta.env.VITE_FRONTEND_URL}/user/${shopId}`;
     copy(qrCodeLink);
   };
 
@@ -108,7 +108,7 @@ const HeaderAdmin = ({ title }) => {
           <Heading size="lg">{title}</Heading>
           <Flex direction={{ sm: "column", md: "row" }} gap={2}>
             <Button
-              leftIcon={<FaLock />}
+              leftIcon={<Lock size={20} />}
               size="sm"
               colorScheme="secondary"
               variant="outline"
@@ -120,7 +120,7 @@ const HeaderAdmin = ({ title }) => {
             <Menu>
               <MenuButton
                 as={Button}
-                leftIcon={<FaQrcode />}
+                leftIcon={<QrCode size={20} />}
                 rightIcon={<ChevronDownIcon />}
                 size="sm"
                 colorScheme="secondary"
@@ -136,7 +136,7 @@ const HeaderAdmin = ({ title }) => {
                         height: "auto",
                         width: "100%",
                       }}
-                      value={`${import.meta.env.VITE_FRONTEND_URL}/play/${shopId}`}
+                      value={`${import.meta.env.VITE_FRONTEND_URL}/user/${shopId}`}
                       viewBox={`0 0 256 256`}
                     />
                   </Box>
@@ -181,7 +181,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { data: shop } = useQuery({
+  const { data: shop, refetch } = useQuery({
     queryKey: ["shop-by-id", shopId],
     queryFn: async () => {
       const response = await getShop(shopId);
@@ -199,6 +199,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
 
   const onUpdateShopSuccess = async () => {
     await queryClient.invalidateQueries(["shop-by-id", shopId]);
+    refetch();
     toast("Code PIN updated!", "success");
     reset();
     onClose();
@@ -235,13 +236,13 @@ const PinCodeModal = ({ isOpen, onClose }) => {
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" gap={6}>
-              <Alert status="warning">
+              <Alert status="warning" borderRadius="md">
                 <AlertIcon />
                 To secure gift collection, each customer will need to present a
                 PIN code to be validated by your team (cash register, counter,
                 reception, etc.).
               </Alert>
-              <Alert status="info" variant="left-accent">
+              <Alert status="info" variant="left-accent" borderRadius="md">
                 <AlertIcon />
                 Specify your pin code
               </Alert>
@@ -267,6 +268,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
                     autoFocus
                     size="lg"
                     mt={2}
+                    maxLength="4"
                     {...register("newPin")}
                   />
 
@@ -283,6 +285,7 @@ const PinCodeModal = ({ isOpen, onClose }) => {
                     size="lg"
                     mt={2}
                     {...register("confirmPin")}
+                    maxLength="4"
                   />
 
                   <FormHelperText color="red.500">

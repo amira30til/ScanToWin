@@ -1,4 +1,3 @@
-// HOOKS
 import { useEffect } from "react";
 import { useToast } from "@/hooks";
 import { useNavigate } from "react-router-dom";
@@ -7,15 +6,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-// FUNCTIONS
 import { loginUser, forgotPassword } from "@/services/authService";
 import { loginSchema } from "@/schemas/auth/login";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-// COMPONENTS
 import Logo from "@/components/Logo";
+import PasswordInput from "@/components/common/PasswordInput";
 
-// STYLE
 import {
   Flex,
   Heading,
@@ -30,12 +27,9 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 
-// ASSETS
-import { AiOutlineMail } from "react-icons/ai";
 import loginImg from "@/assets/login.svg";
-import PasswordInput from "@/components/common/PasswordInput";
-import { MdOutlineMail } from "react-icons/md";
 import { ERROR_MESSAGES } from "@/constants";
+import { Mail } from "lucide-react";
 
 const Login = () => {
   const { t } = useTranslation();
@@ -169,7 +163,7 @@ const Login = () => {
                   }}
                 />
                 <InputRightElement width="4.5rem">
-                  <Icon h="100%" as={MdOutlineMail} color="#000" />
+                  <Icon as={Mail} color="#000" size={20} />
                 </InputRightElement>
               </InputGroup>
               <FormErrorMessage>
@@ -202,7 +196,7 @@ const Login = () => {
             <Button
               type="submit"
               w="100%"
-              leftIcon={<AiOutlineMail />}
+              leftIcon={<Mail />}
               isDisabled={Object.keys(formState.errors).length > 0}
               isLoading={loginMutation.isPending}
               colorScheme="primary"

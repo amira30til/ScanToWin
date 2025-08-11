@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { ShopStatus } from '../enums/shop-status.enum';
 
 export class UpdateShopDto {
   @ApiProperty({
@@ -69,6 +70,15 @@ export class UpdateShopDto {
   tel?: string;
 
   @ApiProperty({
+    required: false,
+    example: true,
+    default: ShopStatus.ACTIVE,
+  })
+  @IsOptional()
+  @IsString()
+  status: string;
+
+  @ApiProperty({
     description: 'Primary game color',
     required: false,
     example: '#FF5733',
@@ -92,9 +102,8 @@ export class UpdateShopDto {
     example: 1234,
   })
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  gameCodePin?: number;
+  @IsString()
+  gameCodePin?: string;
 
   @ApiProperty({
     description: 'Whether the shop guarantees a win',

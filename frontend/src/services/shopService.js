@@ -14,12 +14,16 @@ export const getAdminShop = async (axios, shopId, adminId) =>
 export const getShop = async (shopId) =>
   await axios.get(`${SHOP_URL}/${shopId}`);
 
-export const updateShop = async (axios, shopId, adminId, body) =>
-  await axios.patch(`${SHOP_URL}/${shopId}/admin/${adminId}`, body, {
+export const updateShop = async (axios, shopId, adminId, body) => {
+  return await axios.patch(`${SHOP_URL}/${shopId}/admin/${adminId}`, body, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+};
 
 export const verifyShopCodePin = async (body) =>
   await axios.post(`${SHOP_URL}/verify-game-code`, body);
+
+export const deleteShop = async (axios, shopId) =>
+  await axios.delete(`${SHOP_URL}/${shopId}`);

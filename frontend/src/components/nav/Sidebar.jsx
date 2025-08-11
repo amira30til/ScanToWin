@@ -1,12 +1,15 @@
 import { useLogout } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
 
 import { getActionsByShop } from "@/services/actionService";
+import { startTransition } from "react";
 
 import Logo from "../Logo";
 
+import { Link } from "react-router-dom";
 import {
-  useDisclosure,
   Box,
   Flex,
   Icon,
@@ -23,25 +26,16 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 
+import { FaGoogle, FaInstagram, FaTiktok, FaFacebook } from "react-icons/fa";
 import {
-  MdKeyboardArrowRight,
-  MdOutlineSpaceDashboard,
-  // MdMessage,
-  MdAccountCircle,
-} from "react-icons/md";
-import {
-  FaFolderOpen,
-  // FaStar,
-  FaGoogle,
-  FaInstagram,
-  FaTiktok,
-  FaFacebook,
-} from "react-icons/fa";
-import { FiMenu } from "react-icons/fi";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { FaUsers } from "react-icons/fa6";
-import { BiLogOut } from "react-icons/bi";
-import { AddIcon } from "@chakra-ui/icons";
+  Menu,
+  Users,
+  LogOut,
+  FolderOpen,
+  CircleUser,
+  LayoutDashboard,
+} from "lucide-react";
+import { AddIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
 const actionMap = {
   "Avis Google": { icon: FaGoogle, link: "google" },
@@ -94,7 +88,7 @@ const DrawerElement = () => {
           md: "none",
         }}
         onClick={sidebar.onOpen}
-        icon={<FiMenu />}
+        icon={<Menu />}
         size="sm"
         my={4}
         mx={8}
@@ -122,6 +116,7 @@ const SidebarContent = ({ shops, ...rest }) => {
   const location = useLocation();
   const queryString = location.search;
   const logout = useLogout();
+  const queryClient = useQueryClient();
 
   const { data: actionsByShop, isLoading: actionsByShopIsLoading } = useQuery({
     queryKey: ["actions-by-shop", shopId],
@@ -148,7 +143,10 @@ const SidebarContent = ({ shops, ...rest }) => {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    await queryClient.cancelQueries();
+    startTransition(() => {
+      navigate("/login");
+    });
   };
 
   return (
@@ -211,7 +209,7 @@ const SidebarContent = ({ shops, ...rest }) => {
         aria-label="Main Navigation"
       >
         <NavItem
-          icon={MdOutlineSpaceDashboard}
+          icon={LayoutDashboard}
           href={`${shopId}/dashboard/${queryString}`}
           boxSize={5}
         >
@@ -224,8 +222,8 @@ const SidebarContent = ({ shops, ...rest }) => {
             onClick={handleDropdown}
             icon={
               <Icon
-                as={MdKeyboardArrowRight}
-                transform={integrations.isOpen && "rotate(90deg)"}
+                as={ChevronDownIcon}
+                transform={integrations.isOpen && "rotate(-180deg)"}
               />
             }
           ></IconButton>
@@ -253,67 +251,50 @@ const SidebarContent = ({ shops, ...rest }) => {
             );
           })}
         </Collapse>
-        <NavItem icon={FaFolderOpen} href={`${shopId}/campaign`} boxSize={4}>
+        <NavItem icon={FolderOpen} href={`${shopId}/campaign`} boxSize={4}>
           My Campaign
         </NavItem>
-        {/* <NavItem icon={MdMessage} href={`${shopId}/sms`} boxSize={4}>
-          SMS Campaign
-        </NavItem>
-        <NavItem icon={FaStar} href={`${shopId}/review`} boxSize={4}>
-          Manage Reviews
-        </NavItem> */}
-        <NavItem icon={FaUsers} href={`${shopId}/users`} boxSize={5}>
+        <NavItem icon={Users} href={`${shopId}/users`} boxSize={5}>
           My Users
         </NavItem>
-        <NavItem icon={MdAccountCircle} href={`${shopId}/account`} boxSize={5}>
+        <NavItem icon={CircleUser} href={`${shopId}/account`} boxSize={5}>
           Account
         </NavItem>
       </Flex>
       <Flex justify="center">
         <Divider w="80%" my={4} h="1px" bg="gray.300" />
       </Flex>
-      <NavItem icon={BiLogOut} onClick={handleLogout} boxSize={5}>
+      <NavItem icon={LogOut} onClick={handleLogout} boxSize={5}>
         Logout
       </NavItem>
     </Box>
   );
 };
 
-const NavItem = (props) => {
-  const { icon, children, href, boxSize, ...rest } = props;
+const NavItem = ({ icon, children, href, boxSize, ...rest }) => {
+  const location = useLocation();
+  const urlPath = location.pathname;
+
   const hasHref = href !== undefined && href !== "";
-  const urlPath = window.location.pathname;
-  const cleanHref = href?.split("?")[0];
 
-  const isActive =
-    hasHref &&
-    (urlPath === `/admin/${cleanHref}` ||
-      urlPath.startsWith(`/admin/${cleanHref}/`));
-
-  const isActiveColor = "primary.700";
-
-  if (isActive) {
-    rest.color = isActiveColor;
-    rest.bg = "primary.50";
-  }
+  const cleanHref = `/admin/${href?.split("?")[0]}`;
+  const isActive = hasHref && cleanHref.startsWith(urlPath);
 
   return (
     <Flex
       as={hasHref ? Link : "div"}
       to={hasHref ? `/admin/${href}` : undefined}
       align="center"
-      px="4"
-      pl="4"
-      py="3"
+      bg={isActive ? "primary.50" : undefined}
+      color={isActive ? "primary.700" : undefined}
+      p={3}
       cursor="pointer"
-      color="inherit"
-      _hover={{
-        bg: "primary.50",
-        color: isActive ? isActiveColor : "primary.600",
-      }}
-      role="group"
       fontWeight="semibold"
       transition="all .15s ease"
+      _hover={{
+        bg: "primary.50",
+        color: isActive ? undefined : "primary.700",
+      }}
       {...rest}
     >
       {icon && <Icon mx="2" boxSize={boxSize} as={icon} />}
