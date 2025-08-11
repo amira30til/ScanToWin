@@ -203,7 +203,6 @@ const ActionModal = ({
           description: t("fortuneWheel.actions.instagram.description"),
           buttonText: t("fortuneWheel.actions.instagram.button"),
           icon: <InstagramSvg />,
-          icon: <InstagramSvg />,
         };
       case "Tiktok":
         return {

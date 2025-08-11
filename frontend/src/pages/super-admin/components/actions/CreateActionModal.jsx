@@ -25,12 +25,13 @@ import {
   FormHelperText,
   FormLabel,
 } from "@chakra-ui/react";
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/constants";
+import { ERROR_MESSAGES } from "@/constants";
 
 const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { register, handleSubmit, formState, reset } = useForm({
     resolver: yupResolver(createActionSchema),
@@ -43,16 +44,18 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
     toast(t("create_action.success"), "success");
   };
 
-  const errorMessages = {
-    409: t("create_action.error_already_exists"),
+  const onCreateActionError = (error) => {
+    const errorMessages = {
+      409: t("create_action.error_already_exists"),
+    };
+
+    const message = !error?.response
+      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      : errorMessages[error.response?.status] ||
+        t("create_action.error_create_failed");
+
+    toast(message, "error");
   };
-
-  const message = !error?.response
-    ? ERROR_MESSAGES.NO_SERVER_RESPONSE
-    : errorMessages[error.response?.status] ||
-      t("create_action.error_create_failed");
-
-  toast(message, "error");
 
   const createActionMutation = useMutation({
     mutationFn: async (data) => await createAction(axiosPrivate, data),
