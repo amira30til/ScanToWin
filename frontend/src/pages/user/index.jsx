@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import { getShopGameAssignement } from "@/services/gameService";
 import { getShop } from "@/services/shopService";
@@ -13,6 +14,7 @@ import Spinner from "@/components/Spinner";
 const FORTUNE_WHEEL_NAME = "Fortune Wheel";
 
 const Play = () => {
+  const { t } = useTranslation();
   const { shopId } = useParams();
   const navigate = useNavigate();
 
@@ -64,8 +66,8 @@ const Play = () => {
     <>
       <FortuneWheel shop={shop} />
       <UserCooldownModal
-        title="You have already played today!"
-        description="you can play again in"
+        title={t("cooldownModal.title")}
+        description={t("cooldownModal.description")}
       />
     </>
   );

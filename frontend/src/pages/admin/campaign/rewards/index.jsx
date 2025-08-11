@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast, useAxiosPrivate } from "@/hooks";
 import { useForm, useFieldArray } from "react-hook-form";
-
+import { useTranslation } from "react-i18next";
 import { upsertRewards, getRewardsByShop } from "@/services/rewardService";
 import { upsertRewardsSchema } from "@/schemas/reward/upsertRewards";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -41,14 +41,7 @@ import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/constants";
 
-const HEADERS = [
-  "icon",
-  "name",
-  "number of rewards",
-  "percentage %",
-  "is unlimited",
-  "actions",
-];
+
 
 const Rewards = () => {
   const { shopId } = useParams();
@@ -58,7 +51,8 @@ const Rewards = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const queryClient = useQueryClient();
-
+const { t } = useTranslation();
+const HEADERS = t("rewards.page.headers", { returnObjects: true });
   const { data: rewards, isLoading: isLoadingRewards } = useQuery({
     queryKey: ["rewards-by-shop", shopId],
     queryFn: async () => {
@@ -168,8 +162,8 @@ const Rewards = () => {
     <>
       <AdminSection
         as="form"
-        title="Choose rewards"
-        description="Choose the rewards your customers can win by playing. Customize your prizes to offer a unique and engaging experience."
+        title={t("rewards.page.title")}
+        description={t("rewards.page.description")}
         onSubmit={handleSubmit(onSubmit)}
       >
         <Flex direction="column" gap={4}>
@@ -190,7 +184,7 @@ const Rewards = () => {
                 });
               }}
             >
-              Add a reward
+              {t("rewards.page.addReward")}
             </Button>
           </Flex>
 
@@ -239,7 +233,7 @@ const Rewards = () => {
                                 w="150px"
                               />
                               <EditableInput
-                                placeholder="name of the reward"
+                                placeholder={t("rewards.page.namePlaceholder")}
                                 {...register(`rewards.${index}.name`)}
                                 w="150px"
                               />
@@ -316,7 +310,7 @@ const Rewards = () => {
 
                         <Td>
                           <IconButton
-                            label="Delete reward"
+                            label={t("rewards.page.delete")}
                             icon={<DeleteIcon />}
                             size="sm"
                             variant="ghost"
@@ -340,7 +334,7 @@ const Rewards = () => {
               colorScheme="primary"
               isLoading={upsertRewardsMutation.isPending}
             >
-              Save
+              {t("rewards.page.save")}
             </Button>
           </Flex>
         </Flex>

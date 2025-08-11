@@ -1,0 +1,368 @@
+{
+  "table": {
+    "headers": {
+      "order": "Ordre",
+      "action": "Action",
+      "link": "Lien",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "up": "Haut",
+      "down": "Bas",
+      "delete": "Supprimer l'action"
+    }
+  },
+  "actions": {
+    "add_button": "Ajouter une action",
+    "popover": {
+      "title": "Ajouter une action",
+      "description": "Choisissez une action à ajouter pour engager vos clients",
+      "confirm": "Confirmer"
+    },
+    "page": {
+      "title": "Choisissez des actions",
+      "description": "Définissez l'ordre et les actions que vos clients doivent suivre pour maximiser l'engagement.",
+      "save": "Enregistrer"
+    },
+    "headers": {
+      "name": "Nom",
+      "createdAt": "Créé le",
+      "updatedAt": "Mis à jour le",
+      "isActive": "Actif",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "create": "Créer une action",
+      "delete": "Supprimer l'action"
+    },
+    "messages": {
+      "fetchError": "Échec du chargement des actions",
+      "deleteSuccess": "Action supprimée avec succès",
+      "deleteError": "Échec de la suppression de l'action"
+    }
+  },
+  "rewards": {
+    "page": {
+      "title": "Choisissez les récompenses",
+      "description": "Choisissez les récompenses que vos clients peuvent gagner en jouant. Personnalisez vos prix pour offrir une expérience unique et engageante.",
+      "addReward": "Ajouter une récompense",
+      "save": "Enregistrer",
+      "namePlaceholder": "nom de la récompense",
+      "delete": "Supprimer la récompense",
+      "headers": [
+        "icône",
+        "nom",
+        "nombre de récompenses",
+        "pourcentage %",
+        "illimité",
+        "actions"
+      ]
+    }
+  },
+  "iconPicker": {
+    "searchPlaceholder": "Rechercher des icônes..."
+  },
+  "update_icon_modal": {
+    "title": "Choisir une icône"
+  },
+  "choose_game": {
+    "title": "Sélection de jeu",
+    "description": "Choisissez parmi 3 jeux interactifs pour engager vos utilisateurs et créer une expérience unique.",
+    "success": "Jeu sélectionné avec succès !",
+    "error": "Une erreur s'est produite lors de la sélection du jeu.",
+    "save_button": "Enregistrer",
+    "coming_soon": "Bientôt disponible",
+    "no_description": "Aucune description disponible."
+  },
+  "customize_game": {
+    "title": "Personnalisez votre jeu",
+    "description": "Téléchargez votre logo et choisissez vos couleurs pour créer un jeu qui reflète votre marque.\nOffrez à vos clients une expérience unique et entièrement personnalisée.",
+    "your_logo": "Votre logo",
+    "upload_logo": "Télécharger un logo",
+    "remove_picture": "Supprimer l'image",
+    "save": "Enregistrer",
+    "choose_colors": "Choisissez vos couleurs",
+    "primary": "Primaire",
+    "secondary": "Secondaire"
+  },
+  "admin_campaign": {
+    "title": "Ma campagne"
+  },
+  "social_dashboard": {
+    "filters": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "last_7_days": "Les 7 derniers jours",
+      "last_30_days": "Les 30 derniers jours",
+      "this_month": "Ce mois-ci",
+      "this_year": "Cette année",
+      "custom": "Date personnalisée"
+    },
+    "stats": {
+      "games_launched": "Jeux Lancés",
+      "gifts_won": "Cadeaux Gagnés"
+    }
+  },
+  "stat_box": {
+    "total": "Total"
+  },
+  "chart": {
+    "launched_games": "Jeux lancés",
+    "redeemed_rewards": "Cadeaux gagnés"
+  },
+  "facebook_dashboard": "Tableau de bord Facebook",
+  "google_dashboard": "Tableau de bord Google",
+  "google_reviews": "Avis Google",
+  "dashboard_title": "Tableau de bord",
+  "today": "Aujourd'hui",
+  "yesterday": "Hier",
+  "last_7_days": "7 derniers jours",
+  "last_30_days": "30 derniers jours",
+  "this_month": "Ce mois-ci",
+  "this_year": "Cette année",
+  "custom": "Personnalisé",
+  "games_launched": "Jeux Lancés",
+  "gifts_won": "Cadeaux Gagnés",
+  "instagram_dashboard_title": "Tableau de bord Instagram",
+  "tiktok_dashboard_title": "Tableau de bord Tiktok",
+  "accountTitle": "Compte",
+  "email": "Email",
+  "name": "Nom",
+  "address": "Adresse",
+  "zipCode": "Code Postal",
+  "telephone": "Téléphone",
+  "siret": "Numéro SIRET",
+  "country": "Pays",
+  "create_shop": "Créer une nouvelle boutique",
+  "create_shop_description": "Remplissez les informations ci-dessous pour créer votre boutique",
+  "shop_name": "Nom de la boutique",
+  "enter_shop_name": "Entrez le nom de la boutique",
+  "phone_number": "Numéro de téléphone",
+  "enter_phone_number": "Entrez le numéro de téléphone",
+  "enter_address": "Entrez l'adresse",
+  "city": "Ville",
+  "enter_city": "Entrez la ville",
+  "enter_country": "Entrez le pays",
+  "zip_code": "Code postal",
+  "enter_zip_code": "Entrez le code postal",
+  "create_shop_button": "Créer la boutique",
+  "create_shop_success": "Boutique créée !",
+  "create_shop_error": "Une erreur est survenue lors de la création de votre boutique.",
+  "users": "Utilisateurs",
+  "phone": "Téléphone",
+  "last_played_at": "Dernière partie",
+  "favorite_game": "Jeu préféré",
+  "times_played": "Nombre de parties",
+  "login": {
+    "title": "Bon retour !",
+    "subtitle": "Connectez-vous pour accéder à la plateforme",
+    "email_placeholder": "Entrez votre e-mail",
+    "password_placeholder": "Entrez votre mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "submit": "Connexion",
+    "invalid_email": "Email invalide",
+    "forgot_password_error": "Échec de l'envoi de l'e-mail de réinitialisation"
+  },
+  "reset_password": {
+    "title": "Réinitialiser le mot de passe",
+    "subtitle": "Entrez le code que vous avez reçu par e-mail",
+    "email_placeholder": "Entrez votre e-mail",
+    "code_placeholder": "Entrez le code de vérification",
+    "password_placeholder": "Entrez votre nouveau mot de passe",
+    "submit": "Réinitialiser le mot de passe",
+    "success_title": "Réinitialisation réussie !",
+    "success_button": "Connectez-vous avec votre nouveau mot de passe.",
+    "remember_password": "Vous vous souvenez de votre mot de passe ?",
+    "login": "Connexion",
+    "error_reset_failed": "Échec de la réinitialisation du mot de passe"
+  },
+  "create_action": {
+    "title": "Créer une action",
+    "name_label": "Nom",
+    "name_placeholder": "nom",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "success": "Action créée avec succès.",
+    "error_already_exists": "L'action existe déjà.",
+    "error_create_failed": "Échec de la création de l'action."
+  },
+  "errors": {
+    "AUTH_EMAIL_PASSWORD_MISSING": "Email ou mot de passe manquant",
+    "AUTH_UNAUTHORIZED": "Non autorisé",
+    "AUTH_EMAIL_NOT_FOUND": "Administrateur avec cet email introuvable",
+    "AUTH_LOGIN_FAILED": "Échec de la connexion",
+    "AUTH_RESET_FAILED": "Échec de la réinitialisation du mot de passe",
+    "ADMIN_ALREADY_EXISTS": "Un administrateur avec cet email existe déjà",
+    "ADMIN_CREATE_FAILED": "Échec de la création de l'administrateur",
+    "ACTION_ALREADY_EXISTS": "Une action avec ce nom existe déjà",
+    "ACTION_CREATE_FAILED": "Échec de la création de l'action",
+    "ACTION_UPDATE_FAILED": "Échec de la mise à jour des actions",
+    "GAME_CREATE_FAILED": "Échec de la création du jeu",
+    "GAME_ALREADY_EXISTS": "Un jeu avec ce nom existe déjà",
+    "REWARD_UPDATE_FAILED": "Échec de la mise à jour des récompenses",
+    "REWARD_AT_LEAST_UNLIMITED": "Créer au moins une récompense illimitée",
+    "REWARD_DUPLICATE_NAME": "Une récompense avec ce nom existe déjà",
+    "REWARD_TOTAL_PERCENTAGE": "Le pourcentage total de toutes les récompenses doit être égal à 100 %",
+    "NO_SERVER_RESPONSE": "Pas de réponse du serveur"
+  },
+  "success": {
+    "ADMIN_CREATE_SUCCESS": "Administrateur créé avec succès",
+    "ADMIN_DELETE_SUCCESS": "Administrateur supprimé avec succès",
+    "ACTION_CREATE_SUCCESS": "Action créée avec succès",
+    "ACTION_DELETE_SUCCESS": "Action supprimée avec succès",
+    "ACTION_UPDATE_SUCCESS": "Actions mises à jour avec succès",
+    "GAME_CREATE_SUCCESS": "Jeu créé avec succès",
+    "GAME_UPDATE_SUCCESS": "Jeu mis à jour avec succès",
+    "GAME_DELETE_SUCCESS": "Jeu supprimé avec succès",
+    "REWARD_UPDATE_SUCCESS": "Récompenses mises à jour avec succès"
+  },
+  "admin": {
+    "modal": {
+      "title": "Créer un administrateur",
+      "fields": {
+        "email": "E-mail",
+        "password": "Mot de passe"
+      },
+      "buttons": {
+        "close": "Fermer",
+        "confirm": "Confirmer"
+      },
+      "messages": {
+        "success": "Administrateur créé avec succès",
+        "alreadyExists": "Un administrateur avec cet e-mail existe déjà",
+        "createFailed": "Échec de la création de l'administrateur",
+        "noServer": "Pas de réponse du serveur"
+      }
+    }
+  },
+  "admins": {
+    "table": {
+      "headers": {
+        "email": "E-mail",
+        "role": "Rôle",
+        "status": "Statut",
+        "phone": "Téléphone",
+        "createdAt": "Créé le",
+        "updatedAt": "Mis à jour le",
+        "actions": "Actions"
+      },
+      "button": "Créer un administrateur",
+      "messages": {
+        "fetchFailed": "Échec de la récupération des administrateurs",
+        "deleteSuccess": "Administrateur supprimé avec succès",
+        "deleteFailed": "Échec de la suppression de l'administrateur"
+      }
+    }
+  },
+  "games": {
+    "form": {
+      "name": "Nom",
+      "nameRequired": "Le nom est obligatoire",
+      "description": "Description",
+      "descriptionRequired": "La description est obligatoire",
+      "isActive": "Actif",
+      "picture": "Image du jeu",
+      "uploadPicture": "Télécharger une image",
+      "createGame": "Créer un jeu"
+    },
+    "status": {
+      "active": "Actif",
+      "disabled": "Désactivé"
+    },
+    "messages": {
+      "fetchFailed": "Échec de la récupération des jeux",
+      "invalidImage": "Format d'image invalide",
+      "createSuccess": "Jeu créé avec succès",
+      "createFailed": "Échec de la création du jeu"
+    },
+    "buttons": {
+      "delete": "Supprimer"
+    }
+  },
+  "superAdmin": {
+    "signOut": "Déconnexion",
+    "homeTitle": "Accueil Super Admin",
+    "adminsList": "Liste des Admins",
+    "actionsList": "Liste des Actions"
+  },
+  "wheel": {
+    "spinButton": "Tourner"
+  },
+  "modals": {
+    "youWonReward": "Vous avez gagné un(e) {{rewardName}} !",
+    "enterEmailForReward": "Veuillez entrer votre email pour recevoir votre récompense !"
+  },
+  "form": {
+    "firstName": "Prénom",
+    "yourFirstName": "votre prénom",
+    "lastName": "Nom",
+    "yourLastName": "votre nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "yourPhone": "votre numéro de téléphone",
+    "agreePromotions": "J'accepte de recevoir des communications personnalisées concernant les promotions et les nouveaux produits du magasin."
+  },
+  "buttons": {
+    "confirm": "Confirmer"
+  },
+  "error": {
+    "failedCreateUser": "Échec de la création de l'utilisateur",
+    "alreadyPlayed": "Vous avez déjà joué !"
+  },
+  "succes": {
+    "rewardSentEmail": "Nous vous avons envoyé le cadeau par email !"
+  },
+  "cooldown": {
+    "nowCanPlay": "Vous pouvez maintenant jouer 🎉",
+    "alreadyPlayedTitle": "Vous avez déjà joué !",
+    "canPlayAgainIn": "Vous pourrez rejouer dans :"
+  },
+  "fortuneWheel": {
+    "welcome": "Bienvenue !",
+    "title": "Roue de la Fortune",
+    "instructions": "Tournez la roue pour découvrir votre gain ! Cliquez sur 'Lancer' et attendez que la roue s'arrête.",
+    "actions": {
+      "googleReview": {
+        "description": "Laissez un avis sur Google !",
+        "button": "Évaluer"
+      },
+      "facebook": {
+        "description": "Aimez notre page Facebook !",
+        "button": "J'aime"
+      },
+      "instagram": {
+        "description": "Suivez-nous sur Instagram",
+        "button": "Suivre"
+      },
+      "tiktok": {
+        "description": "Suivez-nous sur TikTok !",
+        "button": "Suivre"
+      },
+      "default": {
+        "description": "Le contenu de l'action est ici",
+        "button": "Suivre"
+      }
+    }
+  },
+  "modal": {
+    "cooldown_title": "Veuillez patienter",
+    "cooldown_description": "Vous devez attendre avant d'essayer à nouveau."
+  },
+  "cooldownModal": {
+    "title": "Vous avez déjà joué aujourd'hui !",
+    "description": "vous pouvez rejouer dans"
+  },
+  "redeem": {
+    "title": "Votre récompense vous attend !",
+    "subtitle": "Montrez cette page au personnel et entrez le code qui vous a été donné.",
+    "submit": "Soumettre",
+    "toast": {
+      "invalid": "Code PIN invalide !",
+      "success": "Vous avez gagné, félicitations !"
+    },
+    "cooldown": {
+      "title": "24h ne se sont pas encore écoulées !",
+      "description": "vous pourrez récupérer votre cadeau dans :"
+    }
+  }
+}

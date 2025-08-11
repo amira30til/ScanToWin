@@ -8,6 +8,7 @@ import {
   Legend,
 } from "chart.js";
 import SocialDashboard from "./components/SocialDashboard";
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(
   CategoryScale,
@@ -21,7 +22,13 @@ ChartJS.register(
 const GOOGLE_NAME = "Avis Google";
 
 const Google = () => {
-  return <SocialDashboard title="Google Dashboard" social={GOOGLE_NAME} />;
+  const { t } = useTranslation();
+  return (
+    <SocialDashboard
+      title={t("google_dashboard")}
+      social={t("google_dashboard")}
+    />
+  );
 };
 
 export default Google;
