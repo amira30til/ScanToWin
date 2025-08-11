@@ -26,7 +26,7 @@ const StatBox = ({ title, value, total, icon }) => {
             <Divider h="100%" orientation="vertical" />
           </Box>
           <Box>
-            <StatLabel>{title}</StatLabel>
+            <StatLabel fontWeight="semibold">{title}</StatLabel>
             <StatNumber color="primary.700">{value?.length || 0}</StatNumber>
             <StatHelpText>
               {((value?.length / total?.length) * 100 || 0).toFixed(2)}%

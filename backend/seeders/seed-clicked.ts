@@ -2,6 +2,14 @@ import { Client } from 'pg';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
 
+const chosenActionIds = [
+  '6f12dc99-c986-4fa2-a25a-5f52e41eed73',
+  'de0707cf-dd09-4061-8e04-4f1600a842b1',
+  'a17332be-73a2-4cc3-8725-ee9fa21514f1',
+  '15a076ae-9d27-4e26-85bc-063e064ca55f',
+];
+const shopId = '2f4cdba4-2f63-48c9-ac06-49e59eaa1e90';
+
 async function seed() {
   const client = new Client({
     host: '127.0.0.1',
@@ -13,29 +21,21 @@ async function seed() {
 
   await client.connect();
 
-  const chosenActionIds = [
-    'b43197a8-fdd0-4592-a9f4-a5759c9e8765',
-    'fdbbf843-2083-4785-8dda-64a222504a6d',
-    '14ecefc4-81f2-48e4-8423-219ce7ba423f',
-    'e365770b-638d-46bc-bdb0-a3dac82d3bec',
-  ];
-  const shopId = 'a1c7dda1-b779-47b8-8441-51d354bd8567';
-
   const twoYearsAgo = new Date();
   twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
 
   for (let i = 0; i < 10000; i++) {
     const id = uuid();
-    const redeemedAt = faker.date.between({
+    const clickedAt = faker.date.between({
       from: twoYearsAgo,
       to: new Date(),
     });
     const chosenActionId = faker.helpers.arrayElement(chosenActionIds);
 
     await client.query(
-      `INSERT INTO reward_redemption (id, "redeemedAt", "chosenActionId", "shopId")
+      `INSERT INTO action_click (id, "clickedAt", "chosenActionId", "shopId")
        VALUES ($1, $2, $3, $4)`,
-      [id, redeemedAt.toISOString(), chosenActionId, shopId],
+      [id, clickedAt.toISOString(), chosenActionId, shopId],
     );
   }
 

@@ -69,6 +69,18 @@ const FortuneWheel = ({ shop }) => {
 
   const onActionHandler = () => {
     let pos = +actionPosition || 1;
+
+    const totalActions = actionsByShop.length;
+
+    if (totalActions === 0) {
+      setCurrentAction(null);
+      return;
+    }
+
+    if (!actionsByShop.some((action) => action.position === pos)) {
+      pos = 1;
+    }
+
     const currentAction = actionsByShop.find(
       (action) => action.position === pos,
     );
@@ -79,7 +91,7 @@ const FortuneWheel = ({ shop }) => {
 
   useEffect(() => {
     if (actionsByShop !== undefined && actionsByShop.length < 1) {
-      navigate(`/play/${shopId}/coming-soon`);
+      navigate(`/user/${shopId}/coming-soon`);
     }
   }, [actionsByShop]);
 
@@ -120,11 +132,13 @@ const FortuneWheel = ({ shop }) => {
               </Text>
             </VStack>
             <Box position="relative" display="inline-block">
-              <Wheel
-                onReward={rewardHandler}
-                primaryColor={shop?.gameColor1}
-                secondaryColor={shop?.gameColor2}
-              />
+              {shop && (
+                <Wheel
+                  onReward={rewardHandler}
+                  primaryColor={shop?.gameColor1}
+                  secondaryColor={shop?.gameColor2}
+                />
+              )}
 
               {showAction && (
                 <Box

@@ -48,11 +48,11 @@ const Account = () => {
               { label: t("telephone"), value: shop.tel },
               { label: t("siret"), value: shop.nbSiret },
               { label: t("country"), value: shop.country },
-            ].map((input) => (
-              <FormControl p={6}>
+            ].map((input, index) => (
+              <FormControl p={6} key={index}>
                 <FormLabel>{input.label}</FormLabel>
                 <Input
-                  readoOnly
+                  readOnly
                   defaultValue={input.value}
                   size="lg"
                   mt={2}

@@ -9,6 +9,7 @@ import NotFound from "./components/NotFound";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Login from "./pages/auth/Login";
 import SuperAdmin from "./pages/super-admin";
+import AdminDetails from "./pages/super-admin/admin-details";
 import Dashboard from "./pages/admin/dashboard";
 import Google from "./pages/admin/dashboard/Google";
 import Facebook from "./pages/admin/dashboard/Facebook";
@@ -29,12 +30,12 @@ const App = () => {
   return (
     <Routes>
       <Route path="reset-password" element={<ResetPassword />} />
-      <Route path="play/:shopId" element={<Play />} />
+      <Route path="user/:shopId" element={<Play />} />
       <Route
-        path="play/:shopId/redeem/:userId/action/:actionId"
+        path="user/:shopId/redeem/:userId/action/:actionId"
         element={<Redeem />}
       />
-      <Route path="play/:shopId/coming-soon" element={<ComingSoon />} />
+      <Route path="user/:shopId/coming-soon" element={<ComingSoon />} />
 
       <Route element={<PersistLogin />}>
         <Route exact path="/" element={<Login />} />
@@ -42,6 +43,7 @@ const App = () => {
         <Route element={<RequireAuth allowedRole={SUPER_ADMIN_ROLE} />}>
           <Route path="/super-admin/*" element={<LayoutSuperAdmin />}>
             <Route path="dashboard" element={<SuperAdmin />} />
+            <Route path=":adminId" element={<AdminDetails />} />
             <Route
               path="*"
               element={<Navigate to="/super-admin/dashboard" />}

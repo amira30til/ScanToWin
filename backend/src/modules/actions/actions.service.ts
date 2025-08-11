@@ -109,11 +109,11 @@ export class ActionsService {
     try {
       const action = await this.actionRepository.findOne({ where: { id } });
 
-      if (!action) {
+      if (!action || !id) {
         throw new NotFoundException(ActionMessages.ACTION_NOT_FOUND(id));
       }
 
-      await this.actionRepository.remove(action);
+      await this.actionRepository.delete(id);
 
       return ApiResponse.success(200, {
         id,
@@ -123,6 +123,7 @@ export class ActionsService {
       return handleServiceError(error);
     }
   }
+
   async softDeleteAction(
     actionId: string,
   ): Promise<ApiResponseInterface<{ id: string }> | ErrorResponseInterface> {

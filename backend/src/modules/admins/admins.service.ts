@@ -20,7 +20,6 @@ import { handleServiceError } from 'src/common/utils/error-handler.util';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { AdminStatus } from './enums/admin-status.enum';
 import { Shop } from '../shops/entities/shop.entity';
-import { ShopStatus } from '../shops/enums/shop-status.enum';
 import { Role } from './enums/role.enum';
 
 @Injectable()
@@ -185,8 +184,6 @@ export class AdminsService {
           await this.cloudinaryService.uploadImageToCloudinary(profilPicture);
         updateAdminDto.profilPicture = result.url;
       }
-      if (profilPicture) {
-      }
 
       await this.adminsRepository.update(id, updateAdminDto);
 
@@ -216,11 +213,6 @@ export class AdminsService {
 
       admin.adminStatus = AdminStatus.ARCHIVED;
       await this.adminsRepository.save(admin);
-
-      await this.shopsRepository.update(
-        { adminId: admin.id },
-        { status: ShopStatus.ARCHIVED },
-      );
 
       return ApiResponse.success(HttpStatusCodes.SUCCESS, {
         message: `Admin with ID ${id} has been archived`,
@@ -340,7 +332,7 @@ export class AdminsService {
   > {
     try {
       const admin = await this.adminsRepository.findOne({
-        where: { id, adminStatus: AdminStatus.ACTIVE },
+        where: { id },
       });
 
       if (!admin) {

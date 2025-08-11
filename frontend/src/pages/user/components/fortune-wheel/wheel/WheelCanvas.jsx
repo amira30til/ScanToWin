@@ -137,6 +137,12 @@ const WheelCanvas = ({
     if (!canvasContext) {
       return false;
     }
+
+    const color =
+      Array.isArray(segColors) && segColors.length > 0
+        ? segColors[key % segColors.length]
+        : "#cccccc";
+
     const ctx = canvasContext;
     const value = segments[key];
     ctx.save();
@@ -145,7 +151,7 @@ const WheelCanvas = ({
     ctx.arc(centerX, centerY, size, lastAngle, angle, false);
     ctx.lineTo(centerX, centerY);
     ctx.closePath();
-    ctx.fillStyle = segColors[key % segColors.length];
+    ctx.fillStyle = color;
     ctx.fill();
     ctx.stroke();
     ctx.save();

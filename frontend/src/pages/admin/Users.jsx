@@ -83,13 +83,6 @@ const HEADERS = [
             <Tbody>
               {games &&
                 users?.map((user, index) => {
-                  const formattedDate = format(
-                    parseISO(user.lastPlayedAt),
-                    "MMMM d, yyyy",
-                    {
-                      locale: fr,
-                    },
-                  );
                   const gameName = games?.find(
                     (game) => game.id === user.favoriteGameId,
                   ).name;
@@ -101,7 +94,16 @@ const HEADERS = [
                         </Td>
                         <Td>{user.email}</Td>
                         <Td>{user.tel}</Td>
-                        <Td>{formattedDate}</Td>
+                        <Td>
+                          {user?.lastPlayedAt &&
+                            format(
+                              parseISO(user?.lastPlayedAt),
+                              "MMMM d, yyyy",
+                              {
+                                locale: fr,
+                              },
+                            )}
+                        </Td>
                         <Td>{gameName}</Td>
                         <Td>{user.totalPlayCount}</Td>
                       </>

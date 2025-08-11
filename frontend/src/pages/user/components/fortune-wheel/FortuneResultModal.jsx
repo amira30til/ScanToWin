@@ -247,7 +247,7 @@ function CooldownTimer({ targetTimestamp }) {
   if (expired) return <span>{t("cooldown.nowCanPlay")}</span>;
 
   return (
-    <Alert status="info" mb={2}>
+    <Alert status="info" mb={2} borderRadius="md">
       <AlertIcon />
       <Box w="full" textAlign="start">
         <AlertTitle>{t("cooldown.alreadyPlayedTitle")}</AlertTitle>

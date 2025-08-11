@@ -79,8 +79,6 @@ const Actions = () => {
   const onSubmit = (values) => {
     const { actionsByShop } = values;
 
-    console.log("actions", actionsByShop);
-
     if (!!shopId) {
       const chosenActions = actionsByShop.map((action, index) => {
         const matched = actions.find((a) => a.name === action.name);

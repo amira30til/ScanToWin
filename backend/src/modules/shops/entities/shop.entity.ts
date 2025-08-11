@@ -66,7 +66,7 @@ export class Shop {
 
   @ApiProperty()
   @Column({ nullable: true })
-  gameCodePin: number;
+  gameCodePin: string;
 
   @ApiProperty()
   @Column({ nullable: true, default: true })

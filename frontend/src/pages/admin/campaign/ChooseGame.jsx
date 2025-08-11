@@ -5,9 +5,9 @@ import { useAxiosPrivate, useToast } from "@/hooks";
 import { useTranslation } from "react-i18next";
 
 import {
-  getActiveGames,
   selectGame,
   getShopGameAssignement,
+  getGames,
 } from "@/services/gameService";
 
 // COMPONENTS
@@ -27,8 +27,8 @@ const ChooseGame = ({ shop }) => {
   const { data: games = [] } = useQuery({
     queryKey: ["active-games"],
     queryFn: async () => {
-      const response = await getActiveGames();
-      return response.data.data.data;
+      const response = await getGames();
+      return response.data.data.games;
     },
   });
 
@@ -88,18 +88,16 @@ const ChooseGame = ({ shop }) => {
       description={t("choose_game.description")}
     >
       <SimpleGrid columns={{ md: 1, lg: 3 }} gap={6}>
-        {games?.map((game, index) => (
+        {games?.map((game) => (
           <Controller
             key={game.id}
             control={control}
             name="selectedGameId"
             render={({ field: { onChange, value } }) => (
               <SelectableGameCard
-                index={index}
                 game={game}
                 isSelected={value === game.id}
                 onSelect={() => onChange(game.id)}
-                t={t}
               />
             )}
           />
@@ -118,9 +116,13 @@ const ChooseGame = ({ shop }) => {
   );
 };
 
-const SelectableGameCard = ({ game, isSelected, onSelect, index, t }) => {
+const SelectableGameCard = ({ game, isSelected, onSelect }) => {
   const borderColor = isSelected ? "primary.500" : "gray.300";
   const border = isSelected ? "2px" : "1px";
+  const { t } = useTranslation();
+
+  const activeGame = game.status === "active";
+  const archivedGame = game.status === "archived";
 
   return (
     <Flex
@@ -145,8 +147,8 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index, t }) => {
       }}
       onClick={onSelect}
       bg={isSelected ? "white" : "inherit"}
-      pointerEvents={index > 0 ? "none" : "auto"}
-      cursor={index > 0 ? "not-allowed" : "pointer"}
+      pointerEvents={archivedGame ? "none" : activeGame ? "auto" : ""}
+      cursor={archivedGame ? "not-allowed" : activeGame ? "pointer" : ""}
     >
       <Flex direction="column" gap={1} justify="center" align="center">
         <Text fontWeight="bold">{game.name}</Text>
@@ -166,7 +168,7 @@ const SelectableGameCard = ({ game, isSelected, onSelect, index, t }) => {
           borderColor="gray.200"
         />
       </Box>
-      {index > 0 && (
+      {archivedGame && (
         <Box
           position="absolute"
           top={0}
