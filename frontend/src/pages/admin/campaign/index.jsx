@@ -7,9 +7,11 @@ import HeaderAdmin from "@/components/nav/HeaderAdmin";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getShop } from "@/services/shopService";
+import { useTranslation } from "react-i18next";
 
 const AdminCampaign = () => {
   const { shopId } = useParams();
+  const { t } = useTranslation();
 
   const { data: shop, shopIsLoading } = useQuery({
     queryKey: ["shop-by-id", shopId],
@@ -24,7 +26,7 @@ const AdminCampaign = () => {
 
   return (
     <Box pos="relative">
-      <HeaderAdmin title="My Campaign" />
+      <HeaderAdmin title={t("admin_campaign.title")} />
       <Flex direction="column" gap={10} px={8} py={10} overflow-x="hidden">
         <Actions />
         <ChooseGame shop={shop} />

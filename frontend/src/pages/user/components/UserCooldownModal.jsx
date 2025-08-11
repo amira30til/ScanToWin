@@ -4,7 +4,7 @@ import { useCountdown, useLocalStorage } from "@/hooks";
 import { useParams } from "react-router-dom";
 
 import { verifyUserCooldown } from "@/services/userService";
-
+import { useTranslation } from "react-i18next";
 import {
   Flex,
   Modal,
@@ -17,7 +17,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const UserCooldownModal = ({ title, description }) => {
+const UserCooldownModal = () => {
+  const { t } = useTranslation();
   const { shopId } = useParams();
 
   const { isOpen, onOpen } = useDisclosure();
@@ -49,10 +50,14 @@ const UserCooldownModal = ({ title, description }) => {
         <Modal isOpen={isOpen} size="xs" isCentered>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader textAlign="center">{title}</ModalHeader>
+            <ModalHeader textAlign="center">
+              {t("modal.cooldown_title")}
+            </ModalHeader>
             <ModalBody>
               <Flex direction="column" gap={2}>
-                <Text textAlign="center">{description}</Text>
+                <Text textAlign="center">
+                  {t("modal.cooldown_description")}
+                </Text>
                 <Text py={2} textAlign="center">
                   {hours > 0 && `${hours}h `}
                   {minutes > 0 && `${minutes}m `}
