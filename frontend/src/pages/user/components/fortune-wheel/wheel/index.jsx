@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useToken } from "@chakra-ui/react";
 
+import { useTranslation } from "react-i18next";
+
 import {
   getRewardsByShop,
   getShopRandomReward,
@@ -13,6 +15,7 @@ import WheelCanvas from "./WheelCanvas";
 import { VStack, Spinner, Box } from "@chakra-ui/react";
 
 const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
+  const { t } = useTranslation();
   const { shopId } = useParams();
   const [primary500] = useToken("colors", ["primary.500"]);
   const [secondary500] = useToken("colors", ["secondary.500"]);
@@ -49,7 +52,7 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
     if (rewards !== undefined && rewards.length < 1) {
       navigate(`/user/${shopId}/coming-soon`);
     }
-  }, [rewards]);
+  }, [rewards, navigate, shopId]);
 
   useEffect(() => {
     if (rewards !== undefined) {
@@ -72,7 +75,7 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
           contrastColor="#000"
           borderColor={primaryColor || primary500}
           needleColor={lightenHexColor(secondaryColor || secondary500, 60)}
-          buttonText="Spin"
+          buttonText={t("wheel.spinButton")}
           buttonTextColor="#252525"
           isOnlyOnce={true}
           size={140}

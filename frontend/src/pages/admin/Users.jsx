@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-
+import { useTranslation } from "react-i18next";
 import { getShopUsers } from "@/services/userService";
 import { getGames } from "@/services/gameService";
 import { format, parseISO } from "date-fns";
@@ -22,16 +22,19 @@ import {
 } from "@chakra-ui/react";
 import Error from "@/components/Error";
 
-const HEADERS = [
-  "Name",
-  "email",
-  "phone",
-  "last played at",
-  "favorite game",
-  "times played",
-];
+
 
 const Users = () => {
+  const { t } = useTranslation();
+
+const HEADERS = [
+  t("name"),
+  t("email"),
+  t("phone"),
+  t("last_played_at"),
+  t("favorite_game"),
+  t("times_played"),
+];
   const { shopId } = useParams();
 
   const {
@@ -59,7 +62,7 @@ const Users = () => {
 
   return (
     <Box pos="relative">
-      <HeaderAdmin title="Users" />
+      <HeaderAdmin title={t("users")} />
       <Flex direction="column" gap={10} px={8} py={10} overflow-x="hidden">
         {usersIsLoading && <Spinner color="secondary.500" />}
         <TableContainer

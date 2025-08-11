@@ -33,6 +33,9 @@ import { submitUserDataSchema } from "@/schemas/submitUserData";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 
+// Import useTranslation hook
+import { useTranslation } from "react-i18next";
+
 const celebrate = keyframes`
   0%   { transform: scale(0.95); opacity: 0; }
   25%  { transform: scale(1.05); opacity: 1; }
@@ -46,6 +49,8 @@ const float = keyframes`
 `;
 
 const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
+  const { t } = useTranslation();
+
   const { shopId } = useParams();
   const toast = useToast();
   const [timestamp, setTimestamp] = useState();
@@ -61,7 +66,7 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
   });
 
   const onCreateUserError = () => {
-    toast("Failed to created user", "error");
+    toast(t("error.failedCreateUser"), "error");
   };
 
   const onCreateUserSuccess = (data) => {
@@ -70,10 +75,10 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
     if (timestamp && data?.data?.error?.code === "USER_COOLDOWN") {
       setTimestamp(timestamp);
       setUserId(data?.data?.error?.userId);
-      toast("You have already played!", "error");
+      toast(t("errors.alreadyPlayed"), "error");
       return;
     } else {
-      toast("We have sent you the gift by email!", "success");
+      toast(t("succes.rewardSentEmail"), "success");
     }
     if (user?.id) setUserId(user.id);
   };
@@ -135,21 +140,21 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
             ))}
           </HStack>
           <ModalHeader align="center" pb="0">
-            You Won a {reward?.name}!
+            {t("modals.youWonReward", { rewardName: reward?.name })}
           </ModalHeader>
           <ModalBody>
             <Text pb={2} fontSize="sm" align="center" color="gray.500">
-              Please enter your email so you can have the reward!
+              {t("modals.enterEmailForReward")}
             </Text>
 
             <Flex direction="column" gap={2}>
               <FormControl>
                 <FormLabel fontSize="sm" color="gray.600">
-                  First Name
+                  {t("form.firstName")}
                 </FormLabel>
                 <Input
                   focusBorderColor="primary.500"
-                  placeholder="your first name"
+                  placeholder={t("form.yourFirstName")}
                   autoFocus
                   size="sm"
                   {...register("firstName")}
@@ -161,11 +166,11 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
               </FormControl>
               <FormControl>
                 <FormLabel fontSize="sm" color="gray.600">
-                  Last Name
+                  {t("form.lastName")}
                 </FormLabel>
                 <Input
                   focusBorderColor="primary.500"
-                  placeholder="your last name"
+                  placeholder={t("form.yourLastName")}
                   autoFocus
                   size="sm"
                   {...register("lastName")}
@@ -177,12 +182,12 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
               </FormControl>
               <FormControl>
                 <FormLabel fontSize="sm" color="gray.600">
-                  Email
+                  {t("form.email")}
                 </FormLabel>
                 <Input
                   focusBorderColor="primary.500"
                   type="email"
-                  placeholder="email"
+                  placeholder={t("form.email")}
                   size="sm"
                   {...register("email")}
                 />
@@ -193,12 +198,12 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
               </FormControl>
               <FormControl>
                 <FormLabel fontSize="sm" color="gray.600">
-                  Phone
+                  {t("form.phone")}
                 </FormLabel>
                 <Input
                   focusBorderColor="primary.500"
                   type="tel"
-                  placeholder="your phone number"
+                  placeholder={t("form.yourPhone")}
                   size="sm"
                   {...register("tel")}
                 />
@@ -212,10 +217,7 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
                 {...register("agreeToPromotions")}
                 colorScheme="primary"
               >
-                <Text fontSize="xs">
-                  I agree to receive personalised communications about
-                  promotions and new products and from the store.
-                </Text>
+                <Text fontSize="xs">{t("form.agreePromotions")}</Text>
               </Checkbox>
             </Flex>
           </ModalBody>
@@ -227,7 +229,7 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
                 colorScheme="primary"
                 isLoading={isPendingCreateUser}
               >
-                Confirm
+                {t("buttons.confirm")}
               </Button>
             </Flex>
           </ModalFooter>
@@ -239,17 +241,18 @@ const FortuneResultModal = ({ reward, onClose, isOpen, currentAction }) => {
 };
 
 function CooldownTimer({ targetTimestamp }) {
+  const { t } = useTranslation();
   const { hours, minutes, seconds, expired } = useCountdown(targetTimestamp);
 
-  if (expired) return <span>You can now play 🎉</span>;
+  if (expired) return <span>{t("cooldown.nowCanPlay")}</span>;
 
   return (
     <Alert status="info" mb={2} borderRadius="md">
       <AlertIcon />
       <Box w="full" textAlign="start">
-        <AlertTitle>Your have already played!</AlertTitle>
+        <AlertTitle>{t("cooldown.alreadyPlayedTitle")}</AlertTitle>
         <AlertDescription>
-          You can play again in: {hours > 0 && `${hours}h `}
+          {t("cooldown.canPlayAgainIn")} {hours > 0 && `${hours}h `}
           {minutes > 0 && `${minutes}m `}
           {seconds}s
         </AlertDescription>

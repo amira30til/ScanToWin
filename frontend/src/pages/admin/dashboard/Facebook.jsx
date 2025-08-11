@@ -8,6 +8,7 @@ import {
   Legend,
 } from "chart.js";
 import SocialDashboard from "./components/SocialDashboard";
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(
   CategoryScale,
@@ -21,7 +22,10 @@ ChartJS.register(
 const FACEBOOK_NAME = "Facebook";
 
 const Facebook = () => {
-  return <SocialDashboard title="Facebook Dashboard" social={FACEBOOK_NAME} />;
+  const { t } = useTranslation();
+  return (
+    <SocialDashboard title={t("facebook_dashboard")} social={FACEBOOK_NAME} />
+  );
 };
 
 export default Facebook;

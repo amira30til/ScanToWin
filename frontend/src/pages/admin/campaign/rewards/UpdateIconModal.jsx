@@ -1,5 +1,5 @@
 import LucideIconPicker from "./LucideIconPicker";
-
+import { useTranslation } from "react-i18next";
 import {
   Flex,
   Modal,
@@ -12,12 +12,13 @@ import {
 } from "@chakra-ui/react";
 
 const UpdateIconModal = ({ onClose, isOpen, onSelectIcon }) => {
+  const { t } = useTranslation();
   return (
     <Portal>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Pick an Icon</ModalHeader>
+          <ModalHeader>{t("update_icon_modal.title")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" gap={4}>
