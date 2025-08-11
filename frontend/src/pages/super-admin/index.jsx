@@ -19,10 +19,6 @@ const SuperAdmin = () => {
         <Admins />
 
         <Heading size="md">Actions List</Heading>
-        <Alert status="info" borderRadius="md">
-          <AlertIcon />
-          Non active actions, won't be shown to the admins
-        </Alert>
         <Actions />
 
         <Heading size="md">Games</Heading>

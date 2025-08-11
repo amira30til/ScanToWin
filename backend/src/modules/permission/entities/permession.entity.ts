@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SubscriptionPermission } from 'src/modules/subscription-permission/entities/subscription-permission.entity';
+import { SubscriptionPermission } from '../../subscription-permission/entities/subscription-permission.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

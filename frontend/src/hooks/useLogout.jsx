@@ -5,9 +5,9 @@ const useLogout = () => {
   const resetAuth = useAuthStore((state) => state.resetAuth);
 
   const logout = async () => {
-    resetAuth();
     try {
       await logoutUser();
+      resetAuth();
     } catch (err) {
       console.error(err);
     }

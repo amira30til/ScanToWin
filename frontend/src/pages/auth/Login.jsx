@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useToast } from "@/hooks";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/store";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { loginUser, forgotPassword } from "@/services/authService";
@@ -33,6 +33,7 @@ import { Mail } from "lucide-react";
 const Login = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const auth = useAuthStore((state) => state.auth);
+  const queryClient = useQueryClient();
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -57,12 +58,15 @@ const Login = () => {
     loginMutation.mutate(values);
   };
 
-  const onLoginSuccess = (response, variables) => {
+  const onLoginSuccess = async (response, variables) => {
     const accessToken = response?.data?.accessToken;
     const role = response?.data?.user?.role;
+    const adminId = response?.data?.user?.id;
 
     setAuth({ ...variables, role, accessToken });
     roleBasedRedirect(role);
+
+    await queryClient.refetchQueries(["adminShops", adminId]);
   };
 
   const onLoginError = (error) => {

@@ -6,9 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from 'src/modules/admins/enums/role.enum';
+import { Role } from '../../admins/enums/role.enum';
 import { extractToken } from './auth.guard';
-import { Admin } from 'src/modules/admins/entities/admin.entity';
+import { Admin } from '../../admins/entities/admin.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 

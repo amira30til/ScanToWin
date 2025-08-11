@@ -51,20 +51,28 @@ const Redeem = () => {
   const verifyShopCodePinMutation = useMutation({
     mutationFn: async (values) => await verifyShopCodePin(values),
     onSuccess: (data) => {
-      if (data.data.error.code === "USER_COOLDOWN") {
+      if (data?.data?.error?.code === "USER_COOLDOWN") {
         toast("You have to wait 24h before getting the reward!", "error");
         setUserId(data.data.error.userId);
-        queryClient.refetchQueries("verify-user-cooldown", shopId, userId);
+        queryClient.refetchQueries([
+          "verify-user-cooldown",
+          shopId,
+          data.data.error.userId,
+        ]);
         return;
       }
-      if (data.data.data.isValid === false) {
+
+      if (data?.data?.data?.isValid === false) {
         toast("Invalid code pin!", "error");
       } else {
         toast("You won congrats!", "success");
         navigate(`/user/${shopId}`);
       }
     },
-    onError: () => {},
+
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    },
   });
 
   const onSubmit = (values) => {

@@ -21,14 +21,12 @@ import {
 import { ApiResponse } from 'src/common/utils/response.util';
 import { HttpStatusCodes } from 'src/common/constants/http.constants';
 import { handleServiceError } from 'src/common/utils/error-handler.util';
-import { Admin } from 'src/modules/admins/entities/admin.entity';
+import { Admin } from '../admins/entities/admin.entity';
 import { ShopStatus } from './enums/shop-status.enum';
-import { Game } from '../game/entities/game.entity';
-import { ActiveGameAssignment } from '../active-game-assignment/entities/active-game-assignment.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { VerifyGameCodeDto } from './dto/verify-game-code.dto';
 import { ChosenAction } from '../chosen-action/entities/chosen-action.entity';
-import { RewardRedemption } from 'src/modules/reward-redemption/entities/reward-redemption.entity';
+import { RewardRedemption } from '../reward-redemption/entities/reward-redemption.entity';
 import { UserGame } from '../user-game/entities/user-game.entity';
 
 @Injectable()

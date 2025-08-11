@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { RewardStatus } from '../enums/reward-status.enums';
-import { Shop } from 'src/modules/shops/entities/shop.entity';
+import { Shop } from '../../shops/entities/shop.entity';
 
 @Entity()
 export class Reward {

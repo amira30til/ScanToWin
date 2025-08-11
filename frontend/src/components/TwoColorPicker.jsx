@@ -42,16 +42,16 @@ const ColorPicker = ({ name, label }) => {
           <DebouncedColorInput
             label={label}
             value={value}
+            error={errors[name]?.message}
             onChange={onChange}
           />
-          <FormErrorMessage>{errors[name]?.message}</FormErrorMessage>
         </>
       )}
     />
   );
 };
 
-const DebouncedColorInput = ({ label, value, onChange }) => {
+const DebouncedColorInput = ({ label, value, onChange, error }) => {
   const debouncedOnChange = useDebounceCallback(onChange, 200);
   const [localValue, setLocalValue] = useState(value);
 
@@ -64,8 +64,8 @@ const DebouncedColorInput = ({ label, value, onChange }) => {
     debouncedOnChange(color);
   };
 
-  const handleInputChange = (e) => {
-    const newValue = e.target.value;
+  const handleInputChange = (event) => {
+    const newValue = event.target.value.replace(/\s+/g, "");
     setLocalValue(newValue);
     debouncedOnChange(newValue);
   };
@@ -86,6 +86,7 @@ const DebouncedColorInput = ({ label, value, onChange }) => {
           focusBorderColor="primary.500"
           size="lg"
         />
+        <FormErrorMessage>{error}</FormErrorMessage>
       </VStack>
     </Flex>
   );
