@@ -23,3 +23,8 @@
 ## run ts file:
 
 `npx ts-node seeders/seed-clicked.ts`
+
+## Migrations
+
+- generate migration: `npm run migration:generate --name=CREATE_USER`
+- run migration: `npm run migration:run`

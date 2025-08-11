@@ -224,7 +224,7 @@ export class AdminsService {
 
   async updateStatus(
     id: string,
-    status: string,
+    status: AdminStatus,
   ): Promise<ApiResponseInterface<Admin> | ErrorResponseInterface> {
     try {
       const admin = await this.adminsRepository.findOne({

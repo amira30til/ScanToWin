@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Admin } from 'src/modules/admins/entities/admin.entity';
-import { Game } from 'src/modules/game/entities/game.entity';
-import { Reward } from 'src/modules/reward/entities/reward.entity';
-import { Shop } from 'src/modules/shops/entities/shop.entity';
-import { UserGame } from 'src/modules/user-game/entities/user-game.entity';
+import { Admin } from '../../admins/entities/admin.entity';
+import { Game } from '../../game/entities/game.entity';
+import { Reward } from '../../reward/entities/reward.entity';
+import { Shop } from '../../shops/entities/shop.entity';
+import { UserGame } from '../../user-game/entities/user-game.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

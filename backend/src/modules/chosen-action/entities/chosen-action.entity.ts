@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Action } from 'src/modules/actions/entities/action.entity';
-import { Shop } from 'src/modules/shops/entities/shop.entity';
+import { Action } from '../../actions/entities/action.entity';
+import { Shop } from '../../shops/entities/shop.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

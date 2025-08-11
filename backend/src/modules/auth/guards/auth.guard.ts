@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Admin } from 'src/modules/admins/entities/admin.entity';
+import { Admin } from '../../admins/entities/admin.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

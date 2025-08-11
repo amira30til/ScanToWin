@@ -86,8 +86,8 @@ export class AuthService {
       await this.adminsRepository.save(user);
 
       return { accessToken, user };
-    } catch (e) {
-      return handleServiceError(e);
+    } catch (error) {
+      return handleServiceError(error);
     }
   }
 
@@ -178,7 +178,7 @@ export class AuthService {
   private setRefreshTokenCookie(res: Response, token: string) {
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      secure: process.env.NODE_ENV !== 'development', // Use secure cookies in production
       sameSite: 'strict' as const,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days (should match the JWT expiry)
       path: '/',
@@ -190,7 +190,7 @@ export class AuthService {
   private clearRefreshTokenCookie(res: Response) {
     res.clearCookie('refresh_token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV !== 'development',
       sameSite: 'strict' as const,
       path: '/',
     });

@@ -1,23 +1,21 @@
-// HOOKS
 import { useEffect, useRef, useState } from "react";
 import { useAxiosPrivate, useToast } from "@/hooks";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { decodeToken } from "@/utils/auth";
 import useAuthStore from "@/store";
 import { useTranslation } from "react-i18next";
 
-// FUNCTIONS
+import { decodeToken } from "@/utils/auth";
 import { updateShopColorSchema } from "@/schemas/shop/updateShopColor";
 import { updateShop } from "@/services/shopService";
 import { dataURLtoFile } from "@/utils/helpers";
 
-// COMPONENTS
 import TwoColorPicker from "@/components/TwoColorPicker";
 import AdminSection from "@/components/common/AdminSection";
+import { yupResolver } from "@hookform/resolvers/yup";
 
-// STYLE
+import { FormProvider } from "react-hook-form";
 import {
   Box,
   Flex,
@@ -29,7 +27,6 @@ import {
   useToken,
 } from "@chakra-ui/react";
 
-import { yupResolver } from "@hookform/resolvers/yup";
 import { LuUpload, LuX } from "react-icons/lu";
 
 const CustomizeGame = ({ shop }) => {
@@ -60,7 +57,7 @@ const CustomizeGame = ({ shop }) => {
   let adminId = decodeToken(auth?.accessToken);
 
   const onUpdateShopSuccess = async () => {
-    await queryClient.invalidateQueries(["adminShops"]);
+    await queryClient.refetchQueries(["adminShops", adminId]);
     toast("Shop updated successfully!", "success");
   };
 

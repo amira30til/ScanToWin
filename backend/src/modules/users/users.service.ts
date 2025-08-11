@@ -201,7 +201,6 @@ export class UsersService {
         const validUntilDate = new Date(
           Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toLocaleDateString();
-        const emailCode = `REWARD-${dto.rewardId}-${Date.now().toString().slice(-6)}`;
 
         await this.mailService.sendGiftEmail(
           `${userToNotify.firstName} ${userToNotify.lastName}`,
@@ -210,14 +209,13 @@ export class UsersService {
           userToNotify.email,
           validFromDate,
           validUntilDate,
-          emailCode,
           reward.id,
           dto.shopId,
           userToNotify.id,
           dto.actionId,
         );
       } catch (emailError) {
-        console.error('Email sending failed');
+        console.error('Email sending failed', emailError);
       }
 
       return ApiResponse.success(

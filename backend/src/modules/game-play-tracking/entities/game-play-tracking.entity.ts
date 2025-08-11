@@ -1,9 +1,9 @@
-import { ActiveGameAssignment } from 'src/modules/active-game-assignment/entities/active-game-assignment.entity';
-import { ChosenAction } from 'src/modules/chosen-action/entities/chosen-action.entity';
-import { Game } from 'src/modules/game/entities/game.entity';
-import { Reward } from 'src/modules/reward/entities/reward.entity';
-import { Shop } from 'src/modules/shops/entities/shop.entity';
-import { User } from 'src/modules/users/entities/user.entity';
+import { ActiveGameAssignment } from '../../active-game-assignment/entities/active-game-assignment.entity';
+import { ChosenAction } from '../../chosen-action/entities/chosen-action.entity';
+import { Game } from '../../game/entities/game.entity';
+import { Reward } from '../../reward/entities/reward.entity';
+import { Shop } from '../../shops/entities/shop.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

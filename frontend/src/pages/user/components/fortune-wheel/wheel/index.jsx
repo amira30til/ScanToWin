@@ -31,17 +31,21 @@ const Wheel = ({ onReward, primaryColor, secondaryColor }) => {
     enabled: !!shopId,
   });
 
-  const { data: randomReward, isLoading: isLoadingRandomReward } = useQuery({
-    queryKey: ["shop-random-reward", shopId],
-    queryFn: async () => {
-      const response = await getShopRandomReward(shopId);
-      return response.data.data.reward;
-    },
-    enabled: !!shopId,
-  });
+  const { isLoading: isLoadingRandomReward, refetch: refetchRandomReward } =
+    useQuery({
+      queryKey: ["shop-random-reward", shopId],
+      queryFn: async () => {
+        const response = await getShopRandomReward(shopId);
+        return response.data.data.reward;
+      },
+      enabled: false,
+    });
 
-  const onFinished = () => {
-    onReward(randomReward);
+  const onFinished = async () => {
+    const { data } = await refetchRandomReward();
+    if (data) {
+      onReward(data);
+    }
   };
 
   useEffect(() => {
