@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useToast, useLocalStorage } from "@/hooks";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next"; // <-- Add this line
+import { useTranslation } from "react-i18next"; 
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { redeemCodeSchema } from "@/schemas/reward/redeemCode";

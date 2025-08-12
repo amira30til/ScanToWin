@@ -1,5 +1,6 @@
 import { useAxiosPrivate } from "@/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import { deleteAdmin } from "@/services/adminService";
 
@@ -17,6 +18,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 
 const DeleteAdminModal = ({ isOpen, onClose, refetch }) => {
+  const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
   const { adminId } = useParams();
   const navigate = useNavigate();
@@ -43,23 +45,24 @@ const DeleteAdminModal = ({ isOpen, onClose, refetch }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete an admin</ModalHeader>
+        <ModalHeader>{t("delete_admin_modal.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          Are you sure you want to delete this admin? <br></br> All shops,
-          rewards, actions related to this admin will be permanently deleted
+          <div
+            dangerouslySetInnerHTML={{ __html: t("delete_admin_modal.body") }}
+          />
         </ModalBody>
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("delete_admin_modal.buttons.close")}
             </Button>
             <Button
               colorScheme="red"
               onClick={deleteGameHandler}
               isLoading={deleteGameMutation.isPending}
             >
-              Delete
+              {t("delete_admin_modal.buttons.delete")}
             </Button>
           </Flex>
         </ModalFooter>

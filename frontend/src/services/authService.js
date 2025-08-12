@@ -1,6 +1,6 @@
 import axios, { axiosAuth } from "@/api/axios";
 
-const AUTH_URL = "/auth";
+const AUTH_URL = "/auth"; 
 
 export const loginUser = async ({ email, password }) =>
   await axiosAuth.post(AUTH_URL, { email, password });

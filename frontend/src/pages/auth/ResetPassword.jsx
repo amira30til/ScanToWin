@@ -67,10 +67,18 @@ const ResetPassword = () => {
   };
 
   const onResetError = (error) => {
-    const message = !error?.response
-      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
-      : ERROR_MESSAGES.AUTH_RESET_FAILED;
+    const errorMessages = {
+      400: ERROR_MESSAGES.AUTH_EMAIL_PASSWORD_MISSING,
+      401: ERROR_MESSAGES.AUTH_UNAUTHORIZED,
+      404: ERROR_MESSAGES.AUTH_EMAIL_NOT_FOUND,
+    };
 
+    const key = !error?.response
+      ? ERROR_MESSAGES.NO_SERVER_RESPONSE
+      : errorMessages[error.response?.status] ||
+        ERROR_MESSAGES.AUTH_RESET_FAILED;
+
+    const message = t(key);
     toast(message, "error");
   };
 
@@ -224,7 +232,7 @@ const ResetPassword = () => {
 };
 
 const PasswordResetSuccessAlert = ({ setShowAlert }) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   return (
     <Alert status="success" borderRadius="md">
       <AlertIcon />

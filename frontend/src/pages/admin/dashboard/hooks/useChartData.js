@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { format, parseISO } from "date-fns";
 import { useToken } from "@chakra-ui/react";
-
+import { useTranslation } from "react-i18next";
 const rewardsGroupBy = (timestamps) => {
   return timestamps.reduce((acc, timestamp) => {
     const day = format(parseISO(timestamp), "yyyy-MM-dd");
@@ -29,6 +29,7 @@ const prepareChartData = (groupedDataList) => {
 };
 
 export const useChartData = (clicked = [], redeemed = [], gamePlayed = []) => {
+  const { t } = useTranslation();
   const [primary300] = useToken("colors", ["primary.300"]);
   const [secondary300] = useToken("colors", ["secondary.300"]);
   const [tertiary300] = useToken("colors", ["tertiary.300"]);
@@ -41,17 +42,17 @@ export const useChartData = (clicked = [], redeemed = [], gamePlayed = []) => {
     const chartData = [
       {
         data: playedGrouped || [],
-        label: "Jeux lancés",
+        label: t("social_dashboard.stats.games_launched"),
         color: primary300,
       },
       {
         data: redeemedGrouped || [],
-        label: "Cadeaux gagnés",
+        label: t("social_dashboard.stats.gifts_won"),
         color: secondary300,
       },
       {
         data: clickedGrouped || [],
-        label: "Nombre d'abonnées",
+        label: t("social_dashboard.subscribers_count"),
         color: tertiary300,
       },
     ];

@@ -78,11 +78,12 @@ const Login = () => {
       404: ERROR_MESSAGES.AUTH_EMAIL_NOT_FOUND,
     };
 
-    const message = !error?.response
+    const key = !error?.response
       ? ERROR_MESSAGES.NO_SERVER_RESPONSE
       : errorMessages[error.response?.status] ||
         ERROR_MESSAGES.AUTH_LOGIN_FAILED;
 
+    const message = t(key);
     toast(message, "error");
   };
 

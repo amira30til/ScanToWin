@@ -15,22 +15,35 @@ import { Flex, Button, Td, Tr, Spinner, Badge } from "@chakra-ui/react";
 
 import { Archive, Check, ArchiveRestore, Eye } from "lucide-react";
 
-const HEADERS = [
-  "Email",
-  "Role",
-  "Status",
-  "Phone",
-  "Created at",
-  "Updated at",
-  "Actions",
-];
-
-const STATUS_MAP = {
-  ACTIVE: { statusColor: "green", statusText: "Active" },
-  ARCHIVED: { statusColor: "yellow", statusText: "Archived" },
-};
+import { useTranslation } from "react-i18next";
 
 const Admins = () => {
+  const { t } = useTranslation();
+
+  const STATUS_MAP = {
+    ACTIVE: {
+      statusColor: "green",
+      statusText:
+        t("admins.table.headers.statuss.active") || t("admins.statuss.active"),
+    },
+    ARCHIVED: {
+      statusColor: "yellow",
+      statusText:
+        t("admins.table.headers.statuss.archived") ||
+        t("admins.statuss.archived"),
+    },
+  };
+
+  const HEADERS = [
+    t("admins.table.headers.email"),
+    t("admins.table.headers.role"),
+    t("admins.table.headers.statuss"),
+    t("admins.table.headers.phone"),
+    t("admins.table.headers.createdAt"),
+    t("admins.table.headers.updatedAt"),
+    t("admins.table.headers.action"),
+  ];
+
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const axiosPrivate = useAxiosPrivate();
@@ -49,16 +62,25 @@ const Admins = () => {
         );
       return data;
     },
-    onError: () => toast("Failed to fetch admins", "error"),
+    onError: () => toast(t("admins.table.messages.fetchFailed"), "error"),
   });
 
   const archiveAdminMutation = useMutation({
     mutationFn: async (data) => await archiveAdmin(axiosPrivate, data),
     onSuccess: () => {
       queryClient.invalidateQueries("admins");
-      toast("Admin archived successfully", "success");
+      toast(
+        t("admins.table.messages.archiveSuccess") ||
+          t("success.ADMIN_CREATE_SUCCESS") ||
+          "Admin archived successfully",
+        "success",
+      );
     },
-    onError: () => toast("Failed to archive admin", "error"),
+    onError: () =>
+      toast(
+        t("admins.table.messages.archiveFailed") || "Failed to archive admin",
+        "error",
+      ),
   });
 
   const archiveAdminHandler = (id) => {
@@ -71,9 +93,17 @@ const Admins = () => {
     mutationFn: async (data) => await restoreAdmin(axiosPrivate, data),
     onSuccess: () => {
       queryClient.invalidateQueries("admins");
-      toast("Admin restored successfully", "success");
+      toast(
+        t("admins.table.messages.restoreSuccess") ||
+          "Admin restored successfully",
+        "success",
+      );
     },
-    onError: () => toast("Failed to restore admin", "error"),
+    onError: () =>
+      toast(
+        t("admins.table.messages.restoreFailed") || "Failed to restore admin",
+        "error",
+      ),
   });
 
   const restoreAdminHandler = (id) => {
@@ -93,7 +123,7 @@ const Admins = () => {
       <Flex direction="column" gap={4}>
         <Flex gap={4}>
           <Button colorScheme="primary" onClick={onOpen}>
-            Create an admin
+            {t("admins.table.button") || "Create an admin"}
           </Button>
           <Button
             variant="outline"
@@ -101,7 +131,7 @@ const Admins = () => {
             rightIcon={showArchived ? <Check size={18} /> : undefined}
             onClick={showArchivedHandler}
           >
-            Show Archived
+            {t("admins.table.showArchived") || "Show Archived"}
           </Button>
         </Flex>
 
@@ -110,7 +140,7 @@ const Admins = () => {
             .filter((admin) => showArchived || admin.adminStatus !== "ARCHIVED")
             .map((admin, index) => {
               const { statusColor, statusText } =
-                STATUS_MAP[admin?.adminStatus];
+                STATUS_MAP[admin?.adminStatus] || {};
 
               return (
                 <Tr key={index} fontSize="sm">
@@ -135,7 +165,7 @@ const Admins = () => {
                   <Td>
                     <Flex justify="center" gap={2}>
                       <IconButton
-                        label="view"
+                        label={t("admins.action.view") || "view"}
                         icon={<Eye size={20} />}
                         size="sm"
                         colorScheme="blue"
@@ -143,7 +173,7 @@ const Admins = () => {
                       />
                       {admin.adminStatus === "ACTIVE" && (
                         <IconButton
-                          label="archive admin"
+                          label={t("admins.action.archive") || "archive admin"}
                           icon={<Archive size={20} />}
                           size="sm"
                           colorScheme="yellow"
@@ -153,7 +183,7 @@ const Admins = () => {
                       )}
                       {admin.adminStatus === "ARCHIVED" && (
                         <IconButton
-                          label="restore admin"
+                          label={t("admins.action.restore") || "restore admin"}
                           icon={<ArchiveRestore size={20} />}
                           size="sm"
                           colorScheme="green"
