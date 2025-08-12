@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useToast, useAxiosPrivate } from "@/hooks";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useDisclosure } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 import { dataURLtoFile } from "@/utils/helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -32,6 +33,8 @@ import { LuUpload, LuX } from "react-icons/lu";
 import { Trash, ArchiveRestore, Archive } from "lucide-react";
 
 const Games = () => {
+  const { t } = useTranslation();
+
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const fileInputRef = useRef(null);
@@ -155,7 +158,7 @@ const Games = () => {
         <Box as="form" bg="white" p={4} onSubmit={handleSubmit(onSubmit)}>
           <SimpleGrid columns={4} gap={6}>
             <FormControl isInvalid={!!formState?.errors?.pictureUrl}>
-              <FormLabel>Game Picture</FormLabel>
+              <FormLabel>{t("games.form.picture")}</FormLabel>
               <input
                 type="file"
                 ref={fileInputRef}
@@ -200,7 +203,7 @@ const Games = () => {
                 >
                   <LuUpload size={24} color={primary500} />
                   <Text mt={2} fontSize="sm">
-                    Upload pictureUrl image
+                    {t("games.form.uploadPicture")}{" "}
                   </Text>
                 </Flex>
               )}
@@ -210,7 +213,7 @@ const Games = () => {
             </FormControl>
 
             <FormControl isInvalid={!!formState?.errors?.name}>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t("games.form.name")}</FormLabel>
 
               <Select
                 bg="white"
@@ -219,9 +222,15 @@ const Games = () => {
                 cursor="pointer"
                 {...register("name")}
               >
-                <option value="Fortune Wheel">Fortune Wheel</option>
-                <option value="Mysterious Box">Mysterious Box</option>
-                <option value="Slot Machine">Slot Machine</option>
+                <option value="Fortune Wheel">
+                  {t("games.gameNames.fortuneWheel")}
+                </option>
+                <option value="Mysterious Box">
+                  {t("games.gameNames.mysteriousBox")}
+                </option>
+                <option value="Slot Machine">
+                  {t("games.gameNames.slotMachine")}
+                </option>
               </Select>
 
               <FormErrorMessage>
@@ -229,11 +238,11 @@ const Games = () => {
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={!!formState?.errors?.name}>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("games.form.description")}</FormLabel>
               <Textarea
                 {...register("description")}
                 focusBorderColor="primary.500"
-                placeholder="Enter game description"
+                placeholder={t("games.form.descriptionPlaceholder")}
               />
               <FormErrorMessage>
                 {formState?.errors?.description?.message}
@@ -241,7 +250,7 @@ const Games = () => {
             </FormControl>
 
             <FormControl isInvalid={!!formState?.errors?.status}>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>{t("games.form.status")}</FormLabel>
 
               <Select
                 maxW="300px"
@@ -253,8 +262,8 @@ const Games = () => {
                 {...register("status")}
                 defaultValue="active"
               >
-                <option value="active">Active</option>
-                <option value="archived">Archived</option>
+                <option value="active">{t("games.status.active")}</option>
+                <option value="archived">{t("games.status.archived")}</option>
               </Select>
 
               <FormErrorMessage>
@@ -270,7 +279,7 @@ const Games = () => {
               mt={4}
               isLoading={createGameMutation.isPending}
             >
-              Create Game
+              {t("games.form.createGame")}{" "}
             </Button>
           </Flex>
         </Box>
@@ -290,7 +299,7 @@ const Games = () => {
                   <Flex justify="center" gap={2}>
                     {game.status === "active" && (
                       <IconButton
-                        label="archive game"
+                        aria-label={t("games.ariaLabels.archiveGame")}
                         icon={<Archive size={20} />}
                         size="sm"
                         colorScheme="yellow"
@@ -300,7 +309,7 @@ const Games = () => {
 
                     {game.status === "archived" && (
                       <IconButton
-                        label="restore game"
+                        aria-label={t("games.ariaLabels.restoreGame")}
                         icon={<ArchiveRestore size={20} />}
                         size="sm"
                         colorScheme="green"
@@ -309,7 +318,7 @@ const Games = () => {
                     )}
 
                     <IconButton
-                      label="delete game"
+                      aria-label={t("games.ariaLabels.deleteGame")}
                       icon={<Trash size={20} />}
                       size="sm"
                       colorScheme="red"
@@ -330,7 +339,7 @@ const Games = () => {
                           : ""
                     }
                   >
-                    {game.status}
+                    {t(`games.status.${game.status}`)}
                   </Badge>
                 </Flex>
                 <Text>{game.description}</Text>
