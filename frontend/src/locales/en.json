@@ -13,6 +13,12 @@
     }
   },
   "actions": {
+    "names": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "google_reviews": "Google Reviews"
+    },
     "add_button": "Add an action",
     "popover": {
       "title": "Add an action",
@@ -83,12 +89,16 @@
     "save": "Save",
     "choose_colors": "Choose your colors",
     "primary": "Primary",
-    "secondary": "Secondary"
+    "secondary": "Secondary",
+    "shop_update_success": "Shop updated successfully!",
+    "shop_update_error": "Failed to update shop!",
+    "invalid_image_format": "Invalid image format"
   },
   "admin_campaign": {
     "title": "My Campaign"
   },
   "social_dashboard": {
+    "subscribers_count": "Number of subscribers",
     "filters": {
       "today": "Today",
       "yesterday": "Yesterday",
@@ -237,7 +247,17 @@
   },
   "admins": {
     "table": {
+      "showArchived": "Show Archived",
+      "action": {
+        "view": "View",
+        "archive": "Archive",
+        "restore": "Restore"
+      },
       "headers": {
+        "statuss": {
+          "active": "Active",
+          "archived": "Archived"
+        },
         "email": "Email",
         "role": "Role",
         "status": "Status",
@@ -250,7 +270,11 @@
       "messages": {
         "fetchFailed": "Failed to fetch admins",
         "deleteSuccess": "Admin deleted successfully",
-        "deleteFailed": "Failed to delete admin"
+        "deleteFailed": "Failed to delete admin",
+        "archiveSuccess": "Admin archived successfully",
+        "archiveFailed": "Failed to archive admin",
+        "restoreSuccess": "Admin restored successfully",
+        "restoreFailed": "Failed to restore admin"
       }
     }
   },
@@ -263,11 +287,19 @@
       "isActive": "Is Active",
       "picture": "Game Picture",
       "uploadPicture": "Upload picture image",
-      "createGame": "Create Game"
+      "createGame": "Create Game",
+      "status": "Status",
+      "removePicture": "Remove image"
     },
     "status": {
       "active": "Active",
-      "disabled": "Disabled"
+      "disabled": "Disabled",
+      "archived": "Archived"
+    },
+    "gameNames": {
+      "fortuneWheel": "Fortune Wheel",
+      "mysteriousBox": "Mysterious Box",
+      "slotMachine": "Slot Machine"
     },
     "messages": {
       "fetchFailed": "Failed to fetch games",
@@ -276,14 +308,28 @@
       "createFailed": "Failed to create game"
     },
     "buttons": {
+      "archive": "Archive",
+      "restore": "Restore",
       "delete": "Delete"
+    },
+    "ariaLabels": {
+      "removePicture": "Remove image",
+      "archiveGame": "Archive game",
+      "restoreGame": "Restore game",
+      "deleteGame": "Delete game"
     }
   },
   "superAdmin": {
     "signOut": "Sign Out",
     "homeTitle": "Super Admin Home",
     "adminsList": "Admins List",
-    "actionsList": "Actions List"
+    "actionsList": "Actions List",
+    "gamesTitle": "Games",
+    "alerts": {
+      "archivedAdmins": "Archived admins will not be able to use their accounts, and their games will be disabled",
+      "nonActiveActions": "Inactive actions will not be shown to admins",
+      "archivedGames": "Archived games will appear as \"coming soon\" to admins"
+    }
   },
   "wheel": {
     "spinButton": "Spin"
@@ -303,7 +349,9 @@
     "agreePromotions": "I agree to receive personalised communications about promotions and new products and from the store."
   },
   "buttons": {
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "close": "Close",
+    "delete": "Delete"
   },
   "error": {
     "failedCreateUser": "Failed to create user",
@@ -364,5 +412,113 @@
       "title": "24h haven't passed yet!",
       "description": "you can get your gift in:"
     }
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "This field must be at least {{count}} characters",
+    "maxLength": "This field must not exceed {{count}} characters",
+    "invalidEmail": "Must be a valid email address",
+    "invalidStatus": "Invalid status",
+    "invalidHexColor": "Must be a valid hex color",
+    "invalidPhone": "Please enter a valid phone number",
+    "invalidCode": "The provided code is invalid",
+    "invalidPinFormat": "PIN must be exactly 4 digits",
+    "pinsMustMatch": "PINs must match",
+    "newPinRequired": "New PIN is required",
+    "confirmPinRequired": "Confirm PIN is required",
+    "digitRequired": "Digit is required",
+    "actionNameRequired": "Action name is required",
+    "atLeastOneAction": "At least one action is required",
+    "nameRequired": "Name is required",
+    "shopNameRequired": "Shop name is required",
+    "shopNameMinLength": "Shop name must be at least {{count}} characters",
+    "addressRequired": "Address is required",
+    "cityRequired": "City is required",
+    "countryRequired": "Country is required",
+    "zipCodeRequired": "Zip code is required",
+    "rewardNameRequired": "Reward name is required",
+    "atLeastOneReward": "At least one reward is required",
+    "uniqueRewardNames": "Reward names must be unique",
+    "mustBeZeroOrMore": "Must be 0 or more",
+    "percentageRequired": "Percentage is required",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least {{count}} characters",
+    "passwordMaxLength": "Password must not exceed {{count}} characters",
+    "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character:[@$!%*?&]",
+    "firstNameMinLength": "First name must be at least {{count}} characters",
+    "firstNameRequired": "First name is required",
+    "lastNameMinLength": "Last name must be at least {{count}} characters",
+    "lastNameRequired": "Last name is required",
+    "descriptionRequired": "Description is required",
+    "pictureRequired": "Picture is required",
+    "oneOf": "This field must be one of the following values: {{values}}",
+    "notOneOf": "This field cannot be one of the following values: {{values}}",
+    "invalidFormat": "Invalid format",
+    "minNumber": "This field must be greater than or equal to {{count}}",
+    "maxNumber": "This field must be less than or equal to {{count}}",
+    "minItems": "You must select at least {{count}} item(s)"
+  },
+  "account_title": "Account",
+  "delete_action": {
+    "title": "Delete an action",
+    "confirmation_message": "Are you sure you want to delete this action?",
+    "warning_message": "Admin's chosen actions and all related data will be permanently deleted."
+  },
+  "delete_game_modal": {
+    "title": "Delete a game",
+    "confirmation": "Are you sure you want to delete this game?",
+    "close": "Close",
+    "delete": "Delete"
+  },
+  "delete_admin_modal": {
+    "title": "Delete an admin",
+    "body": "Are you sure you want to delete this admin? <br /> All shops, rewards, actions related to this admin will be permanently deleted.",
+    "buttons": {
+      "close": "Close",
+      "delete": "Delete"
+    }
+  },
+  "delete_shop_modal": {
+    "title": "Delete a shop",
+    "body": "Are you sure you want to delete this shop?",
+    "buttons": {
+      "close": "Close",
+      "delete": "Delete"
+    }
+  },
+  "adminDetails": {
+    "goBack": "Go back",
+    "title": "Admin Details",
+    "deleteAdmin": "Delete admin",
+    "passwordVerificationCode": "Password verification Code",
+    "createdAt": "Created at",
+    "lastUpdatedAt": "Last updated at",
+    "shops": "Shops",
+    "noShopsYet": "This admin don't have a shop yet",
+    "archiveShop": "Archive shop",
+    "restoreShop": "Restore shop",
+    "deleteShop": "Delete shop",
+    "address": "Address",
+    "city": "City",
+    "zipCode": "ZIP Code",
+    "country": "Country",
+    "shopPinCode": "Shop PIN code",
+    "primaryColor": "Primary color",
+    "secondaryColor": "Secondary color",
+    "isGuaranteedWin": "Is Guaranteed Win",
+    "numberSiret": "Number Siret",
+    "phone": "Phone",
+    "winningPercentage": "Winning Percentage",
+    "chosenActions": "Chosen Actions",
+    "position": "Position",
+    "targetLink": "Target Link",
+    "redeemedRewards": "Redeemed rewards",
+    "chosenGame": "Chosen game",
+    "rewards": "Rewards",
+    "numberOfRewardsToWin": "Number of rewards to win",
+    "percentage": "Percentage",
+    "isUnlimited": "Is unlimited",
+    "true": "true",
+    "false": "false"
   }
 }

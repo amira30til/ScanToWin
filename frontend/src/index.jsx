@@ -14,7 +14,7 @@ import themes from "@/theme";
 import App from "@/App";
 
 import "@/index.css";
-
+import "@/schemas/yupLocale";
 const router = createBrowserRouter([
   {
     path: "*",

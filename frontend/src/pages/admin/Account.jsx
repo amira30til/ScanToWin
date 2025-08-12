@@ -29,7 +29,7 @@ const Account = () => {
 
   return (
     <Box pos="relative">
-      <HeaderAdmin title="Account" />
+      <HeaderAdmin title={t("account_title")} />
 
       <Flex>
         {shop && (

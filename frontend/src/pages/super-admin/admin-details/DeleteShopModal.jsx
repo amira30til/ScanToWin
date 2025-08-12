@@ -1,6 +1,6 @@
 import { useAxiosPrivate } from "@/hooks";
 import { useMutation } from "@tanstack/react-query";
-
+import { useTranslation } from "react-i18next";
 import { deleteShop } from "@/services/shopService";
 
 import {
@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 const DeleteShopModal = ({ isOpen, onClose, shopId, refetch }) => {
+  const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
 
   const deleteShopMutation = useMutation({
@@ -36,20 +37,20 @@ const DeleteShopModal = ({ isOpen, onClose, shopId, refetch }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete a shop</ModalHeader>
+        <ModalHeader>{t("delete_shop_modal.title")}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Are you sure you want to delete this shop?</ModalBody>
+        <ModalBody>{t("delete_shop_modal.body")}</ModalBody>
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("delete_shop_modal.buttons.close")}
             </Button>
             <Button
               colorScheme="red"
               onClick={deleteShopHandler}
               isLoading={deleteShopMutation.isPending}
             >
-              Delete
+              {t("delete_shop_modal.buttons.delete")}{" "}
             </Button>
           </Flex>
         </ModalFooter>

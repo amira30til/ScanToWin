@@ -1,19 +1,18 @@
 import * as yup from "yup";
-
+import i18n from "@/i18n";
 export const resetPasswordSchema = yup
   .object({
     email: yup
       .string()
-      .matches(
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Must be a valid email address",
+      .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, () =>
+        i18n.t("validation.invalidEmail"),
       )
       .required("Email is required"),
 
     verificationCode: yup
       .string()
       .required("PIN is required")
-      .matches(/^\d{4}$/, "PIN must be a 4-digit number"),
+      .matches(/^\d{4}$/, () => i18n.t("validation.invalidPinFormat")),
 
     newPassword: yup
       .string()
@@ -22,7 +21,7 @@ export const resetPasswordSchema = yup
       .max(30, "Password must not exceed 30 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character:[@$!%*?&]",
+        () => i18n.t("validation.passwordComplexity"),
       ),
   })
   .required();
