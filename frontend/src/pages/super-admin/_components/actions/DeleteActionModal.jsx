@@ -16,8 +16,10 @@ import {
   Box,
   Text,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 const DeleteActionModal = ({ isOpen, onClose, actionId, refetch }) => {
+  const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
 
   const deleteActionMutation = useMutation({
@@ -38,28 +40,25 @@ const DeleteActionModal = ({ isOpen, onClose, actionId, refetch }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete a action</ModalHeader>
+        <ModalHeader>{t("delete_action.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box>
-            <Text>Are you sure you want to delete this action?</Text>
-            <Text>
-              Admin's chosen actions and all related data will be permanently
-              deleted
-            </Text>
+            <Text>{t("delete_action.confirmation_message")}</Text>
+            <Text>{t("delete_action.warning_message")}</Text>
           </Box>
         </ModalBody>
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("buttons.close")}
             </Button>
             <Button
               colorScheme="red"
               onClick={deleteActionHandler}
               isLoading={deleteActionMutation.isPending}
             >
-              Delete
+              {t("buttons.delete")}
             </Button>
           </Flex>
         </ModalFooter>

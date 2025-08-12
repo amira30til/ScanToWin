@@ -1,12 +1,11 @@
 import * as yup from "yup";
-
+import i18n from "@/i18n";
 export const loginSchema = yup
   .object({
     email: yup
       .string()
-      .matches(
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Must be a valid email address",
+      .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, () =>
+        i18n.t("validation.invalidEmail"),
       )
       .required("Email is required"),
 

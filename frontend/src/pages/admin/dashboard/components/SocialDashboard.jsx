@@ -292,7 +292,7 @@ const SocialDashboard = ({ title, social }) => {
             <Box w="50%">
               <Flex gap={4} justify="start">
                 <StatBox
-                  title="Nombre d'abonnées"
+                  title={t("social_dashboard.subscribers_count")}
                   value={clickedSelected}
                   total={actionClickedTimestamps}
                   icon={UserPlus}

@@ -14,9 +14,17 @@ import { DateTime } from "luxon";
 import { Flex, Button, Td, Tr, Spinner } from "@chakra-ui/react";
 
 import { Trash } from "lucide-react";
-const HEADERS = ["Name", "Created at", "Updated at", "Actions"];
+import { useTranslation } from "react-i18next";
 
 const Actions = () => {
+  const { t } = useTranslation();
+  const HEADERS = [
+    t("actions.headers.name"),
+    t("actions.headers.createdAt"),
+    t("actions.headers.updatedAt"),
+    t("actions.headers.actions"),
+  ];
+
   const {
     isOpen: isCreateOpen,
     onOpen: onCreateOpen,
@@ -40,7 +48,7 @@ const Actions = () => {
       const response = await getActions();
       return response.data.data.actions;
     },
-    onError: () => toast("Failed to fetch actions", "error"),
+    onError: () => toast(t("actions.messages.fetchError"), "error"),
   });
 
   if (isLoading) return <Spinner color="secondary.500" />;
@@ -50,7 +58,7 @@ const Actions = () => {
       <Flex direction="column" gap={4}>
         <Flex>
           <Button variant="solid" colorScheme="primary" onClick={onCreateOpen}>
-            Create an action
+            {t("actions.add_button")}
           </Button>
         </Flex>
 
