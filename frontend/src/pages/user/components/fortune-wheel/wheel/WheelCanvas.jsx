@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 
 const WheelCanvas = ({
+  
   segments = [],
   segColors,
   winningSegment,

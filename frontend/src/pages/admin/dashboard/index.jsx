@@ -249,7 +249,7 @@ const Dashboard = () => {
             <Box w="50%">
               <Flex gap={4} justify="start">
                 <StatBox
-                  title="Nombres d'abonnées"
+                  title={t("social_dashboard.subscribers_count")}
                   value={clickedSelected}
                   total={shopActionClick}
                   icon={UserPlus}

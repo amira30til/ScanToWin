@@ -1,13 +1,17 @@
 import * as yup from "yup";
-
+import i18n from "@/i18n";
 export const createGameSchema = yup
   .object({
-    name: yup.string().required("name is required"),
-    description: yup.string().required("description is required"),
+    name: yup.string().required(),
+    description: yup
+      .string()
+      .required(() => i18n.t("validation.descriptionRequired")),
     status: yup
       .string()
-      .oneOf(["active", "archived"], "Invalid status")
-      .required("Status is required"),
-    pictureUrl: yup.string().required("picture is required"),
+      .oneOf(["active", "archived"], )
+      .required(),
+    pictureUrl: yup
+      .string()
+      .required(() => i18n.t("validation.pictureRequired")),
   })
   .required();

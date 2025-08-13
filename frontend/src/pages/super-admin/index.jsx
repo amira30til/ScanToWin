@@ -17,23 +17,21 @@ const SuperAdmin = () => {
         <Heading size="md">{t("superAdmin.adminsList")}</Heading>
         <Alert status="info" borderRadius="md">
           <AlertIcon />
-          Archived admins, won't be able to use their accounts, and the their
-          games will be disabled
+          {t("superAdmin.alerts.archivedAdmins")}
         </Alert>
         <Admins />
-
 
         <Heading size="md">{t("superAdmin.actionsList")}</Heading>
         <Alert status="info" borderRadius="md">
           <AlertIcon />
-          Non active actions, won't be shown to the admins
+          {t("superAdmin.alerts.nonActiveActions")}{" "}
         </Alert>
         <Actions />
 
-        <Heading size="md">Games</Heading>
+        <Heading size="md">{t("superAdmin.gamesTitle")}</Heading>
         <Alert status="info" borderRadius="md">
           <AlertIcon />
-          Archived games will be seen as "coming soon" to the admins
+          {t("superAdmin.alerts.archivedGames")}{" "}
         </Alert>
         <Games />
       </Flex>

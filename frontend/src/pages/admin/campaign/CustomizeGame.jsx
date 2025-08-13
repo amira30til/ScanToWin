@@ -58,11 +58,11 @@ const CustomizeGame = ({ shop }) => {
 
   const onUpdateShopSuccess = async () => {
     await queryClient.refetchQueries(["adminShops", adminId]);
-    toast("Shop updated successfully!", "success");
+    toast(t("customize_game.shop_update_success"), "success");
   };
 
   const onUpdateShopError = () => {
-    toast("Failed to update shop!", "error");
+    toast(t("customize_game.shop_update_error"), "error");
   };
 
   const updateShopMutation = useMutation({
@@ -82,7 +82,7 @@ const CustomizeGame = ({ shop }) => {
   const onSaveImage = () => {
     if (!!imageValue && !!adminId) {
       const onError = () => {
-        toast("Invalid image format", "error");
+        toast(t("customize_game.invalid_image_format"), "error");
       };
       const formData = new FormData();
       formData.append("logo", dataURLtoFile(imageValue, "logo.png", onError));

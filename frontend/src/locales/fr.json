@@ -13,6 +13,12 @@
     }
   },
   "actions": {
+    "names": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tiktok": "Tiktok",
+      "google_reviews": "Avis Google"
+    },
     "add_button": "Ajouter une action",
     "popover": {
       "title": "Ajouter une action",
@@ -83,12 +89,17 @@
     "save": "Enregistrer",
     "choose_colors": "Choisissez vos couleurs",
     "primary": "Primaire",
-    "secondary": "Secondaire"
+    "secondary": "Secondaire",
+    "shop_update_success": "Boutique mise à jour avec succès !",
+    "shop_update_error": "Échec de la mise à jour de la boutique !",
+    "invalid_image_format": "Format d'image invalide"
   },
+
   "admin_campaign": {
     "title": "Ma campagne"
   },
   "social_dashboard": {
+    "subscribers_count": "Nombre d'abonnées",
     "filters": {
       "today": "Aujourd'hui",
       "yesterday": "Hier",
@@ -237,7 +248,17 @@
   },
   "admins": {
     "table": {
+      "showArchived": "Afficher archivés",
       "headers": {
+        "statuss": {
+          "active": "Actif",
+          "archived": "Archivé"
+        },
+        "action": {
+          "view": "Voir",
+          "archive": "Archiver",
+          "restore": "Restaurer"
+        },
         "email": "E-mail",
         "role": "Rôle",
         "status": "Statut",
@@ -249,8 +270,12 @@
       "button": "Créer un administrateur",
       "messages": {
         "fetchFailed": "Échec de la récupération des administrateurs",
+        "archiveSuccess": "Administrateur archivé avec succès",
+        "archiveFailed": "Échec de l'archivage de l'administrateur",
         "deleteSuccess": "Administrateur supprimé avec succès",
-        "deleteFailed": "Échec de la suppression de l'administrateur"
+        "deleteFailed": "Échec de la suppression de l'administrateur",
+        "restoreSuccess": "Administrateur restauré avec succès",
+        "restoreFailed": "Échec de la restauration de l'administrateur"
       }
     }
   },
@@ -263,11 +288,19 @@
       "isActive": "Actif",
       "picture": "Image du jeu",
       "uploadPicture": "Télécharger une image",
-      "createGame": "Créer un jeu"
+      "createGame": "Créer un jeu",
+      "status": "Statut",
+      "removePicture": "Supprimer l'image"
     },
     "status": {
       "active": "Actif",
-      "disabled": "Désactivé"
+      "disabled": "Désactivé",
+      "archived": "Archivé"
+    },
+    "gameNames": {
+      "fortuneWheel": "Roue de la Fortune",
+      "mysteriousBox": "Boîte Mystérieuse",
+      "slotMachine": "Machine à Sous"
     },
     "messages": {
       "fetchFailed": "Échec de la récupération des jeux",
@@ -276,14 +309,28 @@
       "createFailed": "Échec de la création du jeu"
     },
     "buttons": {
+      "archive": "Archiver",
+      "restore": "Restaurer",
       "delete": "Supprimer"
+    },
+    "ariaLabels": {
+      "removePicture": "Supprimer l'image",
+      "archiveGame": "Archiver le jeu",
+      "restoreGame": "Restaurer le jeu",
+      "deleteGame": "Supprimer le jeu"
     }
   },
   "superAdmin": {
     "signOut": "Déconnexion",
     "homeTitle": "Accueil Super Admin",
     "adminsList": "Liste des Admins",
-    "actionsList": "Liste des Actions"
+    "actionsList": "Liste des Actions",
+    "gamesTitle": "Jeux",
+    "alerts": {
+      "archivedAdmins": "Les administrateurs archivés ne pourront pas utiliser leurs comptes, et leurs jeux seront désactivés",
+      "nonActiveActions": "Les actions non actives ne seront pas montrées aux administrateurs",
+      "archivedGames": "Les jeux archivés apparaîtront comme \"bientôt disponible\" aux administrateurs"
+    }
   },
   "wheel": {
     "spinButton": "Tourner"
@@ -303,7 +350,9 @@
     "agreePromotions": "J'accepte de recevoir des communications personnalisées concernant les promotions et les nouveaux produits du magasin."
   },
   "buttons": {
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "delete": "Supprimer"
   },
   "error": {
     "failedCreateUser": "Échec de la création de l'utilisateur",
@@ -364,5 +413,113 @@
       "title": "24h ne se sont pas encore écoulées !",
       "description": "vous pourrez récupérer votre cadeau dans :"
     }
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "minLength": "Ce champ doit contenir au moins {{count}} caractères",
+    "maxLength": "Ce champ doit contenir au maximum {{count}} caractères",
+    "invalidEmail": "Adresse e-mail invalide",
+    "invalidStatus": "Statut invalide",
+    "invalidHexColor": "Doit être une couleur hexadécimale valide",
+    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+    "invalidCode": "Le code fourni est invalide",
+    "invalidPinFormat": "Le code PIN doit comporter exactement 4 chiffres",
+    "pinsMustMatch": "Les codes PIN doivent correspondre",
+    "newPinRequired": "Le nouveau code PIN est obligatoire",
+    "confirmPinRequired": "La confirmation du code PIN est obligatoire",
+    "digitRequired": "Le chiffre est obligatoire",
+    "actionNameRequired": "Le nom de l'action est obligatoire",
+    "atLeastOneAction": "Au moins une action est requise",
+    "nameRequired": "Le nom est obligatoire",
+    "shopNameRequired": "Le nom de la boutique est obligatoire",
+    "shopNameMinLength": "Le nom de la boutique doit comporter au moins {{count}} caractères",
+    "addressRequired": "L'adresse est obligatoire",
+    "cityRequired": "La ville est obligatoire",
+    "countryRequired": "Le pays est obligatoire",
+    "zipCodeRequired": "Le code postal est obligatoire",
+    "rewardNameRequired": "Le nom de la récompense est obligatoire",
+    "atLeastOneReward": "Au moins une récompense est requise",
+    "uniqueRewardNames": "Les noms de récompenses doivent être uniques",
+    "mustBeZeroOrMore": "Doit être 0 ou plus",
+    "percentageRequired": "Le pourcentage est obligatoire",
+    "passwordRequired": "Le mot de passe est obligatoire",
+    "passwordMinLength": "Le mot de passe doit comporter au moins {{count}} caractères",
+    "passwordMaxLength": "Le mot de passe ne doit pas dépasser {{count}} caractères",
+    "passwordComplexity": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial :[@$!%*?&]",
+    "firstNameMinLength": "Le prénom doit comporter au moins {{count}} caractères",
+    "firstNameRequired": "Le prénom est obligatoire",
+    "lastNameMinLength": "Le nom doit comporter au moins {{count}} caractères",
+    "lastNameRequired": "Le nom est obligatoire",
+    "descriptionRequired": "La description est obligatoire",
+    "pictureRequired": "L'image est obligatoire",
+    "oneOf": "Ce champ doit être l'une des valeurs suivantes : {{values}}",
+    "notOneOf": "Ce champ ne peut pas être l'une des valeurs suivantes : {{values}}",
+    "invalidFormat": "Format invalide",
+    "minNumber": "Ce champ doit être supérieur ou égal à {{count}}",
+    "maxNumber": "Ce champ doit être inférieur ou égal à {{count}}",
+    "minItems": "Vous devez sélectionner au moins {{count}} élément(s)"
+  },
+  "account_title": "Compte",
+  "delete_action": {
+    "title": "Supprimer une action",
+    "confirmation_message": "Êtes-vous sûr de vouloir supprimer cette action ?",
+    "warning_message": "Les actions choisies par l’administrateur et toutes les données associées seront supprimées définitivement"
+  },
+  "delete_game_modal": {
+    "title": "Supprimer un jeu",
+    "confirmation": "Êtes-vous sûr de vouloir supprimer ce jeu ?",
+    "close": "Fermer",
+    "delete": "Supprimer"
+  },
+  "delete_admin_modal": {
+    "title": "Supprimer un administrateur",
+    "body": "Êtes-vous sûr de vouloir supprimer cet administrateur ?<br />Toutes les boutiques, récompenses, actions liées à cet administrateur seront supprimées définitivement.",
+    "buttons": {
+      "close": "Fermer",
+      "delete": "Supprimer"
+    }
+  },
+  "delete_shop_modal": {
+    "title": "Supprimer une boutique",
+    "body": "Êtes-vous sûr de vouloir supprimer cette boutique ?",
+    "buttons": {
+      "close": "Fermer",
+      "delete": "Supprimer"
+    }
+  },
+  "adminDetails": {
+    "goBack": "Retour",
+    "title": "Détails de l'administrateur",
+    "deleteAdmin": "Supprimer l'administrateur",
+    "passwordVerificationCode": "Code de vérification du mot de passe",
+    "createdAt": "Créé le",
+    "lastUpdatedAt": "Dernière mise à jour le",
+    "shops": "Boutiques",
+    "noShopsYet": "Cet administrateur n'a pas encore de boutique",
+    "archiveShop": "Archiver la boutique",
+    "restoreShop": "Restaurer la boutique",
+    "deleteShop": "Supprimer la boutique",
+    "address": "Adresse",
+    "city": "Ville",
+    "zipCode": "Code postal",
+    "country": "Pays",
+    "shopPinCode": "Code PIN de la boutique",
+    "primaryColor": "Couleur principale",
+    "secondaryColor": "Couleur secondaire",
+    "isGuaranteedWin": "Gain garanti",
+    "numberSiret": "Numéro Siret",
+    "phone": "Téléphone",
+    "winningPercentage": "Pourcentage de gain",
+    "chosenActions": "Actions choisies",
+    "position": "Position",
+    "targetLink": "Lien cible",
+    "redeemedRewards": "Récompenses réclamées",
+    "chosenGame": "Jeu choisi",
+    "rewards": "Récompenses",
+    "numberOfRewardsToWin": "Nombre de récompenses à gagner",
+    "percentage": "Pourcentage",
+    "isUnlimited": "Illimité",
+    "true": "vrai",
+    "false": "faux"
   }
 }
