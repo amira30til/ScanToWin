@@ -37,11 +37,11 @@ const Admins = () => {
   const HEADERS = [
     t("admins.table.headers.email"),
     t("admins.table.headers.role"),
-    t("admins.table.headers.statuss"),
+    t("admins.table.headers.statusLabel"),
     t("admins.table.headers.phone"),
     t("admins.table.headers.createdAt"),
     t("admins.table.headers.updatedAt"),
-    t("admins.table.headers.action"),
+    t("admins.table.headers.actionLabel"),
   ];
 
   const navigate = useNavigate();

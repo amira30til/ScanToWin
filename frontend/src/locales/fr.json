@@ -250,10 +250,12 @@
     "table": {
       "showArchived": "Afficher archivés",
       "headers": {
+        "statusLabel": "Statut",
         "statuss": {
           "active": "Actif",
           "archived": "Archivé"
         },
+        "actionLabel": "Action",
         "action": {
           "view": "Voir",
           "archive": "Archiver",
