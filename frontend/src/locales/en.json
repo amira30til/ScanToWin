@@ -248,12 +248,14 @@
   "admins": {
     "table": {
       "showArchived": "Show Archived",
+      "actionLabel": "Action",
       "action": {
         "view": "View",
         "archive": "Archive",
         "restore": "Restore"
       },
       "headers": {
+        "statusLabel": "Status",
         "statuss": {
           "active": "Active",
           "archived": "Archived"
