@@ -14,8 +14,9 @@ import {
   ModalBody,
   ModalFooter,
 } from "@chakra-ui/react";
-
+import { useTranslation } from "react-i18next";
 const DeleteGameModal = ({ isOpen, onClose, gameId, refetch }) => {
+  const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
 
   const deleteGameMutation = useMutation({
@@ -36,20 +37,20 @@ const DeleteGameModal = ({ isOpen, onClose, gameId, refetch }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete a game</ModalHeader>
+        <ModalHeader>{t("delete_game_modal.title")}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Are you sure you want to delete this game?</ModalBody>
+        <ModalBody>{t("delete_game_modal.confirmation")}</ModalBody>
         <ModalFooter>
           <Flex gap={4}>
             <Button type="button" onClick={onClose}>
-              Close
+              {t("delete_game_modal.close")}{" "}
             </Button>
             <Button
               colorScheme="red"
               onClick={deleteGameHandler}
               isLoading={deleteGameMutation.isPending}
             >
-              Delete
+              {t("delete_game_modal.delete")}{" "}
             </Button>
           </Flex>
         </ModalFooter>

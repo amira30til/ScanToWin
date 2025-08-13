@@ -24,13 +24,17 @@ import {
 } from "@chakra-ui/react";
 import { ERROR_MESSAGES } from "@/constants";
 
-const ACTIONS = ["Facebook", "Instagram", "Tiktok", "Avis Google"];
-
 const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
+  const { t } = useTranslation();
+  const ACTIONS = [
+    t("actions.names.facebook"),
+    t("actions.names.instagram"),
+    t("actions.names.tiktok"),
+    t("actions.names.google_reviews"),
+  ];
   const axiosPrivate = useAxiosPrivate();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
 
   const { register, handleSubmit, formState, reset } = useForm({
     resolver: yupResolver(createActionSchema),
@@ -45,14 +49,15 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
 
   const onCreateActionError = (error) => {
     const errorMessages = {
-      409: t("create_action.error_already_exists"),
+      409: "create_action.error_already_exists",
     };
 
-    const message = !error?.response
+    const key = !error?.response
       ? ERROR_MESSAGES.NO_SERVER_RESPONSE
       : errorMessages[error.response?.status] ||
-        t("create_action.error_create_failed");
+        "create_action.error_create_failed";
 
+    const message = t(key);
     toast(message, "error");
   };
 
@@ -65,7 +70,6 @@ const CreateActionModal = ({ isOpen, onClose, size = "md" }) => {
   const onSubmit = async (values) => {
     createActionMutation.mutate({ ...values, isActive: true });
   };
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />

@@ -1,20 +1,24 @@
 import * as yup from "yup";
-
+import i18n from "@/i18n";
 export const redeemCodeSchema = yup
   .object({
-    digitOne: yup.string().required("Digit is required"),
-    digitTwo: yup.string().required("Digit is required"),
-    digitThree: yup.string().required("Digit is required"),
-    digitFour: yup.string().required("Digit is required"),
+    digitOne: yup.string().required(() => i18n.t("validation.digitRequired")),
+    digitTwo: yup.string().required(() => i18n.t("validation.digitRequired")),
+    digitThree: yup.string().required(() => i18n.t("validation.digitRequired")),
+    digitFour: yup.string().required(() => i18n.t("validation.digitRequired")),
   })
-  .test("all-digits", "The provided code is invalid", function (values) {
-    if (!values) return false;
+  .test(
+    "all-digits",
+    () => i18n.t("validation.invalidCode"),
+    function (values) {
+      if (!values) return false;
 
-    const { digitOne, digitTwo, digitThree, digitFour } = values;
-    return (
-      !!digitOne?.trim() &&
-      !!digitTwo?.trim() &&
-      !!digitThree?.trim() &&
-      !!digitFour?.trim()
-    );
-  });
+      const { digitOne, digitTwo, digitThree, digitFour } = values;
+      return (
+        !!digitOne?.trim() &&
+        !!digitTwo?.trim() &&
+        !!digitThree?.trim() &&
+        !!digitFour?.trim()
+      );
+    },
+  );

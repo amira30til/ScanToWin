@@ -3,12 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAxiosPrivate } from "@/hooks";
 import { useDisclosure } from "@chakra-ui/react";
-
+import { useTranslation } from "react-i18next";
 import { getAdminById } from "@/services/adminService";
 import { updateShop } from "@/services/shopService";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
-
 import IconButton from "@/components/common/IconButton";
 import DeleteAdminModal from "./DeleteAdminModal";
 import DeleteShopModal from "./DeleteShopModal";
@@ -29,6 +28,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { Mail, Phone, Archive, ArchiveRestore, Trash } from "lucide-react";
 
 const AdminDetails = () => {
+  const { t } = useTranslation();
   const { adminId } = useParams();
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
@@ -91,12 +91,12 @@ const AdminDetails = () => {
               colorScheme="secondary"
               onClick={() => navigate("/super-admin")}
             >
-              go back
+              {t("adminDetails.goBack")}
             </Button>
           </Flex>
           <Flex direction="column" gap={4} my={6}>
             <Heading size="lg" fontWeight="semibold" my={6}>
-              Admin Details
+              {t("adminDetails.title")}
             </Heading>
             <Flex align="center" gap={4}>
               <Flex align="center" gap={2}>
@@ -128,7 +128,7 @@ const AdminDetails = () => {
                 {admin?.adminStatus}
               </Badge>
               <IconButton
-                label="delete admin"
+                label={t("adminDetails.deleteAdmin")}
                 icon={<Trash size={20} />}
                 size="sm"
                 colorScheme="red"
@@ -137,14 +137,14 @@ const AdminDetails = () => {
             </Flex>
             <Flex>
               <Text fontWeight="semibold" color="gray.600" me={2}>
-                Password verification Code:{" "}
+                {t("adminDetails.passwordVerificationCode")}:
               </Text>
               <Text>2455{admin?.verificationCode}</Text>
             </Flex>
 
             <Flex>
               <Text fontWeight="semibold" color="gray.600" me={2}>
-                Created at:{" "}
+                {t("adminDetails.createdAt")}:
               </Text>
 
               <Text>
@@ -157,7 +157,7 @@ const AdminDetails = () => {
 
             <Flex>
               <Text fontWeight="semibold" color="gray.600" me={2}>
-                Last updated at:{" "}
+                {t("adminDetails.lastUpdatedAt")}:
               </Text>
               <Text>
                 {admin?.updatedAt &&
@@ -168,10 +168,10 @@ const AdminDetails = () => {
             </Flex>
           </Flex>
           <Heading size="lg" fontWeight="semibold" my={10}>
-            Shops
+            {t("adminDetails.shops")}
           </Heading>
           {admin?.shops?.length < 1 && (
-            <Text>This admin don't have a shop yet</Text>
+            <Text>{t("adminDetails.noShopsYet")}</Text>
           )}
           <SimpleGrid
             columns={{ sm: 1, md: 2 }}
@@ -201,7 +201,7 @@ const AdminDetails = () => {
                   <Flex justify="center" gap={2}>
                     {shop.status === "active" && (
                       <IconButton
-                        label="archive shop"
+                        label={t("adminDetails.archiveShop")}
                         icon={<Archive size={20} />}
                         size="sm"
                         colorScheme="yellow"
@@ -211,7 +211,7 @@ const AdminDetails = () => {
 
                     {shop.status === "archived" && (
                       <IconButton
-                        label="restore shop"
+                        label={t("adminDetails.restoreShop")}
                         icon={<ArchiveRestore size={20} />}
                         size="sm"
                         colorScheme="green"
@@ -220,7 +220,7 @@ const AdminDetails = () => {
                     )}
 
                     <IconButton
-                      label="delete shop"
+                      label={t("adminDetails.deleteShop")}
                       icon={<Trash size={20} />}
                       size="sm"
                       colorScheme="red"
@@ -253,49 +253,49 @@ const AdminDetails = () => {
                 )}
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Address:{" "}
+                    {t("adminDetails.address")}:
                   </Text>
                   <Text>{shop.address}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    city:{" "}
+                    {t("adminDetails.city")}:
                   </Text>
                   <Text>{shop.city}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    ZIP Code:{" "}
+                    {t("adminDetails.zipCode")}:
                   </Text>
                   <Text>{shop.zipCode}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    country:{" "}
+                    {t("adminDetails.country")}:
                   </Text>
                   <Text>{shop.country}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    shop PIN code:{" "}
+                    {t("adminDetails.shopPinCode")}:
                   </Text>
                   <Text>{shop.shopCodePin}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Primary color:{" "}
+                    {t("adminDetails.primaryColor")}:
                   </Text>
                   <Text>{shop.shopColor1}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Secondary color:{" "}
+                    {t("adminDetails.secondaryColor")}:{" "}
                   </Text>
                   <Text>{shop.shopColor2}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Is Guaranteed Win:{" "}
+                    {t("adminDetails.isGuaranteedWin")}:
                   </Text>
                   <Text>
                     {shop.isGuaranteedWin === true ? "true" : "false"}
@@ -303,24 +303,24 @@ const AdminDetails = () => {
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Nomber Siret:{" "}
+                    {t("adminDetails.numberSiret")}:{" "}
                   </Text>
                   <Text>{shop.nbSiret}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Phone:{" "}
+                    {t("adminDetails.phone")}:{" "}
                   </Text>
                   <Text>{shop.tel}</Text>
                 </Flex>
                 <Flex>
                   <Text fontWeight="semibold" color="gray.600" me={2}>
-                    Winning Percentage :{" "}
+                    {t("adminDetails.winningPercentage")}:{" "}
                   </Text>
                   <Text>{shop.winningPercentage}%</Text>
                 </Flex>
 
-                <Heading size="md">Chosen Actions</Heading>
+                <Heading size="md">{t("adminDetails.chosenActions")}</Heading>
                 <SimpleGrid
                   columns={{ sm: 1, md: 2 }}
                   bg="surface.popover"
@@ -329,17 +329,20 @@ const AdminDetails = () => {
                   {shop?.chosenActions?.map((action, index) => (
                     <Box key={index}>
                       <Text fontWeight="semibold">{action?.name}</Text>
-                      <Text fontSize="sm">Position: {action?.position}</Text>
                       <Text fontSize="sm">
-                        Target Link: {action?.targetLink}
+                        {t("adminDetails.position")}: {action?.position}
                       </Text>
                       <Text fontSize="sm">
-                        Redeemed rewards: {action?.redeemedRewards}
+                        {t("adminDetails.targetLink")}: {action?.targetLink}
+                      </Text>
+                      <Text fontSize="sm">
+                        {t("adminDetails.redeemedRewards")}:{" "}
+                        {action?.redeemedRewards}
                       </Text>
                     </Box>
                   ))}
                 </SimpleGrid>
-                <Heading size="md">Chosen game</Heading>
+                <Heading size="md">{t("adminDetails.chosenGame")}</Heading>
                 <Box>
                   <Flex direction="column" align="start" gap={2}>
                     <Text fontWeight="semibold">
@@ -367,7 +370,7 @@ const AdminDetails = () => {
                   </Flex>
                 </Box>
 
-                <Heading size="md">Rewards</Heading>
+                <Heading size="md">{t("adminDetails.rewards")}</Heading>
                 <SimpleGrid
                   columns={{ sm: 1, md: 2 }}
                   bg="surface.popover"
@@ -377,14 +380,17 @@ const AdminDetails = () => {
                     <Box key={index}>
                       <Text fontWeight="semibold">{reward?.name}</Text>
                       <Text fontSize="sm">
-                        Number of rewards to win : {reward?.nbRewardToWin}
+                        {t("adminDetails.numberOfRewardsToWin")}:{" "}
+                        {reward?.nbRewardToWin}
                       </Text>
                       <Text fontSize="sm">
-                        Percentage: {reward?.percentage}%
+                        {t("adminDetails.percentage")}: {reward?.percentage}%
                       </Text>
                       <Text fontSize="sm">
-                        Is unlimited:{" "}
-                        {reward?.isUnlimited === true ? "true" : "false"}
+                        {t("adminDetails.isUnlimited")}:
+                        {reward?.isUnlimited === true
+                          ? t("adminDetails.true")
+                          : t("adminDetails.false")}
                       </Text>
                     </Box>
                   ))}

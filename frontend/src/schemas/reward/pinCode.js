@@ -1,13 +1,13 @@
 import * as yup from "yup";
-
+import i18n from "@/i18n";
 export const pinCodeSchema = yup.object().shape({
   newPin: yup
     .string()
-    .required("new pin is required")
-    .matches(/^\d{4}$/, "new pin must be exactly 4 digits"),
+    .required(() => i18n.t("validation.newPinRequired"))
+    .matches(/^\d{4}$/, () => i18n.t("validation.invalidPinFormat")),
 
   confirmPin: yup
     .string()
-    .required("confirm pin is required")
-    .oneOf([yup.ref("newPin")], "pins must match"),
+    .required(() => i18n.t("validation.confirmPinRequired"))
+    .oneOf([yup.ref("newPin")], () => i18n.t("validation.pinsMustMatch")),
 });
