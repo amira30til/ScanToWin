@@ -8,7 +8,7 @@ export class UpdateGameDto extends PartialType(CreateGameDto) {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
 
   @ApiProperty({ required: false, default: GameStatus.ACTIVE })
   @IsString()

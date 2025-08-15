@@ -282,6 +282,9 @@
     }
   },
   "games": {
+    "list": {
+      "title": "Liste des Jeux"
+    },
     "form": {
       "name": "Nom",
       "nameRequired": "Le nom est obligatoire",
