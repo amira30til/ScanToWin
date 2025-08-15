@@ -28,9 +28,20 @@ import {
   Text,
   Image,
   Textarea,
+  Card,
+  CardBody,
+  CardFooter,
+  Heading,
+  useColorModeValue,
+  Stack,
+  Icon,
+  Avatar,
+  Input,
+  AspectRatio,
+  Center,
 } from "@chakra-ui/react";
 import { LuUpload, LuX } from "react-icons/lu";
-import { Trash, ArchiveRestore, Archive } from "lucide-react";
+import { Trash, ArchiveRestore, Archive, Edit } from "lucide-react";
 
 const Games = () => {
   const { t } = useTranslation();
@@ -42,6 +53,12 @@ const Games = () => {
   const [primary500] = useToken("colors", ["primary.500"]);
   const { onOpen, isOpen, onClose } = useDisclosure();
   const [deleteGameId, setDeleteGameId] = useState("");
+
+  // Color mode values
+  const cardBg = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const hoverBorderColor = useColorModeValue("primary.300", "primary.500");
+  const textColor = useColorModeValue("gray.700", "gray.200");
 
   const { register, handleSubmit, formState, reset, setValue } = useForm({
     resolver: yupResolver(createGameSchema),
@@ -153,174 +170,237 @@ const Games = () => {
   };
 
   return (
-    <>
-      <Flex direction="column" gap={4}>
-        <Box as="form" bg="white" p={4} onSubmit={handleSubmit(onSubmit)}>
-          <SimpleGrid columns={4} gap={6}>
-            <FormControl isInvalid={!!formState?.errors?.pictureUrl}>
-              <FormLabel>{t("games.form.picture")}</FormLabel>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handlePictureChange}
-                accept="image/*"
-                style={{ display: "none" }}
-              />
+    <Box p={{ base: 4, md: 8 }}>
+      {/* Create Game Form */}
+      <Card
+        bg={cardBg}
+        border="1px solid"
+        borderColor={borderColor}
+        borderRadius="lg"
+        boxShadow="sm"
+        mb={8}
+      >
+        <CardBody>
+          <Heading size="lg" mb={6} color="text.primary">
+            {t("games.form.createGame")}
+          </Heading>
 
-              {previewImage ? (
-                <Box position="relative" width="fit-content">
-                  <Image
-                    src={previewImage}
-                    alt="Picture Preview"
-                    maxHeight="100px"
+          <Box as="form" onSubmit={handleSubmit(onSubmit)}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={6}>
+              <FormControl isInvalid={!!formState?.errors?.pictureUrl}>
+                <FormLabel>{t("games.form.picture")}</FormLabel>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handlePictureChange}
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+
+                {previewImage ? (
+                  <Box position="relative" width="fit-content">
+                    <AspectRatio ratio={1} width="120px">
+                      <Image
+                        src={previewImage}
+                        alt="Picture Preview"
+                        borderRadius="md"
+                        border="1px solid"
+                        borderColor={borderColor}
+                        objectFit="contain"
+                        bg="gray.50"
+                      />
+                    </AspectRatio>
+                    <IconButton
+                      aria-label="Remove pictureUrl"
+                      icon={<LuX size={16} />}
+                      size="sm"
+                      position="absolute"
+                      top="-8px"
+                      right="-8px"
+                      colorScheme="red"
+                      rounded="full"
+                      onClick={clearPicture}
+                    />
+                  </Box>
+                ) : (
+                  <Flex
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    border="2px dashed"
+                    borderColor={borderColor}
                     borderRadius="md"
-                  />
-                  <IconButton
-                    aria-label="Remove pictureUrl"
-                    icon={<LuX size={16} />}
-                    size="sm"
-                    position="absolute"
-                    top="-8px"
-                    right="-8px"
-                    colorScheme="red"
-                    rounded="full"
-                    onClick={clearPicture}
-                  />
-                </Box>
-              ) : (
-                <Flex
-                  direction="column"
-                  align="center"
-                  justify="center"
-                  border="2px dashed"
-                  borderColor="gray.300"
+                    p={6}
+                    cursor="pointer"
+                    onClick={triggerPictureUpload}
+                    _hover={{ borderColor: hoverBorderColor }}
+                    transition="all 0.2s"
+                    height="120px"
+                    bg="gray.50"
+                  >
+                    <Icon as={LuUpload} boxSize={6} color={primary500} />
+                    <Text mt={2} fontSize="sm" color="text.secondary">
+                      {t("games.form.uploadPicture")}
+                    </Text>
+                  </Flex>
+                )}
+                <FormErrorMessage>
+                  {formState?.errors?.pictureUrl?.message}
+                </FormErrorMessage>
+              </FormControl>
+
+              <FormControl isInvalid={!!formState?.errors?.name}>
+                <FormLabel>{t("games.form.name")}</FormLabel>
+                <Select
+                  bg="white"
                   borderRadius="md"
-                  p={5}
+                  focusBorderColor="primary.500"
                   cursor="pointer"
-                  onClick={triggerPictureUpload}
-                  _hover={{ borderColor: "primary.500" }}
-                  transition="all 0.2s"
+                  {...register("name")}
                 >
-                  <LuUpload size={24} color={primary500} />
-                  <Text mt={2} fontSize="sm">
-                    {t("games.form.uploadPicture")}{" "}
-                  </Text>
-                </Flex>
-              )}
-              <FormErrorMessage>
-                {formState?.errors?.pictureUrl?.message}
-              </FormErrorMessage>
-            </FormControl>
+                  <option value="Fortune Wheel">
+                    {t("games.gameNames.fortuneWheel")}
+                  </option>
+                  <option value="Mysterious Box">
+                    {t("games.gameNames.mysteriousBox")}
+                  </option>
+                  <option value="Slot Machine">
+                    {t("games.gameNames.slotMachine")}
+                  </option>
+                </Select>
+                <FormErrorMessage>
+                  {formState?.errors?.name?.message}
+                </FormErrorMessage>
+              </FormControl>
 
-            <FormControl isInvalid={!!formState?.errors?.name}>
-              <FormLabel>{t("games.form.name")}</FormLabel>
+              <FormControl isInvalid={!!formState?.errors?.description}>
+                <FormLabel>{t("games.form.description")}</FormLabel>
+                <Textarea
+                  {...register("description")}
+                  focusBorderColor="primary.500"
+                  placeholder={t("games.form.descriptionPlaceholder")}
+                  rows={3}
+                />
+                <FormErrorMessage>
+                  {formState?.errors?.description?.message}
+                </FormErrorMessage>
+              </FormControl>
 
-              <Select
-                bg="white"
-                borderRadius="md"
-                focusBorderColor="primary.500"
-                cursor="pointer"
-                {...register("name")}
+              <FormControl isInvalid={!!formState?.errors?.status}>
+                <FormLabel>{t("games.form.status")}</FormLabel>
+                <Select
+                  bg="white"
+                  borderRadius="md"
+                  fontWeight="medium"
+                  focusBorderColor="primary.500"
+                  cursor="pointer"
+                  {...register("status")}
+                  defaultValue="active"
+                >
+                  <option value="active">{t("games.status.active")}</option>
+                  <option value="archived">{t("games.status.archived")}</option>
+                </Select>
+                <FormErrorMessage>
+                  {formState?.errors?.status?.message}
+                </FormErrorMessage>
+              </FormControl>
+            </SimpleGrid>
+
+            <Flex justify="flex-end" mt={6}>
+              <Button
+                type="submit"
+                colorScheme="primary"
+                size="md"
+                isLoading={createGameMutation.isPending}
               >
-                <option value="Fortune Wheel">
-                  {t("games.gameNames.fortuneWheel")}
-                </option>
-                <option value="Mysterious Box">
-                  {t("games.gameNames.mysteriousBox")}
-                </option>
-                <option value="Slot Machine">
-                  {t("games.gameNames.slotMachine")}
-                </option>
-              </Select>
+                {t("games.form.createGame")}
+              </Button>
+            </Flex>
+          </Box>
+        </CardBody>
+      </Card>
 
-              <FormErrorMessage>
-                {formState?.errors?.name?.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={!!formState?.errors?.name}>
-              <FormLabel>{t("games.form.description")}</FormLabel>
-              <Textarea
-                {...register("description")}
-                focusBorderColor="primary.500"
-                placeholder={t("games.form.descriptionPlaceholder")}
-              />
-              <FormErrorMessage>
-                {formState?.errors?.description?.message}
-              </FormErrorMessage>
-            </FormControl>
+      {/* Games List */}
+      <Heading size="lg" mb={6} color="text.primary">
+        {t("games.list.title")}
+      </Heading>
 
-            <FormControl isInvalid={!!formState?.errors?.status}>
-              <FormLabel>{t("games.form.status")}</FormLabel>
-
-              <Select
-                maxW="300px"
-                bg="white"
-                borderRadius="md"
-                fontWeight="bold"
-                focusBorderColor="primary.500"
-                cursor="pointer"
-                {...register("status")}
-                defaultValue="active"
-              >
-                <option value="active">{t("games.status.active")}</option>
-                <option value="archived">{t("games.status.archived")}</option>
-              </Select>
-
-              <FormErrorMessage>
-                {formState?.errors?.status?.message}
-              </FormErrorMessage>
-            </FormControl>
-          </SimpleGrid>
-
-          <Flex justify="end">
-            <Button
-              type="submit"
-              colorScheme="primary"
-              mt={4}
-              isLoading={createGameMutation.isPending}
-            >
-              {t("games.form.createGame")}{" "}
-            </Button>
-          </Flex>
-        </Box>
-
-        <SimpleGrid
-          columns={{ sm: 1, md: 3 }}
-          bg="surface.popover"
-          direction={{ base: "column", lg: "row" }}
-          gap={8}
-          p={10}
-        >
+      {games?.length === 0 ? (
+        <Card textAlign="center" py={10} bg={cardBg}>
+          <Text fontSize="lg" color="text.secondary">
+            {t("games.list.empty")}
+          </Text>
+        </Card>
+      ) : (
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           {games?.map((game) => (
-            <Flex direction="column" gap={4} key={game.id}>
-              <Flex direction="column" gap={4}>
-                <Flex align="center" justify="space-between">
-                  <Text fontWeight="bold">{game.name}</Text>
-                  <Flex justify="center" gap={2}>
-                    {game.status === "active" && (
+            <Card
+              key={game.id}
+              bg={cardBg}
+              border="1px solid"
+              borderColor={borderColor}
+              borderRadius="lg"
+              overflow="hidden"
+              boxShadow="sm"
+              _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
+              transition="all 0.2s"
+            >
+              <AspectRatio ratio={4 / 3}>
+                <Center bg="gray.50" position="relative">
+                  <Image
+                    src={game.pictureUrl}
+                    alt={game.name}
+                    objectFit="contain"
+                    width="100%"
+                    height="100%"
+                    p={4}
+                  />
+                  <Badge
+                    position="absolute"
+                    top={3}
+                    right={3}
+                    colorScheme={game.status === "active" ? "green" : "yellow"}
+                    borderRadius="full"
+                    px={3}
+                    py={1}
+                    fontSize="xs"
+                    fontWeight="bold"
+                  >
+                    {t(`games.status.${game.status}`)}
+                  </Badge>
+                </Center>
+              </AspectRatio>
+
+              <CardBody>
+                <Flex justify="space-between" align="center" mb={3}>
+                  <Heading size="md" color={textColor}>
+                    {game.name}
+                  </Heading>
+                  <Flex gap={2}>
+                    {game.status === "active" ? (
                       <IconButton
                         aria-label={t("games.ariaLabels.archiveGame")}
-                        icon={<Archive size={20} />}
+                        icon={<Archive size={18} />}
                         size="sm"
-                        colorScheme="yellow"
+                        variant="ghost"
+                        colorScheme="orange"
                         onClick={() => archiveGameHandler(game?.id)}
                       />
-                    )}
-
-                    {game.status === "archived" && (
+                    ) : (
                       <IconButton
                         aria-label={t("games.ariaLabels.restoreGame")}
-                        icon={<ArchiveRestore size={20} />}
+                        icon={<ArchiveRestore size={18} />}
                         size="sm"
+                        variant="ghost"
                         colorScheme="green"
                         onClick={() => restoreGameHandler(game?.id)}
                       />
                     )}
-
                     <IconButton
                       aria-label={t("games.ariaLabels.deleteGame")}
-                      icon={<Trash size={20} />}
+                      icon={<Trash size={18} />}
                       size="sm"
+                      variant="ghost"
                       colorScheme="red"
                       onClick={() => {
                         setDeleteGameId(game.id);
@@ -329,42 +409,14 @@ const Games = () => {
                     />
                   </Flex>
                 </Flex>
-                <Flex>
-                  <Badge
-                    colorScheme={
-                      game.status === "active"
-                        ? "green"
-                        : game.status === "archived"
-                          ? "yellow"
-                          : ""
-                    }
-                  >
-                    {t(`games.status.${game.status}`)}
-                  </Badge>
-                </Flex>
-                <Text>{game.description}</Text>
-              </Flex>
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                mt={4}
-              >
-                <Image
-                  src={game.pictureUrl}
-                  alt={game.name}
-                  boxSize="280px"
-                  objectFit="cover"
-                  borderRadius="full"
-                  boxShadow="lg"
-                  border="2px solid"
-                  borderColor="gray.200"
-                />
-              </Box>
-            </Flex>
+                <Text color="text.secondary" noOfLines={3}>
+                  {game.description}
+                </Text>
+              </CardBody>
+            </Card>
           ))}
         </SimpleGrid>
-      </Flex>
+      )}
 
       <DeleteGameModal
         isOpen={isOpen}
@@ -372,7 +424,7 @@ const Games = () => {
         gameId={deleteGameId}
         refetch={refetch}
       />
-    </>
+    </Box>
   );
 };
 

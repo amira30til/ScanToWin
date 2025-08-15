@@ -281,6 +281,9 @@
     }
   },
   "games": {
+    "list": {
+      "title": "Games List"
+    },
     "form": {
       "name": "Name",
       "nameRequired": "Name is required",
