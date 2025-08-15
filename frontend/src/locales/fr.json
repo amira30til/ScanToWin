@@ -283,7 +283,8 @@
   },
   "games": {
     "management": {
-      "title": "Gestion des jeux"
+      "title": "Gestion des jeux",
+      "subtitle": "Ajoutez, modifiez et organisez vos jeux"
     },
     "list": {
       "title": "Liste des Jeux"

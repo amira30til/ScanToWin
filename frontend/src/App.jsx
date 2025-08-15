@@ -1,4 +1,6 @@
+// App.js - Updated with enhanced animations
 import { Routes, Route, Navigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
 import PersistLogin from "./components/layout/PersistLogin";
 import RequireAuth from "./components/layout/RequireAuth";
@@ -26,6 +28,8 @@ import PageTransitionWrapper from "./components/PageTransitionWrapper";
 import AdminsPage from "./pages/super-admin/_components/admins/admins-page";
 import ActionsPage from "./pages/super-admin/_components/actions/actions-page";
 import GamesPage from "./pages/super-admin/_components/games/games-page";
+
+import "./theme/animation.css";
 
 const ADMIN_ROLE = "ADMIN";
 const SUPER_ADMIN_ROLE = "SUPER_ADMIN";

@@ -282,7 +282,8 @@
   },
   "games": {
     "management": {
-      "title": "Game Management"
+      "title": "Game Management",
+      "subtitle": "Add, edit, and organize your games"
     },
     "list": {
       "title": "Games List"
