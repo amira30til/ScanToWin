@@ -282,6 +282,9 @@
     }
   },
   "games": {
+    "management": {
+      "title": "Gestion des jeux"
+    },
     "list": {
       "title": "Liste des Jeux"
     },
@@ -526,5 +529,36 @@
     "isUnlimited": "Illimité",
     "true": "vrai",
     "false": "faux"
+  },
+  "locale": "fr-FR",
+  "sidebar": {
+    "mainMenu": "Menu Principal",
+    "admins": "Administrateurs",
+    "actions": "Actions",
+    "games": "Jeux",
+    "settings": "Paramètres"
+  },
+  "greeting": {
+    "morning": "Bonjour",
+    "afternoon": "Bon Après-midi",
+    "evening": "Bonsoir"
+  },
+  "user": {
+    "name": "Super Administrateur",
+    "role": "Administrateur"
+  },
+  "header": {
+    "subtitle": "Gérez votre plateforme avec précision et contrôle."
+  },
+  "status": {
+    "systemActive": "Système Actif",
+    "allSecure": "Tout est Sécurisé"
+  },
+  "action": {
+    "viewProfile": "Voir le Profil",
+    "signOut": "Se Déconnecter"
+  },
+  "time": {
+    "currentTime": "Heure Actuelle"
   }
 }

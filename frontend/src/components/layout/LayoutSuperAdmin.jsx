@@ -36,8 +36,10 @@ import {
 } from "react-icons/fi";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const LayoutSuperAdmin = () => {
+  const { t } = useTranslation();
   const logout = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,31 +61,39 @@ const LayoutSuperAdmin = () => {
   }, []);
 
   const navItemsMain = [
-    { path: "/super-admin/admins", icon: FiUsers, label: "Admins" },
-    { path: "/super-admin/actions", icon: FiActivity, label: "Actions" },
-    { path: "/super-admin/games", icon: FiPackage, label: "Games" },
+    { path: "/super-admin/admins", icon: FiUsers, label: t("sidebar.admins") },
+    {
+      path: "/super-admin/actions",
+      icon: FiActivity,
+      label: t("sidebar.actions"),
+    },
+    { path: "/super-admin/games", icon: FiPackage, label: t("sidebar.games") },
   ];
 
   const navItemsSettings = [
-    { path: "/super-admin/settings", icon: FiSettings, label: "Settings" },
+    {
+      path: "/super-admin/settings",
+      icon: FiSettings,
+      label: t("sidebar.settings"),
+    },
   ];
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
+    if (hour < 12) return t("greeting.morning");
+    if (hour < 17) return t("greeting.afternoon");
+    return t("greeting.evening");
   };
 
   const formatTime = (date) =>
-    date.toLocaleTimeString("en-US", {
+    date.toLocaleTimeString(t("locale"), {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
 
   const formatDate = (date) =>
-    date.toLocaleDateString("en-US", {
+    date.toLocaleDateString(t("locale"), {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -121,7 +131,7 @@ const LayoutSuperAdmin = () => {
             mb={2}
             display={{ base: "none", md: "block" }}
           >
-            Main Menu
+            {t("sidebar.mainMenu")}
           </Text>
           <VStack spacing={4} align="stretch" mb={6}>
             {navItemsMain.map((item) => (
@@ -167,17 +177,17 @@ const LayoutSuperAdmin = () => {
             <HStack spacing={3}>
               <Avatar
                 size="sm"
-                name="Super Admin"
+                name={t("user.name")}
                 bg="primary.500"
                 color="white"
                 fontWeight="bold"
               />
               <Box flex={1} display={{ base: "none", md: "block" }}>
                 <Text fontSize="sm" fontWeight="medium">
-                  Super Admin
+                  {t("user.name")}
                 </Text>
                 <Text fontSize="xs" color="text.secondary">
-                  Administrator
+                  {t("user.role")}
                 </Text>
               </Box>
               <IconButton
@@ -186,7 +196,7 @@ const LayoutSuperAdmin = () => {
                 size="sm"
                 onClick={signOut}
                 icon={<Icon as={FiLogOut} />}
-                aria-label="Sign out"
+                aria-label={t("action.signOut")}
               />
             </HStack>
           </Box>
@@ -234,14 +244,14 @@ const LayoutSuperAdmin = () => {
                     fontWeight="bold"
                     color="white"
                   >
-                    {getGreeting()}, Super Admin
+                    {getGreeting()}, {t("user.name")}
                   </Text>
                 </HStack>
                 <Text
                   fontSize={{ base: "md", md: "lg" }}
                   color="whiteAlpha.900"
                 >
-                  Manage your platform with precision and control.
+                  {t("header.subtitle")}
                 </Text>
                 <HStack spacing={4}>
                   <Badge
@@ -252,7 +262,8 @@ const LayoutSuperAdmin = () => {
                     borderRadius="full"
                     fontSize="xs"
                   >
-                    <Icon as={FiTrendingUp} boxSize={3} mr={1} /> System Active
+                    <Icon as={FiTrendingUp} boxSize={3} mr={1} />{" "}
+                    {t("status.systemActive")}
                   </Badge>
                   <Badge
                     bg="whiteAlpha.200"
@@ -262,7 +273,8 @@ const LayoutSuperAdmin = () => {
                     borderRadius="full"
                     fontSize="xs"
                   >
-                    <Icon as={FiShield} boxSize={3} mr={1} /> All Secure
+                    <Icon as={FiShield} boxSize={3} mr={1} />{" "}
+                    {t("status.allSecure")}
                   </Badge>
                 </HStack>
               </VStack>
@@ -297,7 +309,7 @@ const LayoutSuperAdmin = () => {
                       <HStack spacing={3}>
                         <Avatar
                           size="sm"
-                          name="Super Admin"
+                          name={t("user.name")}
                           bg="primary.500"
                           color="white"
                         />
@@ -325,7 +337,7 @@ const LayoutSuperAdmin = () => {
                         bg="transparent"
                         _hover={{ bg: "whiteAlpha.300" }}
                       >
-                        View Profile
+                        {t("action.viewProfile")}
                       </MenuItem>
 
                       <MenuDivider borderColor="whiteAlpha.400" />
@@ -336,7 +348,7 @@ const LayoutSuperAdmin = () => {
                         bg="transparent"
                         _hover={{ bg: "whiteAlpha.300" }}
                       >
-                        Sign Out
+                        {t("action.signOut")}
                       </MenuItem>
                     </MenuList>
                   </Menu>
@@ -353,7 +365,7 @@ const LayoutSuperAdmin = () => {
                   <HStack spacing={2} mb={2}>
                     <Icon as={FiClock} boxSize={4} color="white" />
                     <Text fontSize="sm" color="whiteAlpha.900">
-                      Current Time
+                      {t("time.currentTime")}
                     </Text>
                   </HStack>
                   <Text

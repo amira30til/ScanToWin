@@ -48,17 +48,13 @@ const App = () => {
 
           <Route element={<RequireAuth allowedRole={SUPER_ADMIN_ROLE} />}>
             <Route path="/super-admin/*" element={<LayoutSuperAdmin />}>
-              <Route path="dashboard" element={<SuperAdmin />} />
-              <Route path="admins" element={<AdminsPage />} />{" "}
-              {/* ✅ Admins page */}
-              <Route path="actions" element={<ActionsPage />} />{" "}
-              {/* ✅ Actions page */}
-              <Route path="games" element={<GamesPage />} />{" "}
-              {/* ✅ Games page */}
+              <Route path="admins" element={<AdminsPage />} />
+              <Route path="actions" element={<ActionsPage />} />
+              <Route path="games" element={<GamesPage />} />
               <Route path=":adminId" element={<AdminDetails />} />
               <Route
                 path="*"
-                element={<Navigate to="/super-admin/dashboard" />}
+                element={<Navigate to="/super-admin/admins" replace />}
               />
             </Route>
           </Route>

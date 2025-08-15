@@ -281,6 +281,9 @@
     }
   },
   "games": {
+    "management": {
+      "title": "Game Management"
+    },
     "list": {
       "title": "Games List"
     },
@@ -525,5 +528,36 @@
     "isUnlimited": "Is unlimited",
     "true": "true",
     "false": "false"
+  },
+  "locale": "en-US",
+  "sidebar": {
+    "mainMenu": "Main Menu",
+    "admins": "Admins",
+    "actions": "Actions",
+    "games": "Games",
+    "settings": "Settings"
+  },
+  "greeting": {
+    "morning": "Good Morning",
+    "afternoon": "Good Afternoon",
+    "evening": "Good Evening"
+  },
+  "user": {
+    "name": "Super Admin",
+    "role": "Administrator"
+  },
+  "header": {
+    "subtitle": "Manage your platform with precision and control."
+  },
+  "status": {
+    "systemActive": "System Active",
+    "allSecure": "All Secure"
+  },
+  "action": {
+    "viewProfile": "View Profile",
+    "signOut": "Sign Out"
+  },
+  "time": {
+    "currentTime": "Current Time"
   }
 }
