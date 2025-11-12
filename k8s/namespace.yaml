@@ -1,0 +1,8 @@
+# Namespace for MERN application
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mern-app
+  labels:
+    name: mern-app
+    environment: production

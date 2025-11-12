@@ -1,0 +1,70 @@
+# ArgoCD Application for MERN Stack
+# This file defines the GitOps application for ArgoCD
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mern-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  
+  # Source repository (GitOps)
+  source:
+    repoURL: https://github.com/your-org/mern-app.git # Change to your repository
+    targetRevision: main
+    path: helm
+    helm:
+      valueFiles:
+        - values.yaml
+      # Override values if needed
+      # values: |
+      #   backend:
+      #     image:
+      #       tag: v1.0.0
+  
+  # Destination cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mern-app
+  
+  # Sync policy
+  syncPolicy:
+    automated:
+      prune: true # Remove resources that are no longer defined
+      selfHeal: true # Automatically sync when drift is detected
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true # Create namespace if it doesn't exist
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+---
+# ArgoCD Application for Monitoring
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mern-monitoring
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/mern-app.git
+    targetRevision: main
+    path: k8s/monitoring
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mern-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

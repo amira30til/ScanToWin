@@ -1,0 +1,108 @@
+stages:
+  - build
+  - test
+  - security-scan
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKERHUB_USERNAME: "amiratilouche"
+  BACKEND_IMAGE: "${DOCKERHUB_USERNAME}/mern-backend"
+  FRONTEND_IMAGE: "${DOCKERHUB_USERNAME}/mern-frontend"
+  TRIVY_VERSION: "latest"
+
+# Build Backend Image
+build-backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - cd backend
+    - docker build -t ${BACKEND_IMAGE}:${CI_COMMIT_SHORT_SHA} .
+    - docker build -t ${BACKEND_IMAGE}:latest .
+    - docker push ${BACKEND_IMAGE}:${CI_COMMIT_SHORT_SHA}
+    - docker push ${BACKEND_IMAGE}:latest
+  only:
+    - main
+    - develop
+
+# Build Frontend Image
+build-frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - cd frontend
+    - docker build 
+        --build-arg VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://backend-service:5000/api}
+        --build-arg VITE_FRONTEND_URL=${VITE_FRONTEND_URL:-http://frontend-service:80}
+        -t ${FRONTEND_IMAGE}:${CI_COMMIT_SHORT_SHA} .
+    - docker build 
+        --build-arg VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://backend-service:5000/api}
+        --build-arg VITE_FRONTEND_URL=${VITE_FRONTEND_URL:-http://frontend-service:80}
+        -t ${FRONTEND_IMAGE}:latest .
+    - docker push ${FRONTEND_IMAGE}:${CI_COMMIT_SHORT_SHA}
+    - docker push ${FRONTEND_IMAGE}:latest
+  only:
+    - main
+    - develop
+
+# Security Scan Backend
+scan-backend:
+  stage: security-scan
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress ${BACKEND_IMAGE}:${CI_COMMIT_SHORT_SHA}
+  allow_failure: false
+  only:
+    - main
+    - develop
+
+# Security Scan Frontend
+scan-frontend:
+  stage: security-scan
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress ${FRONTEND_IMAGE}:${CI_COMMIT_SHORT_SHA}
+  allow_failure: false
+  only:
+    - main
+    - develop
+
+# Deploy to Kubernetes (only on main branch)
+deploy-backend:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl config use-context ${KUBE_CONTEXT}
+    - |
+      sed -i "s|tag:.*|tag: \"${CI_COMMIT_SHORT_SHA}\"|g" helm/backend/values.yaml
+      helm upgrade --install backend ./helm/backend --namespace mern-app --create-namespace
+  only:
+    - main
+  when: manual
+  environment:
+    name: production
+    url: https://your-production-url.com
+
+deploy-frontend:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl config use-context ${KUBE_CONTEXT}
+    - |
+      sed -i "s|tag:.*|tag: \"${CI_COMMIT_SHORT_SHA}\"|g" helm/frontend/values.yaml
+      helm upgrade --install frontend ./helm/frontend --namespace mern-app --create-namespace
+  only:
+    - main
+  when: manual
+  environment:
+    name: production
+    url: https://your-production-url.com

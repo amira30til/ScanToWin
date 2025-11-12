@@ -1,0 +1,76 @@
+{{- if .Values.backend.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: backend
+    tier: backend
+    {{- include "mern-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: backend
+        {{- include "mern-app.labels" . | nindent 8 }}
+    spec:
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: mern-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: mern-config
+              key: PORT
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              name: mern-config
+              key: MONGO_URI
+        - name: FRONTEND_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mern-config
+              key: FRONTEND_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mern-secrets
+              key: JWT_SECRET
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mern-secrets
+              key: SENDGRID_API_KEY
+        - name: MAIL_FROM
+          valueFrom:
+            secretKeyRef:
+              name: mern-secrets
+              key: MAIL_FROM
+        resources:
+          {{- toYaml .Values.backend.resources | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.backend.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.backend.readinessProbe | nindent 10 }}
+{{- end }}

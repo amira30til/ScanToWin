@@ -1,0 +1,40 @@
+# ConfigMap for application environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mern-config
+  namespace: mern-app
+data:
+  # Backend configuration
+  NODE_ENV: "production"
+  PORT: "5000"
+  FRONTEND_URL: "http://localhost:5173"
+  
+  # MongoDB connection (will be overridden by secret in production)
+  MONGO_URI: "mongodb://mongodb-service:27017/scan2win"
+  
+  # Frontend API configuration
+  VITE_API_BASE_URL: "http://backend-service:5000/api"
+  VITE_FRONTEND_URL: "http://localhost:5173"
+
+---
+# Secret for sensitive data (create this separately or use sealed-secrets)
+# For production, use Kubernetes Secrets or external secret management
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mern-secrets
+  namespace: mern-app
+type: Opaque
+stringData:
+  # MongoDB credentials
+  MONGO_ROOT_USERNAME: "admin"
+  MONGO_ROOT_PASSWORD: "admin123"
+  MONGO_DATABASE: "scan2win"
+  
+  # JWT Secret (CHANGE IN PRODUCTION!)
+  JWT_SECRET: "your-secret-key-change-in-production"
+  
+  # SendGrid API Key (optional)
+  SENDGRID_API_KEY: ""
+  MAIL_FROM: "noreply@example.com"
