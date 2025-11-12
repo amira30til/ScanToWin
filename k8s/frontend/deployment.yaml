@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-dockerhub-username/mern-frontend:latest # Change to your Docker Hub image
+        image: amira30til/mern-frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
