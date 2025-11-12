@@ -27,7 +27,7 @@ pipeline {
                             echo "🔨 Building backend Docker image..."
                             dir('backend') {
                                 sh """
-                                    docker build \
+                                    /usr/bin/docker build \
                                         --target production \
                                         -t ${BACKEND_IMAGE}:${IMAGE_TAG} \
                                         -t ${BACKEND_IMAGE}:latest \
@@ -44,7 +44,7 @@ pipeline {
                             echo "🔨 Building frontend Docker image..."
                             dir('frontend') {
                                 sh """
-                                    docker build \
+                                    /usr/bin/docker build \
                                         --target production \
                                         --build-arg VITE_API_BASE_URL=http://backend:5000/api \
                                         --build-arg VITE_FRONTEND_URL=http://localhost:5173 \
@@ -67,7 +67,7 @@ pipeline {
                         script {
                             echo "🔍 Scanning backend image for vulnerabilities..."
                             sh """
-                                docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                                /usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                                     aquasec/trivy image \
                                     --exit-code 0 \
                                     --severity HIGH,CRITICAL \
@@ -84,7 +84,7 @@ pipeline {
                         script {
                             echo "🔍 Scanning frontend image for vulnerabilities..."
                             sh """
-                                docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                                /usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                                     aquasec/trivy image \
                                     --exit-code 0 \
                                     --severity HIGH,CRITICAL \
@@ -104,20 +104,20 @@ pipeline {
                 script {
                     echo "📤 Logging in to Docker Hub..."
                     sh """
-                        echo ${DOCKER_HUB_CREDENTIALS} | docker login ${REGISTRY_URL} \
+                        echo ${DOCKER_HUB_CREDENTIALS} | /usr/bin/docker login ${REGISTRY_URL} \
                             -u ${DOCKER_HUB_USERNAME} --password-stdin
                     """
                     
                     echo "📤 Pushing backend image..."
                     sh """
-                        docker push ${BACKEND_IMAGE}:${IMAGE_TAG}
-                        docker push ${BACKEND_IMAGE}:latest
+                        /usr/bin/docker push ${BACKEND_IMAGE}:${IMAGE_TAG}
+                        /usr/bin/docker push ${BACKEND_IMAGE}:latest
                     """
                     
                     echo "📤 Pushing frontend image..."
                     sh """
-                        docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}
-                        docker push ${FRONTEND_IMAGE}:latest
+                        /usr/bin/docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}
+                        /usr/bin/docker push ${FRONTEND_IMAGE}:latest
                     """
                     
                     echo "✅ Images pushed successfully to Docker Hub"
@@ -147,7 +147,7 @@ pipeline {
             script {
                 echo "🧹 Cleaning up..."
                 sh """
-                    docker logout ${REGISTRY_URL} || true
+                    /usr/bin/docker logout ${REGISTRY_URL} || true
                 """
             }
         }
