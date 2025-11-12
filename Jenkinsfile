@@ -6,7 +6,7 @@ pipeline {
         // Docker Hub credentials (use Jenkins credentials store)
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
         DOCKER_HUB_USERNAME = credentials('docker-hub-username')
-        DOCKER_HUB_REPO = 'your-dockerhub-username' // Change this to your Docker Hub username
+        DOCKER_HUB_REPO = 'amiratilouche' // Change this to your Docker Hub username
         
         // Image tags
         BACKEND_IMAGE = "${DOCKER_HUB_REPO}/mern-backend"
